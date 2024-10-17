@@ -1,0 +1,3 @@
+/home/marek/CC2/Source/cmake-build-debug/CMakeFiles/AlfaCAD.dir
+/home/marek/CC2/Source/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/marek/CC2/Source/cmake-build-debug/CMakeFiles/rebuild_cache.dir

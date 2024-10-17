@@ -1,0 +1,168 @@
+﻿  cavaliercontours.cpp
+C:\Users\Marek\CavalierContours\src\cavaliercontours.cpp(1,10): fatal  error C1083: Cannot open include file: 'cavaliercontours.h': No such file or directory
+  alf_main.cpp
+C:\Users\Marek\Cc2\Source\alf_main.cpp(28,10): fatal  error C1083: Cannot open include file: 'allegro.h': No such file or directory
+  alf_main2.cpp
+  allegext.cpp
+C:\Users\Marek\CC2\Source\allegext.cpp(29,10): fatal  error C1083: Cannot open include file: 'allegext.h': No such file or directory
+  blowfish.cpp
+C:\Users\Marek\CC2\Source\blowfish.cpp(264,14): warning C4018: '>': signed/unsigned mismatch
+  b_buf.cpp
+C:\Users\Marek\CC2\Source\b_buf.cpp(19,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  b_dxf_o.cpp
+C:\Users\Marek\Cc2\Source\b_dxf_o.cpp(19,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  b_polyline_offset.cpp
+C:\Users\Marek\CC2\Source\b_polyline_offset.cpp(17,10): fatal  error C1083: Cannot open include file: 'cavc/polylineoffset.hpp': No such file or directory
+  convex_quad.cpp
+C:\Users\Marek\CC2\Source\convex_quad.cpp(17,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  EndianSwap.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  getdefprn.cpp
+  leak_detector_cpp.cpp
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(18,17): error C2143: syntax error: missing ';' before '*'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(18,17): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(18,31): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(19,17): error C2143: syntax error: missing ';' before '*'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(19,17): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(19,8): error C2086: 'int MEM_LEAK': redefinition
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(18,8): message : see declaration of 'MEM_LEAK'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(19,31): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(33,17): error C2065: 'MEM_INFO': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(33,26): error C2146: syntax error: missing ')' before identifier 'alloc_info'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(34,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(34,1): error C2447: '{': missing function header (old-style formal list?)
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(68,13): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(68,27): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(73,9): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(75,8): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(80,18): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(81,4): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(81,17): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(85,5): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(85,12): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(86,5): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(86,25): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(87,10): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(100,13): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(101,13): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(103,8): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(105,3): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(105,16): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(106,8): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(107,3): error C2065: 'temp': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(107,10): error C2065: 'alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(119,3): error C3861: 'add_mem_info': identifier not found
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(135,3): error C3861: 'add_mem_info': identifier not found
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(143,17): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(148,25): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(148,53): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(148,65): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(149,17): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(150,17): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(165,2): error C3861: 'remove_mem_info': identifier not found
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(176,2): error C2065: 'MEM_INFO': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(176,11): error C2146: syntax error: missing ';' before identifier 'mem_alloc_info'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(176,11): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(179,11): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(179,39): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(180,2): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(181,2): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(182,10): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(182,42): error C2065: 'FILE_NAME_LENGTH': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(183,2): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(186,6): error C2065: 'mem_alloc_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(186,2): error C3861: 'add': identifier not found
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(196,14): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(200,17): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(200,45): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(200,57): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(202,8): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(225,13): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(227,26): error C2065: 'OUTPUT_FILE': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(238,9): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(238,32): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(238,51): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(238,63): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(240,21): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(242,55): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(242,35): warning C4473: 'sprintf' : not enough arguments passed for format string
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(242,35): message : placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(242,35): message : the missing variadic argument 1 is required by format string '%llu'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(244,59): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(244,35): warning C4473: 'sprintf' : not enough arguments passed for format string
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(244,35): message : placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(244,35): message : the missing variadic argument 1 is required by format string '%d'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(246,53): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(246,35): warning C4473: 'sprintf' : not enough arguments passed for format string
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(246,35): message : placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(246,35): message : the missing variadic argument 1 is required by format string '%s'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(248,53): error C2065: 'leak_info': undeclared identifier
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(248,35): warning C4473: 'sprintf' : not enough arguments passed for format string
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(248,35): message : placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(248,35): message : the missing variadic argument 1 is required by format string '%d'
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(232,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(234,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\leak_detector_cpp.cpp(255,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  MemPtrReader.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  O_calcul.cpp
+C:\Users\Marek\Cc2\Source\O_calcul.cpp(17,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_dxf_in.cpp
+C:\Users\Marek\Cc2\Source\o_dxf_in.cpp(18,9): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_foldersDialog.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(257,72): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(257,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(253,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(316,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(323,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(337,6): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(412,1): warning C4005: 'BIF_NONEWFOLDERBUTTON': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\shlobj_core.h(1184,1): message : see previous definition of 'BIF_NONEWFOLDERBUTTON'
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(480,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(481,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(539,27): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(588,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(589,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(590,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(591,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(645,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(647,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(697,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(699,6): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(751,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(753,6): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(802,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\o_foldersDialog.cpp(804,6): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  o_hatch1.cpp
+C:\Users\Marek\Cc2\Source\o_hatch1.cpp(17,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_hatch2.cpp
+C:\Users\Marek\Cc2\Source\o_hatch2.cpp(17,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_hatch3.cpp
+C:\Users\Marek\Cc2\Source\o_hatch3.cpp(18,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_pltprn.cpp
+C:\Users\Marek\Cc2\Source\o_pltprn.cpp(17,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  Generating Code...
+  Compiling...
+  o_prnfun.cpp
+C:\Users\Marek\Cc2\Source\o_prnfun.cpp(27,10): fatal  error C1083: Cannot open include file: 'forwin.h': No such file or directory
+  o_transform.cpp
+C:\Users\Marek\CC2\Source\o_transform.cpp(20,10): fatal  error C1083: Cannot open include file: 'QTransform.h': No such file or directory
+  tt2lff_file.cpp
+C:\Users\Marek\CC2\Source\tt2lff_file.cpp(37,10): fatal  error C1083: Cannot open include file: 'ft2build.h': No such file or directory
+  TTF.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+C:\Users\Marek\CC2\Source\TTF.cpp(43,12): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  utf8strings.cpp
+C:\Users\Marek\CC2\Source\utf8strings.cpp(426,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\utf8strings.cpp(435,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\utf8strings.cpp(444,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Marek\CC2\Source\utf8strings.cpp(456,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  winprint.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+C:\Users\Marek\CC2\Source\res\resource.h(38,1): warning C4005: 'IDC_STATIC': macro redefinition
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\atlmfc\include\afxres.h(343,1): message : see previous definition of 'IDC_STATIC'
+C:\Users\Marek\CC2\Source\winprint.cpp(681,17): warning C4101: 'folder_name': unreferenced local variable
+  winsize.cpp
+C:\Users\Marek\Cc2\Source\winsize.cpp(71,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...

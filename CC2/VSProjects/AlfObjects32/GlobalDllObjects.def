@@ -1,0 +1,7 @@
+; GlobalDllObjects.def : Declares the module parameters for the DLL.
+
+LIBRARY      "AlfaObjects"
+DESCRIPTION  'AlfaObjects Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here

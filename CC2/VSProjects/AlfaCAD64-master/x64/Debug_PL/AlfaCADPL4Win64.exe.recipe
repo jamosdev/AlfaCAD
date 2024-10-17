@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\Marek\CC2\VSProjects\AlfaCAD-master\x64\Debug_PL\AlfaCADPL4Win64.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\Marek\CC2\Source\res\text_align_middlecenter.bmp</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Marek\CC2\Source\res\text_align_baselinecenter.bmp</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Marek\CC2\Source\res\text_align_baselineleft.bmp</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Marek\CC2\Source\res\text_align_baselineright.bmp</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

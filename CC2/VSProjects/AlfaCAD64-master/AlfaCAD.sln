@@ -1,0 +1,85 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlfaCAD", "AlfaCAD.vcxproj", "{A526BEBE-1DCA-537D-F8B2-EB678EF97883}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_ES|Win32 = Debug_ES|Win32
+		Debug_ES|x64 = Debug_ES|x64
+		Debug_ES|x86 = Debug_ES|x86
+		Debug_PL|Win32 = Debug_PL|Win32
+		Debug_PL|x64 = Debug_PL|x64
+		Debug_PL|x86 = Debug_PL|x86
+		Debug_UA|Win32 = Debug_UA|Win32
+		Debug_UA|x64 = Debug_UA|x64
+		Debug_UA|x86 = Debug_UA|x86
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release_ES|Win32 = Release_ES|Win32
+		Release_ES|x64 = Release_ES|x64
+		Release_ES|x86 = Release_ES|x86
+		Release_PL|Win32 = Release_PL|Win32
+		Release_PL|x64 = Release_PL|x64
+		Release_PL|x86 = Release_PL|x86
+		Release_UA|Win32 = Release_UA|Win32
+		Release_UA|x64 = Release_UA|x64
+		Release_UA|x86 = Release_UA|x86
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		RelWithDebInfo|Win32 = RelWithDebInfo|Win32
+		RelWithDebInfo|x64 = RelWithDebInfo|x64
+		RelWithDebInfo|x86 = RelWithDebInfo|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_ES|Win32.ActiveCfg = Debug_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_ES|x64.ActiveCfg = Debug_ES|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_ES|x86.ActiveCfg = Debug_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_ES|x86.Build.0 = Debug_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_PL|Win32.ActiveCfg = Debug_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_PL|Win32.Build.0 = Debug_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_PL|x64.ActiveCfg = Debug_PL|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_PL|x86.ActiveCfg = Debug_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_PL|x86.Build.0 = Debug_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_UA|Win32.ActiveCfg = Debug_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_UA|x64.ActiveCfg = Debug_UA|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_UA|x86.ActiveCfg = Debug_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug_UA|x86.Build.0 = Debug_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug|x64.ActiveCfg = Debug|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug|x86.ActiveCfg = Debug|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Debug|x86.Build.0 = Debug|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_ES|Win32.ActiveCfg = Release_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_ES|x64.ActiveCfg = Release_ES|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_ES|x86.ActiveCfg = Release_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_ES|x86.Build.0 = Release_ES|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_PL|Win32.ActiveCfg = Release_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_PL|Win32.Build.0 = Release_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_PL|x64.ActiveCfg = Release_PL|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_PL|x86.ActiveCfg = Release_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_PL|x86.Build.0 = Release_PL|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_UA|Win32.ActiveCfg = Release_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_UA|x64.ActiveCfg = Release_UA|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_UA|x86.ActiveCfg = Release_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release_UA|x86.Build.0 = Release_UA|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release|Win32.ActiveCfg = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release|x64.ActiveCfg = Release|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release|x86.ActiveCfg = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.Release|x86.Build.0 = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|Win32.ActiveCfg = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|Win32.Build.0 = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{A526BEBE-1DCA-537D-F8B2-EB678EF97883}.RelWithDebInfo|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06C9EDD9-6D13-464E-95E2-95A42284FC3A}
+	EndGlobalSection
+EndGlobal
