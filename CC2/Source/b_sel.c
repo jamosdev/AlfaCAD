@@ -602,6 +602,9 @@ int pcx_w_prostokacie(B_PCX *ad)
 #ifndef LINUX
     qsort(x_,4,sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
     qsort(y_,4,sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+
+    //qsort(x_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
+    //qsort(y_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
 #else
       qsort(x_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
       qsort(y_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
@@ -3499,8 +3502,11 @@ int Pcx_in_Rectangle (B_PCX *pcx, int dwc)
 	   memmove(yy_, y_, sizeof(y_));
 
 #ifndef LINUX
-	   qsort(x_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
-	   qsort(y_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+	   //qsort(x_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+	   //qsort(y_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+
+       qsort(x_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
+       qsort(y_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
 #else
        qsort(x_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
        qsort(y_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);

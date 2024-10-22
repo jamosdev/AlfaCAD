@@ -3883,7 +3883,7 @@ void Inicjacja(void)
 
   strcpy(zbior_danych,sk);
   out_file_name () ;
-   Clear_View () ;
+  Clear_View () ;
 
   czytaj_rysunek(sk, TRUE);
 
@@ -5475,6 +5475,7 @@ int Save_Update_flex(int save_upd, int *curr_h, int *curr_v)
     int monitor=0;
     int ret_menu=0;
 	int ret_ref;
+
 
     if (save_upd==0) {
         ret_ref = get_window_origin_and_size(&curr_x0, &curr_y0, curr_h, curr_v);

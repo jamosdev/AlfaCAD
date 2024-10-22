@@ -20,7 +20,7 @@
 #define ALLEGWIN
 #ifndef LINUX
 #ifndef ALLEGRO_AND_MFC
-#define ALLEGRO_AND_MFC
+#define ALLEGRO_AND_MFC //????
 #endif
 #else
 
@@ -1151,6 +1151,8 @@ void     my_fillpoly(int numpoints, AL_CONST int* polypoints, int translucency, 
 	b = _dac_normal[kolor256][2] << 2;
 
 	colorB = makeacol32(r, g, b, 255);
+
+    if ((screenplay->w < 0) || (screenplay->w > 9999)) return;  //????????
 
 	//polygon(screenplay, numpoints, polypoints, cur_fillstyle_color);
 	my_soft_polygon(screenplay, numpoints, polypoints, cur_fillstyle_color, translucency, colorB);
@@ -2539,7 +2541,7 @@ int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width,
 	HWND wnd;
 	GFX_MARGINS* gfx_margins;
 	int ret;
-	int margin_v, e_h=0, e_h1=0;
+	int margin_v, e_h=0, e_h1=0;  //e_h=0;
 	HDC hdc;
 	LPCRECT lprcClip;
 	//MONITORENUMPROC lpfnEnum;

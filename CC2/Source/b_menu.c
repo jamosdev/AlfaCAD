@@ -21,6 +21,9 @@
 #include<stdlib.h>
 #ifndef LINUX
 #include<conio.h>
+#ifdef BIT64
+//#include<shlwapi.h>
+#endif
 #else
 #include <unistd.h>
 #endif

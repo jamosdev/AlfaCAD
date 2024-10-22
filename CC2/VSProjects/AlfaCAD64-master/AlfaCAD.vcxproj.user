@@ -2,12 +2,42 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>C:\Users\Marek\ALFPRO2</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerWorkingDirectory>C:\Users\Marek\ALFPRO2</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--NOCHDIR "Drawings\column.alf"</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_ES|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64ES</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_PL|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64PL</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_UA|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64UA</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_ES|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64ES</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_PL|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64PL</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_UA|x64'">
+    <LocalDebuggerWorkingDirectory>../../../ALFACAD64UA</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--NOCHDIR</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

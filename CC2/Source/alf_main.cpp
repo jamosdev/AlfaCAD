@@ -19,7 +19,7 @@
 
 #ifndef LINUX
 #ifndef ALLEGRO_AND_MFC
-#define ALLEGRO_AND_MFC
+#define ALLEGRO_AND_MFC  //????????
 #endif
 #else
 

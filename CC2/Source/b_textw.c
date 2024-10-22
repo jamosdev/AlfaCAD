@@ -66,6 +66,8 @@ extern void getcolor_RGB_char(unsigned char *red, unsigned char *green, unsigned
 extern int Get_TTF_Char_Outline(TEXT *t, unsigned int unicode, char *alf, long *lw, int yMax);
 extern char  readmouse(void);
 
+extern void gk_text_advance_subpixel_utf8_matrix(GLYPH_REND* const rend,const char* const text,int* const adv_x,int* const adv_y, int *matrix, int *i_matrix, unsigned *l_code);
+
 static unsigned w_char_no=0;
 static long w_lw_no=0 ;
 static int w_text_no=0;
@@ -372,7 +374,7 @@ double Get_Text_Matix_Len (TEXT *ptrs_text, char *ptrsz_t, double font_scale, in
   double margin_factor;
   float letter_spacing;
   int char_h, char_v, char_left, char_top, char_right;
-  unsigned last_code;
+  unsigned last_code=0;
 
   i_matrix=0;
   i_matrix_0=0;

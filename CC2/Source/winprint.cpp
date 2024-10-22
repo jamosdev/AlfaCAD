@@ -32,6 +32,8 @@
 #endif
 
 #include <time.h>
+#include <Windows.h>
+
 #include "bgiext.h"
 
 #include "menu.h"
@@ -159,6 +161,7 @@ extern void unicode2utf8(char* unicodetext, unsigned char* utf8text);
 extern int GET_ALL_PRINTERS(void);
 extern int GET_DEF_PRINTER(char *szPName, int *iBufferSize);
 extern int win2unicode(char *wintext, char *unicodetext);
+
 
 #ifndef LINUX
 static HDC hDC;
@@ -601,8 +604,10 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
     ret=Save_Update_flex(0, &curr_h, &curr_v);
 
     get_posXY(&PozX0, &PozY0);
+#ifdef LINUX
     _free_mouse();
     dialog_cursor(1);
+#endif
 
     if (!in_out)
 #ifdef LINUX
@@ -621,6 +626,8 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
         numoffilters = 1;
         lFilterPatterns[0] = sz__current_mask;
         lFilterPatterns[1] = "";
+
+        printf("tinyfd_FileNameDialog\n");
 
         lTheOpenFileName = tinyfd_FileNameDialog(       //tinyfd_FileNameDialog
             dlg_name,
@@ -655,9 +662,10 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
             NULL);
     }
 #endif
-
+#ifdef LINUX
     dialog_cursor(0);
     lock_mouse();
+#endif
     if (cur) CUR_ON(PozX0,PozY0);
 
 	if (!lTheOpenFileName)
