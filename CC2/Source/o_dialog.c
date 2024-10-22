@@ -880,7 +880,8 @@ static void draw_groups(GROUP_BOX  *Groups, int SizeGroupT, TDIALOG *dlg, BOOL a
   BOOL function_in;
 
 #ifndef LINUX
-  void(*ProcF)(void) = nooop;
+  //void(*ProcF)(void) = nooop;
+  void(*ProcF)(int, int, int, int, int, int, int) = (void (*)(int, int, int, int, int, int, int)) nooop;
 #else
   void(*ProcF)(int, int, int, int, int, int, int) = (void (*)(int, int, int, int, int, int, int)) nooop;
 #endif

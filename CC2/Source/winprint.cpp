@@ -42,11 +42,7 @@
 #include "o_prn_cups.h"
 
 #ifndef LINUX
-#ifdef BIT64
-#include "C:\Users\marek\Allegro_win\Alfax\AlfObjects\GlobalDllObjects.h"
-#else
-#include "C:\Users\marek\Allegro_win\Alfax\AlfObjects32\GlobalDllObjects.h"
-#endif
+#include "AlfaObjects\GlobalDllObjects.h"
 #else
 #include <stdio.h>
 #include <cups/cups.h>

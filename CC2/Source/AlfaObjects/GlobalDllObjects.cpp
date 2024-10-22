@@ -1,3 +1,19 @@
+/*   ______   ___       ___         ____     ______  ____
+*   /\  _  \ /\_ \    /'___\       /\  _`\  /\  _  \/\  _`\
+*   \ \ \L\ \\//\ \  /\ \__/   __  \ \ \/\_\\ \ \L\ \ \ \/\ \
+*    \ \  __ \ \ \ \ \ \ ,__\/'__`\ \ \ \/_/_\ \  __ \ \ \ \ \
+*     \ \ \/\ \ \_\ \_\ \ \_/\ \L\.\_\ \ \L\ \\ \ \/\ \ \ \_\ \
+*      \ \_\ \_\/\____\\ \_\\ \__/.\_\\ \____/ \ \_\ \_\ \____/
+*       \/_/\/_/\/____/ \/_/ \/__/\/_/ \/___/   \/_/\/_/\/___/
+*
+*   A CAD
+*
+*   By Marek Ratajczak 2024
+*
+*   See readme_alfacad.txt for copyright information.
+*
+*/
+
 // GlobalDllObjects.cpp : Defines the initialization routines for the DLL.
 //
 
@@ -9,28 +25,9 @@
 #define GLOBALDLLOBJECTS_EXPORTS
 #include "GlobalDllObjects.h"
 
-//#define MAXPATH   260
+// blocking access between processes
+HANDLE g_hMutex = ::CreateMutex(NULL, FALSE, (LPCSTR)"CTest");
 
-// blokowanie dostêpu miêdzy procesami
-HANDLE g_hMutex = ::CreateMutex(NULL, FALSE, "CTest");
-/*
-HANDLE g_hMutex1 = ::CreateMutex(NULL, FALSE, "CDeposit");
-HANDLE g_hMutex2 = ::CreateMutex(NULL, FALSE, "CReturn");
-HANDLE g_hMutex3 = ::CreateMutex(NULL, FALSE, "CReset");
-HANDLE g_hMutex4 = ::CreateMutex(NULL, FALSE, "CSet");
-HANDLE g_hMutex5 = ::CreateMutex(NULL, FALSE, "CCheck");
-HANDLE g_hMutex6 = ::CreateMutex(NULL, FALSE, "CActive");
-*/
-
-/*
-typedef struct
-{
-	unsigned char flag = 0;
-	int x1, y1, x2, y2;
-	char drawing_file[MAXPATH];
-	char dump_file[MAXPATH];
-} Client_Bitmap;
-*/
 
 #pragma data_seg(".SHARDAT")
 static char lpszMemory[sizeof(CTest)];
@@ -38,51 +35,36 @@ CTest* g_pTest = NULL;
 int g_nClients = 0;
 int g_noClient = 0;
 int g_noClient_ = 0;
-////MMRESULT my_timer;
+char* ptr1;
 #define EMPTY "                                                                                                                                "
 #define MAX_NUMBER_OF_CLIENTS 16
 static Client_Bitmap client_bitmap[MAX_NUMBER_OF_CLIENTS] = { {0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
 									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-/*
-                                    {0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
-									{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},{0,0,0,0,0,EMPTY,EMPTY},
- */
+
 };
+
+static struct shmseg shmp = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+
 #pragma data_seg()
 
 
 static void nooop(void)
 {}
 
-void(*AlfaRedrawPtr)(void) = NULL; // nooop;
+void(*AlfaRedrawPtr)(void) = NULL;
 int(*AlfaEditTextPtr)(char *mytext, int edit_params, int nCmdShow) = NULL;
 int(*AlfatestCallPtr)(int) = NULL;
 
 void(*FF)(void) = nooop;
 
-//typedef void(*TEST_CALLBACK)(int val);
-
 TEST_CALLBACK _theCallback = NULL;
 
-//__declspec(dllexport) void SetCallback(TEST_CALLBACK callback)
 
 void EXPORTED_DLL_FUNCTION SetCallback(TEST_CALLBACK callback)
 {
 	_theCallback = callback;
 }
 
-
-/*
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-*/
 
 //
 //	Note!
@@ -135,28 +117,6 @@ CGlobalDllObjectsApp::CGlobalDllObjectsApp()
 
 CGlobalDllObjectsApp theApp;
 
-/*
-void update_flags(void)
-{
-	BOOL ret;
-	int i;
-	//ret = PlaySound("MouseClick", NULL, SND_SYSTEM);
-	for (i = 0; i < 64; i++)
-	{
-		if (client_bitmap[i].flag > 0)
-		{
-			if ((client_bitmap[i].flag == 1) || (client_bitmap[i].flag == 3)) client_bitmap[i].flag++;
-			else
-			{
-				client_bitmap[i].flag = 0;
-				//ret = PlaySound("MouseClick", NULL, SND_SYSTEM);
-				////ret = PlaySound("clicked.wav", NULL, SND_FILENAME | SND_ASYNC);
-			}
-		}
-	}
-	return;
-}
-*/
 
 BOOL CGlobalDllObjectsApp::InitInstance() 
 {
@@ -165,19 +125,11 @@ BOOL CGlobalDllObjectsApp::InitInstance()
  if (!g_pTest)
  {
 
-	/*
-  ::MessageBox(NULL,
-   "CGlobalDllObjectsApp::InitInstance - "
-   "konstruowanie globalnego CTest", 
-   "CTest.DLL", MB_OK);
-  MessageBeep(MB_ABORTRETRYIGNORE);
-  */
-  //my_timer=timeSetEvent(5000, 500, (LPTIMECALLBACK)update_flags, NULL, TIME_PERIODIC);
   
   g_pTest = ::new (lpszMemory) CTest;
   ASSERT(g_pTest);
 
-  ////my_timer = timeSetEvent(10000, 500, (LPTIMECALLBACK)update_flags, NULL, TIME_PERIODIC);
+
  }
  
  g_nClients++;
@@ -208,13 +160,6 @@ int CGlobalDllObjectsApp::ExitInstance()
   ::PeekMessage(&msg, NULL, 
    WM_QUIT, WM_QUIT, PM_REMOVE);
 
-  /*
-  ::MessageBox(NULL,
-   "CGlobalDllObjectsApp::ExitInstance - "
-   "niszczenie globalnego obiektu CTest", 
-   "CTest.DLL", MB_OK);
-   */
-  ////if (my_timer) ret_timer=timeKillEvent(my_timer);
 
   g_noClient=1;
   g_noClient_ = g_noClient;
@@ -226,31 +171,20 @@ int CGlobalDllObjectsApp::ExitInstance()
 
  ::ReleaseMutex(g_hMutex);
  ::CloseHandle(g_hMutex);
- 
- //::ReleaseMutex(g_hMutex1);
- //::CloseHandle(g_hMutex1);
-
- //::ReleaseMutex(g_hMutex2);
- //::CloseHandle(g_hMutex2);
-
- //::ReleaseMutex(g_hMutex3);
- //::CloseHandle(g_hMutex3);
-
- //::ReleaseMutex(g_hMutex4);
- //::CloseHandle(g_hMutex4);
-
- //::ReleaseMutex(g_hMutex5);
- //::CloseHandle(g_hMutex5);
-
- //::ReleaseMutex(g_hMutex6);
- //::CloseHandle(g_hMutex6);
- 
 	
  return CWinApp::ExitInstance();
 }
 
 extern "C"
 {
+
+int EXPORTED_DLL_FUNCTION GetShmpPtr(shmseg **ptr)
+{
+	ptr1 = (char*) & shmp;
+	*ptr = (shmseg*)ptr1;
+	if (ptr != NULL) return 1;
+	return 0;
+}
 
 void EXPORTED_DLL_FUNCTION GetTestPtr(CTest*& rpTest)
 {
@@ -310,7 +244,6 @@ int EXPORTED_DLL_FUNCTION AlfatestCall(int val)
 {
 	if (AlfatestCallPtr != NULL)
 	{
-		//return AlfatestCallPtr(val);
 		return (int)AlfatestCallPtr;
 	}
 	else return 0;
@@ -320,8 +253,6 @@ int EXPORTED_DLL_FUNCTION Alfacallback(int val)
 {
 	if (_theCallback != NULL)
 	{
-		//_theCallback(val);
-		//return 1;
 		return (int)_theCallback;
 	}
 	else return 0;
@@ -339,13 +270,11 @@ int EXPORTED_DLL_FUNCTION AlfacallbackGo(int val)
 
 unsigned char EXPORTED_DLL_FUNCTION Check_Client_Flag(int client0)
 {
-	//::WaitForSingleObject(g_hMutex5, INFINITE);
 	int client = client0 - 1;
 	
 	if (client_bitmap[client].flag >= 3)
 	{
 		client_bitmap[client].flag = 1;
-		//::ReleaseMutex(g_hMutex5);
 		return 3;
 	}
 	else
@@ -356,7 +285,6 @@ unsigned char EXPORTED_DLL_FUNCTION Check_Client_Flag(int client0)
 			//reset flag
 			client_bitmap[client].flag = 1;
 		}
-		//::ReleaseMutex(g_hMutex5);
 		return client_bitmap[client].flag;
 	}
 
@@ -364,30 +292,30 @@ unsigned char EXPORTED_DLL_FUNCTION Check_Client_Flag(int client0)
 
 void EXPORTED_DLL_FUNCTION Set_Client_Flag(int client0, unsigned char flag)
 {
-	//::WaitForSingleObject(g_hMutex4, INFINITE);
+
 	int client = client0 - 1;
 
 	client_bitmap[client].flag = flag;
-	//::ReleaseMutex(g_hMutex4);
+	
 }
 
 void EXPORTED_DLL_FUNCTION Reset_Client_Flag(int client0)
 {
-	//::WaitForSingleObject(g_hMutex3, INFINITE);
+	
 	int client = client0 - 1;
 	if (client_bitmap[client].flag != 0)
 	{
 		strcpy(client_bitmap[client].dump_file, "");
 	}
 	client_bitmap[client].flag = 0;
-	//::ReleaseMutex(g_hMutex3);
+	
 }
 
 int EXPORTED_DLL_FUNCTION Deposit_Bitmap(int client0, char *dump_file, int x1, int y1, int x2, int y2, char *drawing_file)
 {
 	int ret;
 	int client = client0 - 1;
-	//::WaitForSingleObject(g_hMutex1, INFINITE);
+	
 	if (client >= MAX_NUMBER_OF_CLIENTS) client = MAX_NUMBER_OF_CLIENTS - 1;
 	
 	if (client_bitmap[client].flag != 0)
@@ -404,29 +332,26 @@ int EXPORTED_DLL_FUNCTION Deposit_Bitmap(int client0, char *dump_file, int x1, i
 	strcpy(client_bitmap[client].drawing_file, drawing_file);  //file name seems to be obvious
 	client_bitmap[client].flag = 1;
 	
-	////MessageBeep(MB_OK);
-	////ret = PlaySound("clicked.wav", NULL, SND_FILENAME | SND_ASYNC);
-	//::ReleaseMutex(g_hMutex1);
 	
 	return 1;
 }
 
 int EXPORTED_DLL_FUNCTION Return_Active_Clients(void)
 {
-	//::WaitForSingleObject(g_hMutex6, INFINITE);
+	
 	int client;
 	int client_no = 0;
 	for (client = 0; client < MAX_NUMBER_OF_CLIENTS; client++)
 	{
 		if (client_bitmap[client].flag != 0) client_no++;
 	}
-	//::ReleaseMutex(g_hMutex6);
+	
 	return client_no;
 }
 
 int EXPORTED_DLL_FUNCTION Return_Bitmap(int client0, char *dump_file, int *x1, int *y1, int *x2, int *y2, char *drawing_file)
 {
-	//::WaitForSingleObject(g_hMutex2, INFINITE);
+	
 	int client = client0 - 1;
 	if (client >= MAX_NUMBER_OF_CLIENTS) client = MAX_NUMBER_OF_CLIENTS - 1;
     
@@ -439,13 +364,12 @@ int EXPORTED_DLL_FUNCTION Return_Bitmap(int client0, char *dump_file, int *x1, i
 		*y2 = client_bitmap[client].y2;
 		strcpy(drawing_file, client_bitmap[client].drawing_file);
 
-		//MessageBeep(MB_OK);
-		//::ReleaseMutex(g_hMutex2);
+		
 		return 1;
 	}
 	else
 	{
-		//::ReleaseMutex(g_hMutex2);
+	
 		return 0;
 	}
 }

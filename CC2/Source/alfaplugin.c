@@ -24,7 +24,11 @@
 #include "rysuj_e.h"
 #include "ds/list_str.h"
 
+#ifdef LINUX
 #include "../alfaplugin/alfaplugin_enum.h"
+#else
+#include "../../alfaplugin/alfaplugin_enum.h"
+#endif
 
 #define r14 14
 #define r22 16 
