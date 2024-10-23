@@ -46,7 +46,9 @@ extern void utf8Upper(char* text);
 extern void setrgb2cmyk(int *color_c, int *color_m, int *color_y, int i);
 extern int GetColorAC1(int color);
 extern int GetColorACPlt(int color);
+#ifdef LINUX
 extern int strnicmp(const char *a, const char *b, int n);
+#endif
 
 extern char digits[16];
 extern char numbers[16];

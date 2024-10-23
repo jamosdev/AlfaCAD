@@ -24,15 +24,15 @@ LPWSTR filename_ini = (LPWSTR)L"Edycja ALFACADPL.INI";
 // Create a locale object representing the German (Switzerland) locale
 #define _LOCALE_ "pl-PL"
 
-#define __BOLD__ u8"Pogrubiony"
-#define __UNDERLINED__ u8"Podkreślony"
-#define __ITALIC__ u8"Kursywa"
-#define __A_TO_LEFT__ u8"Adjustowany do lewej"
-#define __A_TO_RIGHT__ u8"Adjustowany do prawej"
-#define __A_TO_MIDDLE__ u8"Adjustowany do środka"
-#define __A_TO_CENTRE__ u8"Adjustowany do centrum"
-#define __HIDDEN__ u8"Ukryty"
-#define __COPY_TEXT__ u8"Kopiuj tekst ze schowka"
+char __BOLD__[]=u8"Pogrubiony";
+char __UNDERLINED__[]=u8"Podkreślony";
+char __ITALIC__[]=u8"Kursywa";
+char __A_TO_LEFT__[]=u8"Adjustowany do lewej";
+char __A_TO_RIGHT__[]=u8"Adjustowany do prawej";
+char __A_TO_MIDDLE__[]=u8"Adjustowany do środka";
+char __A_TO_CENTRE__[]=u8"Adjustowany do centrum";
+char __HIDDEN__[]=u8"Ukryty";
+char __COPY_TEXT__[]=u8"Kopiuj tekst ze schowka";
 
 #endif
 
@@ -1598,10 +1598,10 @@ static char* desktop_data_param_comment[] =
 #define _TOOLS_TO_INSTALL_ u8"nie jest zainstalowane"
 #define _INSTALL_TOOLS_ u8"Zainstaluj niezbędne pakiety"
 
-#define _Yes_ "Yes"
-#define _No_ "No"
-#define _YES_ 'Y'
-#define _yes_ 'y'
+char _Yes_[]="Tak";
+char _No_[]="Nie";
+#define _YES_ 'T'
+#define _yes_ 't'
 #define _NO_ 'N'
 #define _no_ 'n'
 

@@ -24,15 +24,15 @@ LPWSTR filename_ini = (LPWSTR)L"Editar ALFACADES.INI";
 // Create a locale object representing the Spanish (Spain) locale
 #define _LOCALE_ "es-ES"
 
-#define __BOLD__ u8"Negrita"
-#define __UNDERLINED__ u8"Subrayado"
-#define __ITALIC__ u8"Cursiva"
-#define __A_TO_LEFT__ u8"Ajustar a la izquierda"
-#define __A_TO_RIGHT__ u8"Ajustar a la derecha"
-#define __A_TO_MIDDLE__ u8"Ajustar al medio"
-#define __A_TO_CENTRE__ u8"Ajustar al centro"
-#define __HIDDEN__ u8"Oculto"
-#define __COPY_TEXT__ u8"Copiar texto del portapapeles"
+char __BOLD__[]=u8"Negrita";
+char __UNDERLINED__[]=u8"Subrayado";
+char __ITALIC__[]=u8"Cursiva";
+char __A_TO_LEFT__[]=u8"Ajustar a la izquierda";
+char __A_TO_RIGHT__[]=u8"Ajustar a la derecha";
+char __A_TO_MIDDLE__[]=u8"Ajustar al medio";
+char __A_TO_CENTRE__[]=u8"Ajustar al centro";
+char __HIDDEN__[]=u8"Oculto";
+char __COPY_TEXT__[]=u8"Copiar texto del portapapeles";
 
 #endif
 
@@ -1592,10 +1592,10 @@ static char* desktop_data_param_comment[] =
 #define _TOOLS_TO_INSTALL_ u8"No instalado"
 #define _INSTALL_TOOLS_ u8"Instalar los paquetes necesarios"
 
-#define _Yes_ "Yes"
-#define _No_ "No"
-#define _YES_ 'Y'
-#define _yes_ 'y'
+char _Yes_[]="Si";
+char _No_[]="No";
+#define _YES_ 'S'
+#define _yes_ 's'
 #define _NO_ 'N'
 #define _no_ 'n'
 

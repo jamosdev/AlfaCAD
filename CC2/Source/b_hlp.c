@@ -19,7 +19,7 @@
 #include "menu.h"
 extern BOOL Semaphore;
 extern BOOL Cust_Semaphore;
-extern int Expand_flex();
+extern int Expand_flex(void);
 extern BOOL Show_Alfa_Instruction(void);
 
 static void noooph(void)

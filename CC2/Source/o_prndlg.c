@@ -73,6 +73,8 @@ extern void hide_x_cursor(void);
 extern int Print2Page(int WINPRINT_DEF);
 
 extern BOOL SetDefaultPrinter_(char* printer_name);
+extern int GetPrintPageWidth(void);
+extern int GetPrintPageHeight(void);
 
 typedef unsigned long DWORD;
 

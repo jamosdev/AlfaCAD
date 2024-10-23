@@ -2581,7 +2581,11 @@ void Static_analysis(void) {
 #ifdef LINUX
     qsort(st_layers, st_layer_no, sizeof(unsigned char), (__compar_fn_t) qsort_by_number);
 #else
-    qsort(st_layer, st_layer_no, sizeof(unsigned char), (int(*)(const int*, const int*)) qsort_by_number);
+    //good for CLion
+    qsort(st_layer, st_layer_no, sizeof(unsigned char), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_number);
+
+    //good for VS
+    //qsort(st_layer, st_layer_no, sizeof(unsigned char), (int(*)(const int*, const int*)) qsort_by_number);
 #endif
 
     //creating layers mask

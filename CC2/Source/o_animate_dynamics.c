@@ -61,6 +61,10 @@ extern void dialog_cursor(int on);
 extern void set_posXY(double pozx, double pozy);
 extern void get_posXY(double *pozx, double *pozy);
 
+#ifndef LINUX
+int gettimeofday(struct timeval* tp, struct timezone* tzp);
+#endif
+
 POLE pmanimation[] = {
         {u8"", L' ', 0, NULL},
 };

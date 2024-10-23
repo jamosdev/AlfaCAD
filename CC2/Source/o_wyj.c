@@ -250,7 +250,6 @@ extern void Set_change_dlg(T_change_param* s__change_param_);
 
 extern void Reset_change_dlg(void);
 
-extern int Get_WINE(void);
 extern int focus_on_window(void);
 extern int set_focus_on_window(void);
 extern int my_poll_mouse(void);
@@ -3892,13 +3891,7 @@ void Inicjacja(void)
   Change = FALSE;
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  focus = focus_on_window();
-	  my_poll_mouse();
-  }
-  else focus = set_focus_on_window();
+  focus = set_focus_on_window();
 
 }
 
@@ -3943,12 +3936,7 @@ void Nowy_rysunek(void)
   Change = FALSE;
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-	  my_poll_mouse();
-  }
+
 }
 
 void Prototype(void)
@@ -4022,13 +4010,6 @@ void New_from_template(void)
 	Ini_Layers_Dlg();
 	Change = FALSE;
 	Set_Auto_Backup(FALSE);
-
-	if (Get_WINE())
-	{
-		simulate_keypress(27);
-		int focus = focus_on_window();
-		my_poll_mouse();
-	}
 
 }
 
@@ -4631,15 +4612,6 @@ void Load_P_File1234(char *previous_file)
 
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-
-	  my_poll_mouse();
-
-  }
-
 
 }
 
@@ -4778,9 +4750,7 @@ int Load_Last_Window_Settings(int *x_win_orig, int *y_win_orig, int *win_width, 
     {
 
 	  get_full_screen(x_win_orig, y_win_orig, win_width, win_height);
-#ifndef LINUX
-	  if (Get_WINE()) *win_height -= 10;
-#endif
+
 	  return 1;
     }
 	else
@@ -4795,9 +4765,7 @@ int Load_Last_Window_Settings(int *x_win_orig, int *y_win_orig, int *win_width, 
 error_set1:
 	  close (f_set_handle) ;
       get_full_screen(x_win_orig, y_win_orig, win_width, win_height);
-#ifndef LINUX
-	  if (Get_WINE()) *win_height -= 10;
-#endif
+
 	  return 1;
 	}
   return 0;
@@ -5254,14 +5222,12 @@ void out_file_name (void)
 
   strcpy(str_utf8, str);
   komunikat0_str (9, str_utf8) ;
-  w95_setapptitle(str);
   my_set_window_title(zbior_danych);
  }
  else
  {
 	 strcpy(sz_file,"");
 	 komunikat0_str (9, sz_file) ;
-     w95_setapptitle(sz_file);
      my_set_window_title(ALF_TITLE);
  }
 }

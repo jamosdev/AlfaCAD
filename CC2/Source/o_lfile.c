@@ -18,6 +18,7 @@
 #ifndef LINUX
 #include <dos.h>
 #include <io.h>
+#include <direct.h> //needed by CLion
 #else
 #include <unistd.h>
 #endif
@@ -251,7 +252,11 @@ char *Current_Directory (int drive, char *path)     //path konczy sie Slash
 #else
    setdisk(drive-1);
 #endif
-   if (-1 == /*getcurdir*/ getcwd (path,80))
+#ifdef LINUX
+   if (-1 == /*getcurdir*/ getcwd (path,255))
+#else
+  if (NULL == _getcwd (path,255))
+#endif
    {
      path [0] = '\0';
      return NULL;

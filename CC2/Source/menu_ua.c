@@ -24,15 +24,15 @@ LPWSTR filename_ini = (LPWSTR)L"Редагувати ALFACADUA.INI";
 // Create a locale object representing the German (Switzerland) locale
 #define _LOCALE_ "ua-UA"
 
-#define __BOLD__ u8"Жирний"
-#define __UNDERLINED__ u8"Підкреслено"
-#define __ITALIC__ u8"Курсив"
-#define __A_TO_LEFT__ u8"Змінити вліво"
-#define __A_TO_RIGHT__ u8"Змінити праворуч"
-#define __A_TO_MIDDLE__ u8"Відрегулювати до середини"
-#define __A_TO_CENTRE__ u8"Відрегулювати до центру"
-#define __HIDDEN__ u8"Прихований"
-#define __COPY_TEXT__ u8"Копіювати текст із буфера обміну"
+char __BOLD__[]=u8"Жирний";
+char __UNDERLINED__[]=u8"Підкреслено";
+char __ITALIC__[]=u8"Курсив";
+char __A_TO_LEFT__[]=u8"Змінити вліво";
+char __A_TO_RIGHT__[]=u8"Змінити праворуч";
+char __A_TO_MIDDLE__[]=u8"Відрегулювати до середини";
+char __A_TO_CENTRE__[]=u8"Відрегулювати до центру";
+char __HIDDEN__[]=u8"Прихований";
+char __COPY_TEXT__[]=u8"Копіювати текст із буфера обміну";
 
 #endif
 
@@ -1602,8 +1602,8 @@ static char* desktop_data_param_comment[] =
 #define _YES__ u8"Т"
 #define _NO__ u8"Н"
 
-#define _Yes_ u8"Так"
-#define _No_ u8"Ні"
+char _Yes_[]=u8"Так";
+char _No_[]=u8"Ні";
 
 #endif
 

@@ -701,8 +701,7 @@ unicode_count_chars (const uint8_t * utf8)
    to "input_length". The return value may be UTF8_VALID or
    UTF8_INVALID. */
 
-int32_t
-valid_utf8 (const uint8_t * input, int32_t input_length)
+int32_t valid_utf8 (const uint8_t * input, int32_t input_length)
 {
     int32_t error;
     utf8_info_t info;

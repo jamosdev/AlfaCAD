@@ -169,8 +169,8 @@ char * tinyfd_openFileDialog(
 	char const * aTitle, /* NULL or "" */
 	char const * aDefaultPathAndFile, /* NULL or "" */
 	int aNumOfFilterPatterns0 , /* 0 (2 in the following example) */
-	//char const * const * aFilterPatterns, /* NULL or char const * lFilterPatterns[2]={"*.png","*.jpg"}; */
-    char * aFilterPatterns0, /* NULL or char const * lFilterPatterns[2]={"*.png","*.jpg"}; */
+	char const * const * aFilterPatterns, /* NULL or char const * lFilterPatterns[2]={"*.png","*.jpg"}; */
+    //char * aFilterPatterns0, /* NULL or char const * lFilterPatterns[2]={"*.png","*.jpg"}; */
 	char const * aSingleFilterDescription, /* NULL or "image files" */
 	int aAllowMultipleSelects ) ; /* 0 or 1 */
 		/* in case of multiple files, the separator is | */

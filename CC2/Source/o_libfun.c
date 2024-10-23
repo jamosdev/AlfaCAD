@@ -1240,12 +1240,12 @@ int Get_Svga_Mode (void)
 }
 
 
-void change_bs2s(T_Fstring *string)
+void change_bs2s(T_Fstring thestring)
 { int i;
 #ifndef LINUX
-	for (i=0; i<strlen(string); i++)
+	for (i=0; i<strlen(thestring); i++)
 	{
-		if (string[i]=='/') string[i]='\\';
+	  if (thestring[i]=='/') thestring[i]='\\';
 	}
 #endif
     return;

@@ -25,9 +25,11 @@
 
 extern BOOL Get_Private_Profile_Strings_GFX(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring));
 extern BOOL Add_Private_Profile_Group_GFX(T_Fstring lpApplicationName, BOOL (*add_value)(FILE *stru) );
+
+#ifdef LINUX
 extern int stricmp(const char *a, const char *b);
 extern int strnicmp(const char *a, const char *b, int n);
-
+#endif
 
 static DRIVER_STRUCT drv;
 

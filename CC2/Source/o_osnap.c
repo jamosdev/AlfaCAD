@@ -17,7 +17,8 @@
 #include <forwin.h>
 #include <math.h>
 #include <stdlib.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <string.h>
 #include "bib_e.h"
 #include "rysuj_e.h"
 #include "o_osnap.h"

@@ -204,8 +204,6 @@ extern int GoRegRedraw(void(*ptr)(void));
 extern int TestRedraw(void);
 extern int testCall(int val);
 
-extern void go_ahead(void);
-
 extern int key_buffer;
 extern BOOL Semaphore;
 extern BOOL Cust_Semaphore;
@@ -277,6 +275,7 @@ extern void init_file_dropped_fill_buf(void);
 extern int GetShmpPtr_1(struct shmseg **shmp_);
 extern void set_editbox_geometry_win(int x, int y);
 extern void set_editbox_geometry_line_win(int x, int y);
+extern int GoRegtestCall(int(*ptr)(int));
 #endif
 
 extern BITMAP *qmark;
@@ -2421,7 +2420,7 @@ if (doit == 1) {
     ret = GetShmpPtr_1(&shmp);
 
     if (ret == 0)
-        return;
+        return 0;
 
     bufptr = &shmp->buf;
     //shmp->complete = 0;
@@ -3371,7 +3370,7 @@ void Initialize_Desktop_font(char *font_name)
 	getenv_s(&requiredSize, NULL, 0, "WINDIR");
 	if (requiredSize == 0)
 	{
-		*winfont = "";
+		winfont = NULL;
 	}
 #else
     requiredSize=255;
@@ -4014,15 +4013,6 @@ else //master
 	strcat(file, ext);
 	strcpy(Czcionka_Pulpitu, file); // font_name);
 
-#ifndef LINUX
-#ifdef BIT64
- w95_setvmtitle(u8"AlfaCAD  (x64)");
- w95_setapptitle(u8"by Marek Ratajczak");
-#else
- w95_setvmtitle(u8"AlfaCAD");
- w95_setapptitle(u8"by Marek Ratajczak");
-#endif
-#endif
 
     int png_mem = 32 * 32 * 4 + 100;
     int png_mem64 = 64 * 64 * 4 + 100;
@@ -4968,15 +4958,6 @@ for (int i = 0; i < bitmaps_size; i++)
     strcpy (zbior_danych, "") ;
    }
 
-#ifndef LINUX
-  if (Get_WINE())
-  {
-	  //makro_wine();
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-	  //_sleep(0);
-  }
-#endif
 
   if (strlen(zbior_danych)>0) load_file_to_history(file_name);
  
@@ -5015,8 +4996,6 @@ for (int i = 0; i < bitmaps_size; i++)
   y_edit -= Get_WIN_WINDOW_T_B();
   set_editbox_geometry_line_win(x_edit, y_edit);
 #endif
-
-  go_ahead();
 
   position_mouse(getmaxx()/2, getmaxy()/2);
   scare_mouse();

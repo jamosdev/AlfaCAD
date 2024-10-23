@@ -110,8 +110,6 @@ int GetPrintVertres(void);
 int GetPrintHorizDensity(void);
 int GetPrintVertDensity(void);
 
-extern void Set_WINE(int w_);
-
 extern int Number_of_clients;
 extern int Client_number;
 extern BOOL just_file;
@@ -292,7 +290,6 @@ void Initial_Message(char file_name[255])
  {
 	 sprintf(NT_version, "\nRunning on Wine %s", pwine_get_version());
 	 strcat(logoandquote, NT_version);
-	 Set_WINE(1);
  }
  else
  {

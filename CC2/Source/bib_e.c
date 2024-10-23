@@ -24,6 +24,9 @@
 #include<string.h>
 #ifndef LINUX
 #include<dos.h>
+#ifdef _CMAKE_
+#include <synchapi.h> //needed for CLion
+#endif
 #else
 #include <unistd.h>
 #endif
@@ -13051,18 +13054,6 @@ int	findnext(struct ffblk *_ffblk)
 
 	return ret;
 }
-
-
-void w95_setvmtitle(const char *tekst)
-{
-	 return;
-}
-
-void w95_setapptitle(const char *tekst)
-{
-	return;
-}
-
 
 char *w95_getlogon (void)
 {  static char logon[60];

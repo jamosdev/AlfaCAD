@@ -392,8 +392,6 @@ extern char** argv_;
 
 int	global_mode;
 
-static int WINE = 0;
-
 void beep(long sound);
 
 BOOL my_rgb_map = FALSE;
@@ -640,16 +638,6 @@ int32_t sprintf_timestampAsYYYYMMDDHHMMSS ( char* buf, long *date, timestamp_t t
 
     *date=year*10000+month*100+day;
     return sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
-}
-
-void Set_WINE(int w_)
-{
-	WINE = w_;
-}
-
-int Get_WINE(void)
-{
-	return WINE;
 }
 
 void     getviewsettings(struct viewporttype  *viewport)
@@ -5363,7 +5351,6 @@ void expand_vertically(void)
 	dy_new = DskRect.bottom - DskRect.top - dh + dw / 2 - e_h;
 	//dy_new = dy_back;
 
-	if (WINE) dy_new -= 10;
 
 	set_resized_window(dx_new, dy_new);
 
@@ -5656,8 +5643,6 @@ void expand_diagonally(void)
 
 	dx_new = DskRect.right - DskRect.left;
 	dy_new = DskRect.bottom - DskRect.top - dh + dw/2 - e_h;
-
-	if (WINE) dy_new -= 10;
 
 	set_resized_window(dx_new, dy_new);
 
@@ -6022,21 +6007,9 @@ int circle_and_rectangle_proc0(int untrap_mouse)
 	   a = 1;
    }
 
-   //if (untrap_mouse == 1)
-   if (WINE)
-   {
-	   Free_Mouse();
-	   //LockMouse();
 
-	   int p_mouse = my_poll_mouse();
-	   int p_keyboard = my_poll_keyboard();
-	   moveto(x0_new + (dx_new / 2), y0_new + (dy_new / 2));
-	   show_os_cursor(0);
-   }
-   else
-   {
-	   LockMouse();
-   }
+	LockMouse();
+
 
    ////simulate_keypress(14592);
 
@@ -6110,30 +6083,6 @@ int focus_on_window(void)
 	return 0;
 #endif
 }
-
-void go_ahead(void)
-{
-	int ret;
-	
-	if (WINE)
-	{
-		makro_wine();
-
-	    simulate_keypress(_MACRO_C__);
-	    ret = my_poll_keyboard();
-	    simulate_keypress(_EXECUTE_C__);
-	    ret = my_poll_keyboard();
-
-		komunikat_str((char*)_Go_AHEAD_);
-
-#ifndef LINUX
-		Sleep(10);
-#else
-        sleep(0.001);
-#endif
-	}
-}
-
 
 void DoneBackground(void)
 {

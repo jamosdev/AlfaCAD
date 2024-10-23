@@ -21,9 +21,6 @@
 #include<stdlib.h>
 #ifndef LINUX
 #include<conio.h>
-#ifdef BIT64
-//#include<shlwapi.h>
-#endif
 #else
 #include <unistd.h>
 #endif
@@ -1434,6 +1431,29 @@ char* StrStrIA(const char* haystack, const char* needle) {
     return NULL;
 }
 #endif
+
+char *strcasestr(const char *str, const char *pattern) {
+	size_t i;
+	unsigned char c0 = *pattern, c1, c2;
+
+	if (c0 == '\0')
+		return (char *)str;
+
+	c0 = toupper(c0);
+	for (; (c1 = *str) != '\0'; str++) {
+		if (toupper(c1) == c0) {
+			for (i = 1;; i++) {
+				c2 = pattern[i];
+				if (c2 != '\0')
+					return (char *)str;
+				c1 = str[i];
+				if (toupper(c1) != toupper(c2))
+					break;
+			}
+		}
+	}
+	return NULL;
+}
 #endif
 
 
@@ -6501,7 +6521,8 @@ int inkeys(TMENU *menu, BOOL search_ok)
 #ifdef LINUX
                        ptr = strcasestr(txt, search_str);
 #else
-                       ptr = StrStrIA(txt, search_str);
+                       //ptr = StrStrIA(txt, search_str);
+                   	   ptr = strcasestr(txt, search_str);
 #endif
                        if (ptr != NULL) break;
                    }

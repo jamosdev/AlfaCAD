@@ -47,8 +47,8 @@ extern void InitBufPCX(unsigned long_long buffer_size);
 extern void FreeBufPCX(void);
 
 #ifndef LINUX
-#ifndef BIT64
-uint32_t ntohl(uint32_t const net) {
+////#ifndef BIT64
+static uint32_t ntohl(uint32_t const net) {
 	uint8_t data[4] = {0};
 	memcpy(&data, &net, sizeof(data));
 
@@ -57,7 +57,7 @@ uint32_t ntohl(uint32_t const net) {
 		| ((uint32_t)data[1] << 16)
 		| ((uint32_t)data[0] << 24);
 }
-#endif
+////#endif
 #endif
 
 static unsigned int Ntohl(int chunklen)

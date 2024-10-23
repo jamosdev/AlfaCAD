@@ -1489,15 +1489,15 @@ HWND CreateTextBoxW(CStringW mytext /*char *mytext*/, int edit_params, CONST INT
 		NULL);      // Pointer not needed.
 
 
-	CreateToolTip(ID_BUTTON_BOLD, hWnd, hInstance, __BOLD__);
-	CreateToolTip(ID_BUTTON_UNDERLINED, hWnd, hInstance, __UNDERLINED__);
-	CreateToolTip(ID_BUTTON_ITALIC, hWnd, hInstance, __ITALIC__);
-	CreateToolTip(ID_BUTTON_LEFT, hWnd, hInstance, __A_TO_LEFT__);
-	CreateToolTip(ID_BUTTON_RIGHT, hWnd, hInstance, __A_TO_RIGHT__);
-	CreateToolTip(ID_BUTTON_CENTER, hWnd, hInstance, __A_TO_MIDDLE__);
-	CreateToolTip(ID_BUTTON_MIDDLE_CENTER, hWnd, hInstance, __A_TO_CENTRE__);
-	CreateToolTip(ID_BUTTON_HIDDEN, hWnd, hInstance, __HIDDEN__);
-	CreateToolTip(ID_BUTTON_COPY_TEXT, hWnd, hInstance, __COPY_TEXT__);  //PTSTR pszText
+	HWND hwnd = CreateToolTip(ID_BUTTON_BOLD, hWnd, hInstance, __BOLD__);
+	HWND hwnd1 = CreateToolTip(ID_BUTTON_UNDERLINED, hWnd, hInstance, __UNDERLINED__);
+	HWND hwnd2 = CreateToolTip(ID_BUTTON_ITALIC, hWnd, hInstance, __ITALIC__);
+	HWND hwnd3 = CreateToolTip(ID_BUTTON_LEFT, hWnd, hInstance, __A_TO_LEFT__);
+	HWND hwnd4 = CreateToolTip(ID_BUTTON_RIGHT, hWnd, hInstance, __A_TO_RIGHT__);
+	HWND hwnd5 = CreateToolTip(ID_BUTTON_CENTER, hWnd, hInstance, __A_TO_MIDDLE__);
+	HWND hwnd6 = CreateToolTip(ID_BUTTON_MIDDLE_CENTER, hWnd, hInstance, __A_TO_CENTRE__);
+	HWND hwnd7 = CreateToolTip(ID_BUTTON_HIDDEN, hWnd, hInstance, __HIDDEN__);
+	HWND hwnd8 = CreateToolTip(ID_BUTTON_COPY_TEXT, hWnd, hInstance, __COPY_TEXT__);  //PTSTR pszText
 
 	hwndButtonOK = CreateWindowW(
 		L"BUTTON",  // Predefined class; Unicode assumed 

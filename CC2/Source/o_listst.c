@@ -30,6 +30,10 @@ extern char *GetStringFromClipboard(void);
 extern void PutStringToClipboard(char *ptrsz_sz_tmp);
 
 extern int utf82unicode(unsigned char *utf8text, unsigned char *unicodetext);
+extern void unicode2win(char *unicodetext, char *wintext, int count);
+extern int32_t valid_utf8 (const uint8_t * input, int32_t input_length);
+extern void decodingwin(char *text);
+
 
 static POLE *pmList_String ;
 static POLE pm_tmp [] = { {u8"",' ',0,NULL}, } ;
@@ -273,7 +277,7 @@ void encodewin(char *utf8text, char *wintext)
 	char unicodetext[MaxTextLen];
 
 	count = utf82unicode(utf8text, &unicodetext);
-	ret = unicode2win(unicodetext, wintext, count);
+    unicode2win(unicodetext, wintext, count);
 }
 
 void Put_Str_To_Clip(char *ptrsz_buf)

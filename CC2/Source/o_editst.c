@@ -51,6 +51,7 @@ extern void setcolor(int kolor);
 extern int keys;
 extern char catch (unsigned char zn);
 extern float ttf_width_w;
+extern int TTF_char_len(unsigned int unicode);
 
 extern int utf82unicode(unsigned char *utf8text, unsigned char *unicodetext);
 extern int TTF_text_len(char *text);
@@ -59,6 +60,9 @@ extern int TTF_text_len_pos(char *text, int pos);
 extern int inukeys(TMENU *menu);
 
 extern void take_altkey_away(void);
+extern int Expand_flex(void);
+extern BOOL Get_Str_From_Clip(char *ptrsz_buf, int i_poz, int i_buflen, int xpcz, int ypcz);
+extern void Put_Str_To_Clip(char *ptrsz_buf);
 
 #ifdef LINUX
 extern void Put_Str_To_Clip(char *ptrsz_buf);
