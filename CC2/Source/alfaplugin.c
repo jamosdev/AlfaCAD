@@ -17,7 +17,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef LINUX
+#include <ds/list.h>
+#else
 #include <../ds/list.h>
+#endif
 #include "alfaplugin_manager.h"
 #include "forwin.h"
 #include "bib_e.h"

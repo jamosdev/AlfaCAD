@@ -32,10 +32,10 @@
 #endif
 
 #include <time.h>
+#ifndef LINUX
 #include <Windows.h>
-
+#endif
 #include "bgiext.h"
-
 #include "menu.h"
 #include "tinyfiledialogs.h"
 
