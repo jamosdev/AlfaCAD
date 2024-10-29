@@ -141,7 +141,7 @@ void _free_mouse(void)
 #ifdef LINUX
     show_x_cursor();
 #endif
-    unscare_mouse();
+    ////unscare_mouse();
 
     Show_Mouse(X, Y) ;
     ini_cursor = TRUE;

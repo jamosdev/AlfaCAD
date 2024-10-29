@@ -3837,13 +3837,15 @@ void Inicjacja(void)
   char ext__[MAXEXT];
   int flags;
   int focus;
+  int ret;
 
   if (Change)
   {
-    komunikat (3);
-    key = Get_Legal_Key (_YES_NO_ESC_);
-    komunikat (0);
-    if (key == ESC) return;
+    ret=ask_question(3, "Esc",_Yes_,_No_, _DRAWING_NOT_SAVED_, 12, _SAVE_IT_, 11, 1, 61);
+    //1 ok; 0 - rezygnuj; 2 - Powrot
+    if (ret==1) key=_YES_;
+    else if (ret==2) key=_NO_;
+    else return;
     if (key == _YES_ || key == _yes_)
     {
       Uaktualnij();
