@@ -51,7 +51,11 @@
 #include <curl/curl.h>
 #endif
 
+#ifdef LINUX
+#include <sys/time.h>
+#else
 #include <time.h>
+#endif
 #include <math.h>
 #include"forwin.h"
 
@@ -81,6 +85,10 @@ typedef unsigned long  DWORD;
 #include "allegro/font.h"
 #include "allegro/internal/aintern.h"
 #endif
+
+timeval tvtimestamp = { 0,0 };
+timeval tvtimestamp1;
+
 
 #include "alfpro.h"
 #include "o_inigfx.h"
@@ -369,6 +377,8 @@ extern int ask_question(int n_buttons, char* esc_string, char* ok_string, char* 
 extern void Restart(void);
 extern DWORD SystemSilent(char* strFunct, char* strstrParams);
 extern DWORD RunSilent(char* strFunct, char* strstrParams);
+
+extern int Expand_flex(void);
 
 extern char** argv_;
 
@@ -1578,7 +1588,8 @@ void GrMouseClear(void)
 }
 
 void GrMouseGetKeys(GrMouseEvent *event, int PozX, int PozY)
-{
+{   int tvret;
+
 	event->flags=0;
 
 	int p_mouse = my_poll_mouse();  // WINE
@@ -1587,7 +1598,28 @@ void GrMouseGetKeys(GrMouseEvent *event, int PozX, int PozY)
 	cur_mouse_b = mouse_b;
 
 	if ((cur_mouse_b & 1) && !(last_mouse_b & 1)) event->flags += 4;
-	if ((cur_mouse_b & 2) && !(last_mouse_b & 2)) event->flags += 1;
+	if ((cur_mouse_b & 2) && !(last_mouse_b & 2))
+    {
+        event->flags += 1;
+        tvret=gettimeofday(&tvtimestamp, NULL);
+    }
+
+    if (tvtimestamp.tv_sec>0)
+    {
+        if (!(cur_mouse_b & 2))
+              tvtimestamp.tv_sec=0;
+        else if (cur_mouse_b & 1) {
+            //check time again
+            tvret=gettimeofday(&tvtimestamp1, NULL);
+            if (((tvtimestamp1.tv_sec-tvtimestamp.tv_sec)*1e6 + (tvtimestamp1.tv_usec-tvtimestamp.tv_usec))>500000)
+            {
+                tvtimestamp.tv_sec=0;
+                int ret = Expand_flex();
+                event->flags = 0;
+                return;
+            }
+        }
+    }
 	if ((cur_mouse_b & 4) && !(last_mouse_b & 4)) event->flags += 2;
 
 }

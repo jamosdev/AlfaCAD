@@ -3632,6 +3632,10 @@ static void rysuj_luk_(LUK *ad,int mode,int kolor)
     int ret;
     LUK l_tmp, l_tmp1;
 
+
+    if (Check_if_Equal2(ad->kat1, ad->kat2))
+        return;
+
   if ((ad->typ == HATCH_OUTLINE_TYPE) && (Get_Point_View() == FALSE)) return;
 
   if (Layers [ad->warstwa].on == 0)
@@ -4586,7 +4590,6 @@ void rysuj_obiekt_(char *ad, int mode,int kolor)
             rysuj_filledellipse_((ELLIPSE*)ad,mode,kolor);
     break;
       case   Oluk :
-
             rysuj_luk_((LUK*)ad,mode,kolor);
    break;
       case   Owwielokat :
