@@ -206,6 +206,7 @@ extern "C" {
 
 
 //extern BITMAP *parent_screen;
+Window get_allegro_window(void);
 
 static AWIdnd dnd;
 
@@ -2552,7 +2553,10 @@ void focus_display_window(void)
 {
     XRaiseWindow(main_display,main_root_window);
 }
-
+Window get_allegro_window(void)
+{
+    return _xwin.window;
+}
 #endif
 
 int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height)

@@ -463,10 +463,12 @@ set(Source_Files
     "../../../CC2/Source/woods_US.c"
     "../../../CC2/Source/o_combinations.c"
     "../../../CC2/Source/uri_encode.c"
-        o_text2PDF.c
-        utf8.c
-        o_animate_dynamics.c
-        o_animate_dynamics.h
+    "../../../CC2/Source/o_text2PDF.c"
+    "../../../CC2/Source/utf8.c"
+    "../../../CC2/Source/o_animate_dynamics.c"
+    "../../../CC2/Source/o_animate_dynamics.h"
+    #"../../../CC2/Source/present_window.cpp"
+    #"../../../CC2/Source/present_window.h"
 )
 source_group("Source Files" FILES ${Source_Files})
 
@@ -13604,6 +13606,14 @@ endif()
 #find_package should find everything fine so long as the ENV Variable is set or, for linux systems,
 #it is in the default install path.
 
+#OPTIONAL GTK4
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(GTK REQUIRED gtk4)
+###pkg_check_modules(GTK REQUIRED gtk+-3.0)
+
+#include_directories(${GTK_INCLUDE_DIRS})
+#link_directories(${GTK_LIBRARY_DIRS})
+
 target_link_libraries(${PROJECT_NAME}
         X11
         Xrandr
@@ -13634,5 +13644,7 @@ target_link_libraries(${PROJECT_NAME}
         #"${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/liballeg.a"
         "${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/libjpgalleg.so"
         #"${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/libjpgalleg.a"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/libz.a")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/libz.a"
+        #"${GTK_LIBRARIES}"
+        )
 

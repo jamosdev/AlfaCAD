@@ -701,6 +701,8 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
   void(*CUR)(int ,int);
   float width;
 
+  //int x1, y1, x2, y2;
+
   paperk = kolory.paperk;
   inkk = kolory.inkk;
   paperk_ini = kolory.paperk_ini;
@@ -711,6 +713,11 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
   kolory.inkk_ini = ink_ini;
   CUR = MVCUR ;
   MVCUR = noopmv ;
+
+
+  //get_clip_rect(screen, &x1, &y1, &x2, &y2);
+  //set_clip_rect(screen, )
+
   if (lmax < 10)
   {
 	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE);
@@ -1089,6 +1096,8 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
   int x1, x2, y1, y2;
   int dx;
   int input_width;
+  int x01, y01, x02, y02;
+  int clip_state;
 
   
   cur_off(PozX, PozY);  
@@ -1123,7 +1132,12 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
     if(paper < 9) ink = 15;
 
 	dx = (int)((float)InputLines[i].dx*wsp_x);
-	
+
+    get_clip_rect(screen, &x01, &y01, &x02, &y02);
+    set_clip_rect(screen,  x1+2, y1, x2-2, y2); //+2 and -2 to not overlap the frame
+    clip_state=get_clip_state(screen);
+    set_clip_state(screen, 1);
+
     if(read_dlg(buf, ink, paper, ink_ini, paper_ini,
 	InputLines[i].MaxLen, InputLines[i].width, dx, InputLines[i].legal) != ESC)
     {
@@ -1150,6 +1164,8 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
 	  
       ret = -1;
     }
+      set_clip_rect(screen,  x01, y01, x02, y02);
+      set_clip_state(screen, clip_state);
   }
   moveto(PozX+pocz_x, PozY+pocz_y);
   cur_on(PozX, PozY); 

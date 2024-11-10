@@ -805,7 +805,7 @@ extern int SetBufferSize(char *P, long Size);
 
 /*b_text*/
 //extern int editstring(char *, char *, int, float, BOOL, int, BOOL) ;
-extern int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit);
+extern int editstring(char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit);
 extern int get_string (char *, char *, int , int , int );
 extern int get_string_str (char *, char *, int , int , char *);
 extern int getkey(void);

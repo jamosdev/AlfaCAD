@@ -94,6 +94,8 @@ typedef std::string String;
 typedef std::wstring WString;
 extern String WStringToString(const WString& widestr);
 
+char* get_font_family_name(void);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -184,6 +186,8 @@ void report_mem_leak_cpp_(void);
 
 void set_editbox_geometry_win(int x, int y);
 void set_editbox_geometry_line_win(int x, int y);
+
+//char *get_font_family_name(void);
 
 
 #ifndef LINUX

@@ -2544,7 +2544,7 @@ enum SELG  {NGSel=0,GSel};
 enum SELC  {NCSel=0,CSel};
 
 
-enum OKNOTYP {Cross=0,Dragg,Window};
+enum OKNOTYP {Cross=0,Dragg,Windoww};
 
 #define MAXINSETS 64
 #define MAXPINSETS 32

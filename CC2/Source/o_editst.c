@@ -551,7 +551,7 @@ int utf8lento(const char *s, int to)
 	return len;
 }
 
-int lenutf8to(const unsigned char *s, int to)
+int lenutf8to(const char *s, int to)
 {
 	int len = 0;
 	int i = 0;
@@ -564,7 +564,7 @@ int lenutf8to(const unsigned char *s, int to)
 	return len;
 }
 
-int posutf8tomaxend(const unsigned char *s, int maxend)
+int posutf8tomaxend(const char *s, int maxend)
 {
 	int len = 0;
 	int i = 0;
@@ -580,7 +580,7 @@ int posutf8tomaxend(const unsigned char *s, int maxend)
 	return len;
 }
 
-int findlentopxl(const unsigned char *s, int max_pxl)
+int findlentopxl(const char *s, int max_pxl)
 {
 	int i=0;
 	int len_pxl=0;
@@ -625,7 +625,7 @@ int findfpostopxl(/*const unsigned*/ char *s, int max_pxl)
 }
 
 
-int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit)
+int editstring(char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit)
 /*----------------------------------------------------------------------------------------------------------------------------*/
 /* Allows the user to edit a string with only certain characters allowed -
    Returns TRUE if ESC was not pressed, FALSE is ESC was pressed.
@@ -651,9 +651,9 @@ int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL 
 
 	b_add = TRUE;
 
-	if (maxlength < 6){//expand = 0;//width = maxlength;
-		b_add = FALSE;
-	};
+	////if (maxlength < 6){//expand = 0;//width = maxlength;
+	////	b_add = FALSE;
+	////};
 	editing_text = TRUE;
 	
 	width_w= ttf_width_w;
@@ -713,8 +713,11 @@ if (last_edit==TRUE)
  {
 	m_len = findlentopxl(s, width_pxl);
 
-     if (fwlen < (width - 1)) m_len = (len - fpos);
-     else m_len = (width - 1);
+   //  if (fwlen < (width - 1)) m_len = (len - fpos);
+   //  else m_len = (width - 1);
+
+   if (fwlen < (width)) m_len = (len - fpos);
+   else m_len = (width);
 
 	outtext_r_e(x0, y0, m_len, &s[fpos], TRUE); 
 	pos_len_pxl = TTF_text_len_pos(&s[fpos], m_len);
@@ -1016,7 +1019,7 @@ do
      pos_len_pxl = TTF_text_len_pos(&s[fpos],  m_len);
 
 	 outtext_r_e (x0, y0, m_len, &s[fpos], FALSE);
-	 
+
      if (b_add == TRUE) put_add_char (x0, y0, fpos, len, width, width0, width_w, fwlen, width_pxl_a, pos_len_pxl, expand);
      
 	 len_ttf = TTF_text_len_pos(&s[fpos], pos-fpos);
@@ -1546,7 +1549,7 @@ void outetextxy_s(int x, int y, int maxlength, int width, char *s,
 	{
 		x += WIDTH ;
 		width -= 2;
-		b_add == TRUE;
+		b_add = TRUE;
 	}
 	outtext_r_e(x, y, min(len, width), s, FALSE);
 	int width_w = ttf_width_w;

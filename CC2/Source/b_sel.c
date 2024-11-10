@@ -3011,7 +3011,7 @@ int Point_in_Rectangle (T_Point *ptrs_point, int dwc)
   double x1, y1, x2, y2 ;
   double df_psize ;
 
-    if (dwc==Window)
+    if (dwc==Windoww)
     {
         return Point_Rectangle(ptrs_point);
     }
@@ -3520,7 +3520,7 @@ int Pcx_in_Rectangle (B_PCX *pcx, int dwc)
 	   y2 = y_[3];
    }
 
-  if (dwc==Window)
+  if (dwc==Windoww)
    {
 
      return (punkt_w_prostokacie(x1, y1) &&
@@ -3719,7 +3719,7 @@ int elipsa_wybrana_prec (ELLIPSE *ad)
 int elipsa_w_prostokacie (ELLIPSE *ad)
 /*----------------------------------*/
 {
-    return (test_ellipse_sel_prec (ad, Window) >= 1) ? 1 : 0 ;
+    return (test_ellipse_sel_prec (ad, Windoww) >= 1) ? 1 : 0 ;
 
 }
 
@@ -3734,7 +3734,7 @@ int lukeliptyczny_w_prostokacie (ELLIPTICALARC *ad)
 /*----------------------------------------------*/
 {
 
-    return (test_ellipticalarc_sel_prec (ad, Window) >= 1) ? 1 : 0 ;
+    return (test_ellipticalarc_sel_prec (ad, Windoww) >= 1) ? 1 : 0 ;
 }
 
 BOOL Check_Draw_Pieslice (OKRAG *ad)
