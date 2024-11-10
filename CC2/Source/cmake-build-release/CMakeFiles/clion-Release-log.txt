@@ -1,18 +1,5 @@
 /home/marek/clion-2024.1.3/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=/home/marek/clion-2024.1.3/bin/ninja/linux/x64/ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -S /home/marek/CC2/Source -B /home/marek/CC2/Source/cmake-build-release
 x64 architecture in use
 -- Configuring done (0.0s)
-CMake Error at CMakeLists.txt:497 (add_executable):
-  Cannot find source file:
-
-    ../../../CC2/o_text2PDF.c
-
-  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
-  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
-  .f95 .f03 .hip .ispc
-
-
-CMake Error at CMakeLists.txt:497 (add_executable):
-  No SOURCES given to target: AlfaCAD
-
-
-CMake Generate step failed.  Build files cannot be regenerated correctly.
+-- Generating done (0.0s)
+-- Build files have been written to: /home/marek/CC2/Source/cmake-build-release
