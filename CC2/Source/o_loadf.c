@@ -244,7 +244,7 @@ extern void set_global_hidden_blocks_visibility(BOOL block_visibility);
 #define LIST_DRIVE_MAX 9
 #define SPEC_KOR (1)
 
-#define DYLabS  	10 //12
+#define DYLabS  	12 //12
 /*------------------------------------------*/
 
 #define LIST_FILES 0
@@ -369,7 +369,7 @@ static INPUTLINE edit[32] =
 #define EDIT_FILE_NAME   0
 #define EDIT_SPEC  1 //2
 #define EDIT_PROT  3
-#define DYComboBoxS	10 //12   //(ED_INF_HEIGHT + 2)
+#define DYComboBoxS	12 //12   //(ED_INF_HEIGHT + 2)
 
 #define ID_EDIT_SPEC_NAME0 21
 #define ID_EDIT_SPEC0 22

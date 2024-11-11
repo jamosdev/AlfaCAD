@@ -98,8 +98,8 @@ void lock_mouse(void)
 {
 
 	locked_mouse=TRUE;
-	gmaxx2=getmaxx()/2;
-	gmaxy2=getmaxy()/2;
+	gmaxx2 = getmaxx() / 2;
+    gmaxy2 = getmaxy() / 2;
 
 #ifdef LINUX
     hide_x_cursor();

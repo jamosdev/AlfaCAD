@@ -292,7 +292,7 @@ static int read_estr(void)
   }
   else
   {
-      zn = editstring(buf, "", MaxTextLen * 2, (float)et[np]->lmax, b_graph_value, et[np]->extend, TRUE);
+      zn = editstring(buf, "", MaxTextLen * 2, (float)et[np]->lmax, b_graph_value, et[np]->extend, TRUE, 4, 4);
   }
   MVCUR=CUR;
   uaktualnijs (E_Clear) ;
@@ -392,7 +392,7 @@ static int read_estr_zn(char zn0)
   {
     b_graph_value = TRUE ;
   }
-  zn= editstring (buf, "", MaxTextLen, (float)et[np]->lmax, b_graph_value, 1, FALSE) ;
+  zn= editstring (buf, "", MaxTextLen, (float)et[np]->lmax, b_graph_value, 1, FALSE, 4, 4) ;
   MVCUR=CUR;
   uaktualnijs (E_Clear) ;
 #define DOWNKEY 336

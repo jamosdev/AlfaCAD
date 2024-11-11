@@ -2553,11 +2553,13 @@ enum OKNOTYP {Cross=0,Dragg,Windoww};
 #define COMNDmnr_Insets 32
 #define COMNDmnr COMNDmnr_base + COMNDmnr_Insets //173+32 //maksymalny numer funkcji w menu poziomym - (max number of the function in auxiliary menu)
 #define ENTER 0x0d
+#define MOUSEENTER 2132
 #define SPC 0x20
 #define CTRL_SPC 0x14  //Device control 4
 #define CTRL_CR 0x0a
 #define TAB 9
 #define ESC 27
+#define MOUSEESC ESC
 #define DEL 83
 #define ShTAB 15
 #define SHTAB 271

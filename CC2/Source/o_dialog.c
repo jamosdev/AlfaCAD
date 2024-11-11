@@ -189,6 +189,8 @@ extern BITMAP *Get_Screenplay(void);
 extern void  outtext_r_(BITMAP *ui_screen, char  *textstring);
 extern int get_palette_color(int color);
 
+extern void _free_mouse(void);
+
 extern char *BLOCKLIST;
 
 extern char *qmark_p;
@@ -720,12 +722,12 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
 
   if (lmax < 10)
   {
-	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE);
+	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE, 5, 3);
   }
   else
   {
 	  width = (dx - 4 * DXIL - ttf_width_w) / ttf_width_w + extra1;
-	  zn = editstring(tekst, legal, lmax, width, FALSE, 1, TRUE);
+	  zn = editstring(tekst, legal, lmax, width, FALSE, 1, TRUE, 5, 3);
   }
   MVCUR = CUR ;
   kolory.paperk = paperk;
@@ -1124,9 +1126,12 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
     paper_ini = InputLines[i].paper_ini == COLOR_NULL ? dlg_kolory->dlg_in_line_paper_ini : InputLines[i].paper_ini ;
 
 	if (InputLines[i].MaxLen<10)
-       moveto( x1+ 0.9 * DXIL, y1 +(y2-y1-(HEIGHT-3))/2 + 1);
+       //moveto( x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 1);
+       moveto( x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 2);
 	else
-		moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 1);
+		//moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 1);
+        moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 2);
+
     strcpy( buf, InputLines[i].txt);
  
     if(paper < 9) ink = 15;
@@ -1151,19 +1156,22 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
 
 	  if (InputLines[i].MaxLen < 10)
 	  {
-		  input_width = ((x2 - x1) - 3 * DXIL - ttf_width_w) / ttf_width_w + extra1;
-		  outetextxy(x1 + DXIL, y1 + (y2 - y1 - (HEIGHT - 2)) / 2 + 2, InputLines[i].MaxLen,
-			  input_width, InputLines[i].txt, ink, paper);
+	  	  //input_width = ((x2 - x1) - 3 * DXIL - ttf_width_w) / ttf_width_w + extra1;
+          input_width=InputLines[i].width;
+	  	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLines[i].MaxLen,
+            input_width, InputLines[i].txt, ink, paper);
 	  }
 	  else
 	  {
-		  input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w ) / ttf_width_w + extra1;
+		  //input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w ) / ttf_width_w + extra1;
+          input_width=InputLines[i].width;
 		  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLines[i].MaxLen,
 			  input_width, InputLines[i].txt, ink, paper);
 	  }
 	  
       ret = -1;
     }
+      _free_mouse();
       set_clip_rect(screen,  x01, y01, x02, y02);
       set_clip_state(screen, clip_state);
   }
@@ -1219,14 +1227,14 @@ void Draw_Input_Line(INPUTLINE *InputLine)
 		  int a = 0;
 	  }
 
-	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 2)/*WIDTH*/) / 2 + 2, InputLine->MaxLen,
+	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLine->MaxLen,
 		  InputLine->width, InputLine->txt, ink, paper); //254
   }
   else
   {
 	  input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w) / ttf_width_w  + extra1;
 
-	  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)/*WIDTH*/) / 2 + 2, InputLine->MaxLen,
+	  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLine->MaxLen,
 		  input_width, InputLine->txt, ink, paper); //254
   }
 

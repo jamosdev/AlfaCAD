@@ -217,6 +217,7 @@ extern void getcolor_RGB_char(unsigned char *red, unsigned char *green, unsigned
 extern int getcolor(void);
 extern void  gettextjustify(int *horiz, int *vert);
 extern int32_t utf8_to_ucs2 (const uint8_t * input, const uint8_t ** end_ptr);
+extern int utf8len(const char *s);
 
 extern int gk_face_character_outline(GLYPH_FACE* const gface, const unsigned code, char *alf, long *lw0, int yMax0);
 extern int gk_face_character_ymax(GLYPH_FACE* const gface, int *yMax0);
@@ -2793,7 +2794,7 @@ void reset_font(void)
 	MP_SIZE = 19;
 	BAR_G = 19;
 	HEIGHT = 19;
-    ED_INF_HEIGHT = 20;
+    ED_INF_HEIGHT = 21; //20;
 	WIDTH = 10;
 	f_ini = fopen(font_file_name, "wt");
 
@@ -3151,6 +3152,7 @@ int TTF_char_len(unsigned int unicode)
 	return gk_char_width(rend_UI, unicode);
 }
 
+//returning length based on pos
 int TTF_text_len_pos(char *text, int pos)
 {
 	char buf[MaxTextLen*2+2];
@@ -3171,6 +3173,60 @@ int TTF_text_len_pos(char *text, int pos)
 	gk_rend_set_bold_strength(rend_UI, 50);
 	gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
 	return text_h;
+}
+
+//returning pos based on cursor position
+BOOL TTF_text_pos_x0(char *text, int x0, int y0, int width_w, int *pos)
+{   int x_length, x_position, y_position;
+    char buf[MaxTextLen*2+2];
+    int text_h, text_v;
+    int pos1;
+    //int x1, y1, x2, y2;
+    //get_clip_rect(screen, &x1, &y1, &x2, &y2);
+
+    x_length=mouse_x-x0;
+    if (x_length<-width_w) return FALSE;
+
+    if (x_length<0) x_length=0;
+
+    y_position=mouse_y-y0;
+    if (y_position<0) return FALSE;
+
+    //pos1 = utf8len(text);
+    pos1 = strlen(text);
+
+    if (!rend_UI) return FALSE;
+
+    if (text == NULL) return FALSE;
+
+    strncpy(buf, text, (MaxTextLen*2));
+
+    gk_rend_set_size_pixels(rend_UI, WIDTH*ttf_h, HEIGHT*ttf_v); //
+    gk_rend_set_bold_strength(rend_UI, 50);
+    gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
+
+    y_position=y0+text_v-mouse_y;
+    if (y_position<0) return FALSE;
+
+    if (mouse_x>(x0+text_h+width_w)) return FALSE;
+
+    while (text_h>x_length)
+    {
+        if (pos1 > 0)
+        {
+            if (buf[pos1 - 1] > 127)
+                pos1 -= 2;
+            else pos1--;
+            buf[pos1]='\0';
+            gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
+        }
+        else
+        {
+            text_h=0;
+        }
+    }
+    *pos=pos1;
+    return TRUE;
 }
 
 int my_text_length(FONT *font, const char *text)
@@ -3204,7 +3260,6 @@ void TTF_text_UI_(BITMAP *ui_screen, const char *text, int x, int y, int *text_h
 	else if (horiz == 2) x = x - *text_h;
 	
 	gk_render_line_utf8(ui_screen, rend_UI, text, x, y + HEIGHT - 3);
-	
 }
 
 void TTF_text_UI(const char *text, int x, int y, int *text_h, int *text_v)
@@ -3214,7 +3269,6 @@ void TTF_text_UI(const char *text, int x, int y, int *text_h, int *text_v)
 
 void TTF_text_UI_W_H_(BITMAP *ui_screen, const char* text, int x, int y, int* text_h, int* text_v, int WIDTH__, int HEIGHT__)
 {
-
 	int color;
 	COLOR_ kolor;
 	unsigned char red, green, blue;
@@ -3238,7 +3292,6 @@ void TTF_text_UI_W_H_(BITMAP *ui_screen, const char* text, int x, int y, int* te
 	else if (horiz == 2) x = x - *text_h;
 
 	gk_render_line_utf8(ui_screen, rend_UI, text, x, y + HEIGHT__ - 3);
-
 }
 
 void TTF_text_UI_W_H(const char* text, int x, int y, int* text_h, int* text_v, int WIDTH__, int HEIGHT__)
@@ -3252,7 +3305,6 @@ void TTF_text_test(BITMAP *bmp, char *text, int x, int y)
 	GLYPH_REND *rend;
 	int text_v, text_h;
 
-	
 	face = gk_load_face_from_file("DejaVuSans.ttf", 0);
 	if (!face) return;
 	rend = gk_create_renderer(face, 0);
@@ -3289,7 +3341,6 @@ void TTF_logo(int x, int y)
 	gk_text_size_utf8(rend1, logo, &text_h, &text_v);
 	gk_render_line_utf8(screen, rend1, logo, x- text_h/2, y- text_v/2 - HEIGHT);
 
-	
 	gk_unload_face(face1);
 	gk_done_renderer(rend1);
 }
@@ -3315,19 +3366,17 @@ void Free_Desktop_font()
 void Free_ini_font()
 {
 	int gk;
-
 	
 		if (rend_ini != NULL)
 		   gk_done_renderer(rend_ini);
 		
 		rend_ini = NULL;
-	
 }
 
 void Save_Desktop_font(char *font_name)
 {
 	FILE *f_ini;
-	//zapis pliku font.ini
+	//saving in file font.ini
 	FONTNUMBER = 0;
 
 	f_ini = fopen(font_file_name, "wt");
@@ -3345,7 +3394,6 @@ void set_ttf_digits27_len(void)
     PL266 = 50 * TTF_text_len("0");
     PL366 = 75 * TTF_text_len("0");
 }
-
 
 void Initialize_alft(void)
 {
@@ -3433,7 +3481,6 @@ void Initialize_Desktop_font(char *font_name)
 	find_font_face(Desktop_Font_File);
 
 	set_ttf_digits27_len();
-
 }
 
 void Set_Desktop_font(char *font_name)
@@ -3465,8 +3512,7 @@ void Set_Desktop_font(char *font_name)
 
 	gk_rend_set_error_char(rend_UI, 0);
 	gk_rend_set_undefined_char(rend_UI, 0);
-	set_ttf_digits27_len(); 
-
+	set_ttf_digits27_len();
 }
 
 void extra_logo(int x, int y, int option, char *file_name)
@@ -3497,7 +3543,6 @@ void extra_logo(int x, int y, int option, char *file_name)
 
 	gk_unload_face(face);
 	gk_done_renderer(rend);
-	
 }
 
 typedef struct
@@ -3832,7 +3877,7 @@ allegro_init();
 
  ret= set_window_icon();
 
- install_timer();
+ //install_timer();
  nbuttons = install_mouse();
 
  three_finger_flag=FALSE;
@@ -3842,6 +3887,7 @@ allegro_init();
  char konf[10][10][32];
  
  install_keyboard(); 
+ install_timer();
  
  poll_kbd=keyboard_needs_poll(); 
  poll_m = mouse_needs_poll();
@@ -3950,7 +3996,7 @@ else //master
       strcpy(font_name,"DejaVuSans.ttf");
 	  strcpy(Czcionka_Pulpitu, font_name);
       MP_SIZE=BAR_G=HEIGHT=19;
-      ED_INF_HEIGHT = HEIGHT + 1;
+      ED_INF_HEIGHT = HEIGHT + 2; //1;
       WIDTH=10;
       f_ini = fopen ( font_file_name , "wt" ) ;
       fprintf(f_ini,"%s\n",font_name);
@@ -3990,10 +4036,10 @@ else //master
 #endif
 			   {
 				   MP_SIZE = BAR_G = HEIGHT = 19;
-                   ED_INF_HEIGHT = HEIGHT + 1;
+                   ED_INF_HEIGHT = HEIGHT + 2; //1;
 				   WIDTH = 10;
 			   }
-			   if (HEIGHT==0) HEIGHT=ED_INF_HEIGHT-1;
+			   if (HEIGHT==0) HEIGHT=ED_INF_HEIGHT-2; //1;
 			}
 	   }
       }

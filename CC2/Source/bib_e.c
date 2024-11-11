@@ -157,6 +157,9 @@ extern char* punits[];
 extern char *upunits[];
 extern int(*SW2[13])(void);
 extern char readmouse(void);
+
+//extern int get_cursor_info(void);
+
 void Scale_Point (double k1, double k2, double x1,double y1,double x2,double y2,double *x,double *y);
 
 const int funits_no=8;
@@ -214,6 +217,26 @@ char alfa_mouse_arrow_data[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
    0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+char alfa_mouse_edit_data[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
+{
+    0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0
+};
+
 #define DEFAULT_SPRITE_W32   32
 #define DEFAULT_SPRITE_H32   32
 
@@ -267,6 +290,42 @@ char alfa_mouse_arrow_data32[DEFAULT_SPRITE_H32 * DEFAULT_SPRITE_W32] =
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
+
+char alfa_mouse_edit_data32[DEFAULT_SPRITE_H32 * DEFAULT_SPRITE_W32] =
+        {
+                0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
 
 static GrContext *second_screen;
 GrContext *second_screen_back;
@@ -445,7 +504,11 @@ static BITMAP *alfa_mouse_null = NULL;
 static BITMAP *alfa_mouse_pointer = NULL;
 static BITMAP *alfa_mouse_pointer32 = NULL;/* default mouse pointer */
 
+static BITMAP *alfa_mouse_edit = NULL;
+static BITMAP *alfa_mouse_edit32 = NULL;
+
 static BITMAP *alfa_mouse_sprite = NULL;
+static BITMAP *alfa_mouse_edit_sprite = NULL;
 
 extern unsigned long_long imagesizelong(int left, int top, int right, int bottom);
 
@@ -12550,6 +12613,11 @@ void set_dialog_cursor(BOOL bigsmall)
 	BIGCURSOR = bigsmall;
 	if (BIGCURSOR) alfa_mouse_sprite = alfa_mouse_pointer32;
 	else  alfa_mouse_sprite = alfa_mouse_pointer;
+
+    if (BIGCURSOR) alfa_mouse_edit_sprite = alfa_mouse_edit32;
+    else  alfa_mouse_edit_sprite = alfa_mouse_edit;
+
+
 	set_mouse_sprite(alfa_mouse_sprite);
 	save_dialog_cursor();
 }
@@ -12559,6 +12627,72 @@ void DoneBuffMacro(void)
     if (bufor_makra != NULL) free(bufor_makra);
 }
 
+void my_scare_mouse() 
+{
+    show_mouse(NULL);
+}
+
+void my_unscare_mouse()
+{
+    show_mouse(screen);
+}
+
+void set_cursor_pointer(void)
+{
+    scare_mouse();
+    set_mouse_sprite(alfa_mouse_sprite);
+    set_mouse_sprite_focus(0, 0);
+    unscare_mouse();
+    show_mouse(screen);
+}
+
+void set_cursor_pointer_linux(void)
+{
+    show_os_cursor(MOUSE_CURSOR_NONE);
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    disable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+}
+
+void set_cursor_pointer__(void)
+{
+    scare_mouse();
+    show_os_cursor(MOUSE_CURSOR_NONE);
+    //int ret = get_cursor_info();
+    disable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    set_mouse_sprite(alfa_mouse_sprite);
+    unscare_mouse();
+
+}
+
+void set_cursor_edit(void)
+{
+    scare_mouse();
+    set_mouse_sprite(alfa_mouse_edit_sprite);
+    if (BIGCURSOR) set_mouse_sprite_focus(8, 16);
+    else set_mouse_sprite_focus(8, 8);
+
+    unscare_mouse();
+    show_mouse(screen);
+}
+
+void set_cursor_edit_linux(void)
+{
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    enable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_EDIT);
+    show_os_cursor(MOUSE_CURSOR_EDIT);
+}
+
+void set_cursor_edit__(void)
+{
+    scare_mouse();
+    set_mouse_sprite(NULL);
+    enable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_EDIT);
+    unscare_mouse();
+}
 
 void ini_cursors(void)
 {
@@ -12574,7 +12708,16 @@ void ini_cursors(void)
       alfa_mouse_pointer = create_mouse_pointer(alfa_mouse_arrow_data);
       if (BIGCURSOR) alfa_mouse_sprite = alfa_mouse_pointer32;
       else  alfa_mouse_sprite = alfa_mouse_pointer;
-      set_mouse_sprite(alfa_mouse_sprite);
+
+    if (alfa_mouse_edit32!=NULL) destroy_bitmap(alfa_mouse_edit32);
+    if (alfa_mouse_edit != NULL) destroy_bitmap(alfa_mouse_edit);
+    alfa_mouse_edit32 = create_mouse_pointer32(alfa_mouse_edit_data32);
+    alfa_mouse_edit = create_mouse_pointer(alfa_mouse_edit_data);
+
+    if (BIGCURSOR) alfa_mouse_edit_sprite = alfa_mouse_edit32;
+    else  alfa_mouse_edit_sprite = alfa_mouse_edit;
+
+    set_mouse_sprite(alfa_mouse_sprite);
 }
 
  void ini_e (void)

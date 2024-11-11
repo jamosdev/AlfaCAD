@@ -5654,7 +5654,7 @@ void  wysokosc_znaku_TTF(void)
 	dwt = ((float)WIDTH / (float)HEIGHT)*1.9;
 
 	MP_SIZE = BAR_G = HEIGHT = (int)(d+0.5);
-	ED_INF_HEIGHT = HEIGHT + 1;
+	ED_INF_HEIGHT = HEIGHT + 2; //1;
 
 	WIDTH = (int)((dwt * (float)HEIGHT / 1.9)+0.5);
 

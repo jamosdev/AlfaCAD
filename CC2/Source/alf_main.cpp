@@ -152,6 +152,7 @@ int first_window_main=0;
 #endif
 int EditText(char *mytext, int adjust, int nCmdShow, int *single, int *tab);
 int EditFile(char *mytextfilename, int adjust, int nCmdShow);
+int get_cursor_info(void);
 int set_window_icon(void);
 #ifndef LINUX
 void Set_Focus(HWND HWnd);
@@ -346,6 +347,31 @@ RECT lpRect_file = { 0, 32, 640, 432 };
 HINSTANCE my_hInstance;
 
 static int on_header = 0;
+
+int get_cursor_info(void)
+{
+	CURSORINFO ci;
+	ci.cbSize = sizeof(ci);
+
+	if (!GetCursorInfo(&ci)) {
+		return 0;
+	}
+
+	//BOOL ret = DestroyCursor(ci.hCursor);
+	ci.hCursor = NULL;
+	ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+
+		//SetWindowsHookEx(WH_MOUSE_LL, );
+	//remove_mouse();
+	//install_mouse();
+
+	return 1;
+}
 
 void set_editbox_geometry_win(int x, int y)
 {

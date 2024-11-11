@@ -6810,6 +6810,9 @@ int inukeys(TMENU *menu)
 		}
 	}
 
+
+#define MOUSEENTER 2132
+#define MOUSEESC ESC  //27
 #define LEFTKEY 2123 //331
 #define INSKEY 2049 //257 
 #define INSKEY1 2130 //338
@@ -7039,9 +7042,9 @@ int inukeys(TMENU *menu)
 			sleep_state = FALSE;
 
 			mkeys = keys; keys = 0;
-			if ((mkeys)&'\01') return ucatch (ESC);
+			if ((mkeys)&'\01') return ucatch (MOUSEESC);
 			if ((mkeys)&'\02') return ucatch ('\02');
-			if ((mkeys)&'\04')  return ucatch (ENTER);
+			if ((mkeys)&'\04')  return ucatch (MOUSEENTER);  //ENTER
 		}
 
 		Odczyt_licznikow();
