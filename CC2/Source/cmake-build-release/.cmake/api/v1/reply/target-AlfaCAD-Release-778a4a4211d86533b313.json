@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "AlfaCADUA"
+			"path" : "AlfaCAD"
 		}
 	],
 	"backtrace" : 1,
@@ -27,25 +27,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 497,
+				"line" : 498,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 13617,
+				"line" : 13618,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 1317,
+				"line" : 1318,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 802,
+				"line" : 803,
 				"parent" : 0
 			}
 		]
@@ -84,10 +84,6 @@
 				{
 					"backtrace" : 3,
 					"define" : "QT_WIDGETS_LIB"
-				},
-				{
-					"backtrace" : 3,
-					"define" : "UKRAINIAN"
 				},
 				{
 					"backtrace" : 3,
@@ -312,10 +308,6 @@
 				{
 					"backtrace" : 3,
 					"define" : "QT_WIDGETS_LIB"
-				},
-				{
-					"backtrace" : 3,
-					"define" : "UKRAINIAN"
 				},
 				{
 					"backtrace" : 3,
@@ -626,11 +618,12 @@
 				181,
 				182,
 				183,
-				184
+				184,
+				186
 			]
 		}
 	],
-	"id" : "AlfaCADUA::@6890427a1f51a3e7e1df",
+	"id" : "AlfaCAD::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -780,8 +773,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "AlfaCADUA",
-	"nameOnDisk" : "AlfaCADUA",
+	"name" : "AlfaCAD",
+	"nameOnDisk" : "AlfaCAD",
 	"paths" : 
 	{
 		"build" : ".",
@@ -973,7 +966,8 @@
 				181,
 				182,
 				183,
-				184
+				184,
+				186
 			]
 		},
 		{
@@ -2100,6 +2094,12 @@
 			"backtrace" : 1,
 			"path" : "o_animate_dynamics.h",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "slider.c",
+			"sourceGroupIndex" : 0
 		}
 	],
 	"type" : "EXECUTABLE"

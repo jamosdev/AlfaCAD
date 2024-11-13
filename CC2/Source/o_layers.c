@@ -41,6 +41,7 @@ extern char digits[16];
 extern char numbers[16];
 extern int getmaxy(void);
 extern void draw_button(BUTTON *Button);
+extern void redraw_button(BUTTON* Button);
 extern int ask_question (int n_buttons, char *esc_string, char *ok_string, char *cont_string, char *comment_string, int color_comment, char *comment1_string, int color1_comment, int cien, int image);
 extern void delete_all_from_layer_atrybut (int layer_no, int atrybut);
 extern void shift_layer_numbers(int layer_no);
@@ -988,7 +989,8 @@ static void up_layer (void)
   }
   get_dlg_controls_to_layers ();
   n_first_layer_in_dlg--;
-  init_layer_dlg_control (TRUE);
+  init_layer_dlg_control (FALSE);
+  Redraw_Dlg(&layers_dlg);
 }
 
 static void dn_layer (void)
@@ -1002,7 +1004,8 @@ static void dn_layer (void)
   }
   get_dlg_controls_to_layers ();
   n_first_layer_in_dlg++;
-  init_layer_dlg_control (TRUE);
+  init_layer_dlg_control (FALSE);
+  Redraw_Dlg(&layers_dlg);
 }
 
 static void goto_layer (int to_which)
@@ -1025,7 +1028,8 @@ static void goto_layer (int to_which)
     return ;
   }
   n_first_layer_in_dlg = which_layer ;
-  init_layer_dlg_control (TRUE);
+  init_layer_dlg_control (FALSE);
+  Redraw_Dlg(&layers_dlg);
 }
 
 static void pgup_layer (void)
@@ -1042,7 +1046,8 @@ static void pgup_layer (void)
   {
     n_first_layer_in_dlg = 0 ;
   }
-  init_layer_dlg_control (TRUE);
+  init_layer_dlg_control (FALSE);
+  Redraw_Dlg(&layers_dlg);
 }
 
 
@@ -1061,7 +1066,8 @@ static void pgdn_layer (void)
   {
     n_first_layer_in_dlg =  no_layers - NoDialogLayers ;
   }
-  init_layer_dlg_control (TRUE) ;
+  init_layer_dlg_control (FALSE) ;
+  Redraw_Dlg(&layers_dlg);
 }
 
 int up_layer_ (void)
@@ -1325,7 +1331,7 @@ static int proc_dlg_layer (int n)
           if (buttons[20].check==1)
           {
               buttons[20].check = 0;
-              draw_button(&buttons[20]);
+              redraw_button(&buttons[20]);
           }
           if (erase_state<2) erase_state=-1;
           else erase_state=3;  //ready to block deletion
@@ -1342,7 +1348,7 @@ static int proc_dlg_layer (int n)
                 buttons[i].name2=193;
                 buttons[i].enable = buttons[19].check && buttons[i - BUTTON_ERASE + BUTTON_CURRENT].enable;
                 buttons[i].flags = (buttons[19].check == 1) ? 0 : BUTTON_HIDDEN;
-                draw_button(&buttons[i]);
+                redraw_button(&buttons[i]);
             }
         }
         else if (erase_state==3)
@@ -1354,7 +1360,7 @@ static int proc_dlg_layer (int n)
                   if ((layer_in_row >= BLayer) && (layer_in_row <= ELayer)) buttons[i].enable = buttons[19].check && buttons[i - BUTTON_ERASE + BUTTON_CURRENT].enable;
                   else buttons[i].enable = 0;
                   buttons[i].flags = (buttons[19].check == 1) ? 0 : BUTTON_HIDDEN;
-                  draw_button(&buttons[i]);
+                  redraw_button(&buttons[i]);
               }
           }
       }
@@ -1365,7 +1371,7 @@ static int proc_dlg_layer (int n)
             if (buttons[19].check==1)
             {
                 buttons[19].check = 0;
-                draw_button(&buttons[19]);
+                redraw_button(&buttons[19]);
             }
             if (erase_state<3)
                  erase_state=0;
@@ -1383,7 +1389,7 @@ static int proc_dlg_layer (int n)
             if ((layer_in_row==BLayer) || (layer_in_row<=ELayer)) buttons[i].name2=200;
             buttons[i].name2=0;
             buttons [i].flags = (buttons[20].check==1) ? 0 : BUTTON_HIDDEN;
-            draw_button(&buttons[i]);
+            redraw_button(&buttons[i]);
         }
     }
     else if ((n>=BUTTON_ERASE) && (n<(BUTTON_ERASE + NoDialogLayers)))
@@ -1431,7 +1437,7 @@ static int proc_dlg_layer (int n)
 
             BLayer=layer_to_mark;
             buttons [n].name2=200;
-            draw_button(&buttons[n]);
+            redraw_button(&buttons[n]);
             erase_state=1;
         }
         else if (erase_state==1) //BLayer selected, ELayer selection
@@ -1440,7 +1446,7 @@ static int proc_dlg_layer (int n)
             if (layer_to_mark==BLayer)  //untag and get back to previous step
             {
                 buttons [n].name2=0;
-                draw_button(&buttons[n]);
+                redraw_button(&buttons[n]);
                 erase_state=0;
             }
             else
@@ -1458,7 +1464,7 @@ static int proc_dlg_layer (int n)
                 for (int i=nb; i<=ne; i++)
                 {
                     buttons[i].name2 = 200;
-                    draw_button(&buttons[i]);
+                    redraw_button(&buttons[i]);
                 }
                 erase_state=2;
             }
@@ -1471,7 +1477,7 @@ static int proc_dlg_layer (int n)
             for (int i=nb; i<=ne; i++)
             {
                 buttons[i].name2 = 0;
-                draw_button(&buttons[i]);
+                redraw_button(&buttons[i]);
             }
             int layer_to_mark = (n - BUTTON_ERASE) + n_first_layer_in_dlg;
 
@@ -1479,7 +1485,7 @@ static int proc_dlg_layer (int n)
 
             BLayer=layer_to_mark;
             buttons [n].name2=200;
-            draw_button(&buttons[n]);
+            redraw_button(&buttons[n]);
             erase_state=1;
         }
         else if (erase_state==3) //Erase block

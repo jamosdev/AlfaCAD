@@ -3717,7 +3717,7 @@ void change_mode_gr(DRIVER_STRUCT *drv)
     curr_h_ = dy_new;
 
 #endif
-  
+
    return;
 }
 

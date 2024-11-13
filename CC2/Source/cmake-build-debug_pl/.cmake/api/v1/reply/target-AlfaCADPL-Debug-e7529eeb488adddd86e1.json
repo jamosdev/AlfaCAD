@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "AlfaCAD"
+			"path" : "AlfaCADPL"
 		}
 	],
 	"backtrace" : 1,
@@ -27,25 +27,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 497,
+				"line" : 498,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 13617,
+				"line" : 13618,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 1317,
+				"line" : 1318,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 802,
+				"line" : 803,
 				"parent" : 0
 			}
 		]
@@ -56,7 +56,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-O0 -O0 -fcolor-diagnostics"
+					"fragment" : "-O0 -g -fcolor-diagnostics"
 				}
 			],
 			"defines" : 
@@ -71,15 +71,7 @@
 				},
 				{
 					"backtrace" : 3,
-					"define" : "ENGLISH"
-				},
-				{
-					"backtrace" : 3,
 					"define" : "LINUX"
-				},
-				{
-					"backtrace" : 3,
-					"define" : "NDEBUG"
 				},
 				{
 					"backtrace" : 3,
@@ -186,6 +178,10 @@
 				},
 				{
 					"backtrace" : 4,
+					"path" : "/usr/include/qt/QtPrintSupport"
+				},
+				{
+					"backtrace" : 4,
 					"path" : "/usr/include/KF5/KDELibs4Support"
 				},
 				{
@@ -231,6 +227,14 @@
 				{
 					"backtrace" : 4,
 					"path" : "/usr/include/qt/QtDBus"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/ruby-3.0.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/ruby-3.0.0/x86_64-linux"
 				},
 				{
 					"backtrace" : 4,
@@ -280,7 +284,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-O0 -O0 -fcolor-diagnostics"
+					"fragment" : "-O0 -g -fcolor-diagnostics"
 				}
 			],
 			"defines" : 
@@ -295,15 +299,7 @@
 				},
 				{
 					"backtrace" : 3,
-					"define" : "ENGLISH"
-				},
-				{
-					"backtrace" : 3,
 					"define" : "LINUX"
-				},
-				{
-					"backtrace" : 3,
-					"define" : "NDEBUG"
 				},
 				{
 					"backtrace" : 3,
@@ -410,6 +406,10 @@
 				},
 				{
 					"backtrace" : 4,
+					"path" : "/usr/include/qt/QtPrintSupport"
+				},
+				{
+					"backtrace" : 4,
 					"path" : "/usr/include/KF5/KDELibs4Support"
 				},
 				{
@@ -455,6 +455,14 @@
 				{
 					"backtrace" : 4,
 					"path" : "/usr/include/qt/QtDBus"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/ruby-3.0.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/ruby-3.0.0/x86_64-linux"
 				},
 				{
 					"backtrace" : 4,
@@ -618,17 +626,18 @@
 				181,
 				182,
 				183,
-				184
+				184,
+				186
 			]
 		}
 	],
-	"id" : "AlfaCAD::@6890427a1f51a3e7e1df",
+	"id" : "AlfaCADPL::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-O0 -O0",
+				"fragment" : "-O0 -g",
 				"role" : "flags"
 			},
 			{
@@ -772,8 +781,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "AlfaCAD",
-	"nameOnDisk" : "AlfaCAD",
+	"name" : "AlfaCADPL",
+	"nameOnDisk" : "AlfaCADPL",
 	"paths" : 
 	{
 		"build" : ".",
@@ -965,7 +974,8 @@
 				181,
 				182,
 				183,
-				184
+				184,
+				186
 			]
 		},
 		{
@@ -2092,6 +2102,12 @@
 			"backtrace" : 1,
 			"path" : "o_animate_dynamics.h",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "slider.c",
+			"sourceGroupIndex" : 0
 		}
 	],
 	"type" : "EXECUTABLE"

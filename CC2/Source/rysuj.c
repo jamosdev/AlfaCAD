@@ -126,6 +126,8 @@ extern void relock_mouse(void);
 
 extern void  QInitialize(int argc, char *argv[]);
 
+extern int slider(void);
+
 char default_path_TTF[MAXPATH]="";
 char default_path_OTF[MAXPATH]="";
 char *winvar;
@@ -5056,6 +5058,16 @@ for (int i = 0; i < bitmaps_size; i++)
   set_close_button_callback (closebutton);
 
   if (desktop_instruction) ret=Show_Alfa_Instruction();
+
+
+  //it's just for test of slider
+  /*
+  _free_mouse();
+  dialog_cursor(1);
+  int ret2=slider();
+  dialog_cursor(0);
+  lock_mouse();
+   */
 
   //MAIN LOOP
 

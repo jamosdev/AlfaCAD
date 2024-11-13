@@ -467,6 +467,7 @@ set(Source_Files
     "../../../CC2/Source/utf8.c"
     "../../../CC2/Source/o_animate_dynamics.c"
     "../../../CC2/Source/o_animate_dynamics.h"
+    "../../../CC2/Source/slider.c"
     #"../../../CC2/Source/present_window.cpp"
     #"../../../CC2/Source/present_window.h"
 )

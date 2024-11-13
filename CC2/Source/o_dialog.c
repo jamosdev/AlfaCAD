@@ -716,10 +716,6 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
   CUR = MVCUR ;
   MVCUR = noopmv ;
 
-
-  //get_clip_rect(screen, &x1, &y1, &x2, &y2);
-  //set_clip_rect(screen, )
-
   if (lmax < 10)
   {
 	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE, 5, 3);
@@ -3299,6 +3295,16 @@ void draw_button(BUTTON *Button)
     Draw_Button(Button);
 }
 
+void redraw_button(BUTTON* Button)
+/*----------------------------------------------------*/
+{
+	show_mouse(NULL);
+	setlinestyle1(SOLID_LINE, 0, NORM_WIDTH);
+	setwritemode(COPY_PUT);
+	Draw_Button(Button);
+	show_mouse(screen);
+}
+
 static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
 /*------------------------------------------------------------*/
 {
@@ -3349,16 +3355,22 @@ static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
       case B_PUSHBUTTON:
 	  case B_FLATPUSHBUTTON:
 	   Buttons[i].check = 1;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   delay(200);
 	   Buttons[i].check = 0;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   delay(50);
 	   break;
       case B_CHECKBOX:
 	   if(Buttons[i].check) Buttons[i].check = 0;
 	   else Buttons[i].check = 1;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   break;
       case B_RADIOBUTTON:
 	  case B_ROUNDRADIOBUTTON:
@@ -3368,7 +3380,6 @@ static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
     }
     moveto(PozX+pocz_x, PozY+pocz_y);
     cur_on(PozX, PozY);  
-
     ret = Buttons[i].id;
     *ib=i;
   }
@@ -3463,6 +3474,9 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
  void draw_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, BITMAP *dialog_screen, RECT *dialog_rect)
 /*-----------------------------------------------------------------------------------*/
 {
+	//show_mouse(NULL);
+	//select_mouse_cursor(MOUSE_CURSOR_NONE);
+
     Set_Screenplay(dialog_screen);
 
   if(dlg->Groups != NULL) draw_groups(*(dlg->Groups),dlg->SizeGroupT, dlg, FALSE);
@@ -3478,6 +3492,10 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
   destroy_bitmap(dialog_screen);
 
   Set_Screenplay(screen);
+
+  //show_mouse(screen);
+  //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+
 
   pocz_x=pocz_x0;
   pocz_y=pocz_y0;
@@ -4012,8 +4030,10 @@ int Dialog_in_dialog(TDIALOG *dlg)
     int id, ib, id_h;
     int x1, y1, x2, y2;
     BITMAP *bitmap_ptr;
+    BITMAP* bitmap;
     int pocz_x1, pocz_y1;
     int ret=0;
+	int mx, my;
 
     pocz_x1=pocz_x;
     pocz_y1=pocz_y;
@@ -4029,15 +4049,29 @@ int Dialog_in_dialog(TDIALOG *dlg)
     tipsmenu.poz = 0;
     tipsmenu.max = dlg->SizeImageT;
 
+
+	mx = mouse_x;
+	my = mouse_y;
+	
+    select_mouse_cursor(MOUSE_CURSOR_NONE);
+	show_mouse(NULL);
+
     Get_Dlg_Rect(dlg, &x1, &y1, &x2, &y2);
 
-    dlg->xb = 0;
-    dlg->yb = 0;
+    dlg->xb = x1; //0
+    dlg->yb = y1; //0;
+    bitmap = create_bitmap(x2 - x1, y2 - y1);
+    dlg->back = (char *)bitmap;
+    getimage(x1, y1, x2, y2, dlg->back);
+
     bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
-    dlg->back = (char *)bitmap_ptr;
-    getimage(0, 0, getmaxx(), getmaxy(), dlg->back);
+    dlg->background = (char *)bitmap_ptr;
+    getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
 
     Redraw_Dlg(dlg);
+
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+	show_mouse(screen);
 
     int ended=0;
     while (!ended)
@@ -4082,10 +4116,20 @@ int Dialog_in_dialog(TDIALOG *dlg)
         }
     }
 
-    putimage(0, 0, dlg->background, COPY_PUT);
+
+    select_mouse_cursor(MOUSE_CURSOR_NONE);
+	show_mouse(NULL);
+
+    if (dlg->background!=NULL)
+        putimage(0, 0, dlg->background, COPY_PUT);
+    //if (dlg->back!=NULL)
+    //    putimage(0, 0, dlg->back, COPY_PUT);
     destroy_bitmap(dlg->back);
     dlg->back=NULL;
     dlg->background=NULL;
+
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+	show_mouse(screen);
 
     pocz_x=pocz_x1;
     pocz_y=pocz_y1;
@@ -4110,6 +4154,7 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 
     block_changed=FALSE;
 
+
     if (strcmp(dlg->txt,"Dim")==0) dim=0;
 
     get_size_and_disable_F11(dim);
@@ -4127,6 +4172,7 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 
 	dialog_window_was_resized = FALSE;
 	free_mouse();
+
 
 	if (GFX_WIN == 1)
 	{
@@ -4215,6 +4261,9 @@ continue2:
             }
         }
     }
+
+
+	Move_Mouse(0, 0);
 
 	init(init_option, dlg, &tipsmenu);
 

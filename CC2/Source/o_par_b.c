@@ -1960,7 +1960,7 @@ void Parametry(void)
    }
   else
   {
-   if ((n==86) || (n==87) || (n == 88))
+   if ((n==86) || (n==87) || (n == 88) || (n == 9))  //9 is edit INI file
 	{
 	closew(&mParametry);
 	redcr0(0);

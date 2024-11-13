@@ -100,6 +100,7 @@ char* get_font_family_name(void);
 extern "C" {
 #endif
 
+extern int Save_Update_flex(int save_upd, int *curr_h, int *curr_v);
 
 extern	char** argv_;
 extern 	char* argp__;
@@ -2314,10 +2315,14 @@ int EditText(char *mytext, int edit_params, int nCmdShow, int *single, int *tab)
     char New_Edit_Params[16];
     double PozX0, PozY0, PozX01, PozY01;
     double DX,DY;
+    int ret;
+    static int curr_h, curr_v;
 
     sprintf(Height,"%d", HeightI);
     sprintf(Width, "%d", WidthI);
     sprintf(New_Edit_Params,"%d",edit_params);
+
+    ret=Save_Update_flex(0, &curr_h, &curr_v);
 
     get_posXY(&PozX0, &PozY0);
 
@@ -2332,6 +2337,8 @@ int EditText(char *mytext, int edit_params, int nCmdShow, int *single, int *tab)
 
     set_posXY(PozX0, PozY0);
     CUR_ON(PozX0,PozY0);
+
+    ret=Save_Update_flex(1, &curr_h, &curr_v);
 
     if (*single==-1) return -1;
 
@@ -2379,6 +2386,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
     BOOL reload_ini;
     int single = 0;
     long sz;
+    int ret1;
+    static int curr_h, curr_v;
 
     //reading file
     f = fopen(filename, "rt");
@@ -2404,6 +2413,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
     sprintf(Width, "%d", WidthI);
     sprintf(New_Edit_Params,"%d",edit_params);
 
+    ret1=Save_Update_flex(0, &curr_h, &curr_v);
+
     get_posXY(&PozX0, &PozY0);
     _free_mouse();
     dialog_cursor(1);
@@ -2415,6 +2426,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
 
     set_posXY(PozX0, PozY0);
     CUR_ON(PozX0,PozY0);
+
+    ret=Save_Update_flex(1, &curr_h, &curr_v);
 
     if (my_text != NULL)
     {
