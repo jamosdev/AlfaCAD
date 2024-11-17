@@ -1532,9 +1532,7 @@ static BOOL get_desktop(T_Fstring key_name, T_Fstring ret_string)
 
 	if (stricmp(key_name, IC_BACKGROUNDPCX) == 0)
 	{
-
-		change_bs2s(&ret_string);
-
+		change_bs2s(ret_string);
 		strcpy(background_pcx_file, ret_string);
 
 	}

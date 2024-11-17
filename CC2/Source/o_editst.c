@@ -83,10 +83,9 @@ extern BOOL Get_Str_From_Clip(char *ptrsz_buf,
 extern int Expand_flex();
 extern int TTF_char_len(unsigned int unicode);
 
+#endif
 extern void set_cursor_pointer(void);
 extern void set_cursor_edit(void);
-
-#endif
 
 BOOL editing_text = FALSE;
 

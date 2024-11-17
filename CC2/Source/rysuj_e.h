@@ -874,6 +874,9 @@ extern int CUSTOM_KOM;
 extern double thermal_axis_size;
 extern double node_size;
 
+    extern void my_scare_mouse(void);
+    extern void my_unscare_mouse(void);
+
 #ifdef __cplusplus
 }
 #endif

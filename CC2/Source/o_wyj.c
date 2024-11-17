@@ -58,6 +58,9 @@
 
 #include "forlinux.h"
 
+#define MIN_H 800 //1024
+#define MIN_V 540 //640
+
 #define DRV_MASTER 0
 #define DRV_SLAVE 1
 
@@ -5542,6 +5545,9 @@ int Expand_flex()
             ret_menu=-999;
         }
         save_window_dim(curr_x0, curr_y0, curr_h, curr_v);
+
+		if (curr_h1 < MIN_H) curr_h1 = MIN_H;
+		if (curr_v1 < MIN_V) curr_v1 = MIN_V;
 #ifdef LINUX
         expand_dim(curr_x01, curr_y01, curr_h1, curr_v1);
 #else
@@ -5995,6 +6001,7 @@ static TDIALOG desktop_dlg =
 	1, &buttons_desktop,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

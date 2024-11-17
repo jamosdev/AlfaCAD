@@ -26,6 +26,16 @@
 
 #endif
 
+#define IC_CLOUD "CLOUD"
+#define IC_CLOUD_CONNECT "CONNECT"
+#define IC_CLOUD_USER "USER"
+#define IC_CLOUD_PASSWORD "PASSWORD"
+#define IC_CLOUD_SHARE_URL "SHARE_URL"
+#define IC_CLOUD_ADS "ADS"
+#define IC_CLOUD_ADS_URL "ADS_URL"
+#define IC_CLOUD_UPGRADE "UPGRADE"
+#define IC_CLOUD_UPGRADE_URL "UPGRADE_URL"
+
 #include "allegext.h"
 #include <allegro.h>
 #include "loadpng.h"
@@ -62,7 +72,6 @@
 #ifdef LINUX
 #include "../../allegro5-4.4.3/include/allegro/font.h"
 #include "../../allegro5-4.4.3/include/allegro/internal/aintern.h"
-
 
 #define LPCTSTR const char *
 #define LPCSTR const char *
@@ -115,8 +124,25 @@ timeval tvtimestamp1;
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
-
+BOOL cloud_connect;
+char *cloud_user;
+char *cloud_user0;
+char *cloud_password;
+char *cloud_password0;
+char *cloud_share_url;
+char *cloud_share0_url;
+char *cloud_ads;
+char *cloud_ads0;
+char *cloud_ads_url;
+char *cloud_ads0_url;
+char *cloud_upgrade;
+char *cloud_upgrade0;
+char *cloud_upgrade_url;
+char *cloud_upgrade0_url;
 //#define BEEP
+
+extern char* encodePassword(char *pass, char *key);
+extern char* decodePassword(char *pass, char *key);
 
 extern void set_client_flag(int client_no, unsigned char flag);
 extern int deposit_hbitmap(char *dump_file, int real_x1, int real_y1, int real_x2, int real_y2, char *drawing_file);
@@ -204,7 +230,6 @@ extern "C" {
 #ifdef LINUX
 #include "xdndfile.h"
 
-
 //extern BITMAP *parent_screen;
 Window get_allegro_window(void);
 
@@ -215,10 +240,14 @@ static AWIdnd dnd;
     int getprop (Display *disp, char *name, Window win, Window root_window);
     char *atomtype (Atom x);
 #endif
+
 	int GoRegRedraw(void(*ptr)(void));
 	int TestRedraw(void);
 	int testCall(int val);
 
+    extern void utf8Upper(char* text);
+    extern void change_bs2s(T_Fstring thestring);
+    extern BOOL Get_Private_Profile_Strings_Cloud(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring));
 
     extern char *icon_upgrademark_pmem;
     extern char *icon_noupgrademark_pmem;
@@ -371,6 +400,7 @@ extern char **strarray;
 extern void flip_any_screen(BITMAP* third_screen);
 extern size_t uri_decode(const char* src, const size_t len, char* dst);
 extern int __file_exists(char* name);
+extern int __file_size(char* name);
 
 extern void extra_logo(int x, int y, int option, char* file_name);
 extern int getlanguage(void);
@@ -1471,9 +1501,21 @@ void     GrMouseDisplayCursor(void)
 }
 
 
+static void sscare_mouse(void)
+{
+    show_mouse(NULL);
+}
+
+static void uunscare_mouse(void)
+{
+    acquire_bitmap(screen);
+    show_mouse(screen);
+    release_bitmap(screen);
+}
+
 void     GrMouseEraseCursor(void)
 {
-  scare_mouse();
+  scare_mouse();  
   return;
 }
 
@@ -3204,6 +3246,8 @@ void set_resized_window_GFX(DRIVER_STRUCT *drv, int dx, int dy)
 */
 #endif
 
+
+
    h_increase=dx;
    v_increase=dy;
 
@@ -3215,9 +3259,7 @@ void set_resized_window_GFX(DRIVER_STRUCT *drv, int dx, int dy)
 
    window_was_resized=1;
 
-
    if (set_gfx_mode(GFX_GDI, gfx_width, gfx_height, 0, 0) != 0)
-
    {
     set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	graphic_error(allegro_error);
@@ -3996,6 +4038,82 @@ char *lang_sufix[]={"","PL","UA","ES"};
 #define DAYS_DELAY  1 //2
 #define CHECK_DELAY  7
 
+static BOOL get_cloud(T_Fstring key_name, T_Fstring ret_string)
+/*-----------------------------------------------------------*/
+{
+    int val_int;
+    long val_long;
+    float val_float;
+    char *encoded_password;
+    char *decoded_password;
+    char cloud_password_encoded[64]="";
+
+    //strupr(key_name);
+    utf8Upper(key_name);
+    //   strupr (ret_string);
+    if (ret_string == NULL) return TRUE;
+
+    if (stricmp(key_name, IC_CLOUD_CONNECT) == 0)
+    {
+        if ( sscanf ( ret_string, "%d", &val_int) == 1 )
+        {
+            cloud_connect = val_int;
+        }
+    }
+    else
+    if (stricmp(key_name, IC_CLOUD_USER) == 0)
+    {
+        strcpy(cloud_user, ret_string);
+        strcpy(cloud_user0, ret_string+1);
+        cloud_user0[strlen(cloud_user0)-1]='\0';
+    }
+    else
+    if (stricmp(key_name, IC_CLOUD_PASSWORD) == 0)
+    {
+        strcpy(cloud_password, ret_string);
+
+        strcpy(cloud_password0, ret_string+1);
+        cloud_password0[strlen(cloud_password0)-1]='\0';
+
+        /*encrypted version, if would be needed*/
+        //encoded_password=encodePassword(cloud_password0, NULL);
+        //printf("%s\n",encoded_password);
+        //decoded_password=decodePassword(encoded_password, NULL);
+        //printf("%s\n",decoded_password);
+    }
+    if (stricmp(key_name, IC_CLOUD_SHARE_URL) == 0)
+    {
+        strcpy(cloud_share_url, ret_string);
+        strcpy(cloud_share0_url, ret_string+1);
+        cloud_share0_url[strlen(cloud_share0_url)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_ADS) == 0)
+    {
+        strcpy(cloud_ads, ret_string);
+        strcpy(cloud_ads0, ret_string+1);
+        cloud_ads0[strlen(cloud_ads0)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_ADS_URL) == 0)
+    {
+        strcpy(cloud_ads_url, ret_string);
+        strcpy(cloud_ads0_url, ret_string+1);
+        cloud_ads0_url[strlen(cloud_ads0_url)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_UPGRADE) == 0)
+    {
+        strcpy(cloud_upgrade, ret_string);
+        strcpy(cloud_upgrade0, ret_string+1);
+        cloud_upgrade0[strlen(cloud_upgrade0)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_UPGRADE_URL) == 0)
+    {
+        strcpy(cloud_upgrade_url, ret_string);
+        strcpy(cloud_upgrade0_url, ret_string+1);
+        cloud_upgrade0_url[strlen(cloud_upgrade0_url)-1]='\0';
+    }
+    return TRUE;
+}
+
 int Al_Load_PNG_fade(char *png_name, char *png_name1, int w, int h, int x, int y, int d_x, int d_y, int fade_out)
 {
     BITMAP* bmp_add = NULL, *bmp, * bmp0, * bmp1, * buffer, *buffer_f = NULL;
@@ -4238,581 +4356,650 @@ int Al_Load_PNG_fade(char *png_name, char *png_name1, int w, int h, int x, int y
             char *last_upgd_date_file="last_upgd_date.dat";
             long last_upgd_date_num;
 
-            if (__file_exists(last_upgd_date_file))
+            //allocating credentials
+            cloud_connect=1;
+
+            cloud_user=(char*)malloc(32);
+            strcpy(cloud_user,"\"alfacad\"");
+            cloud_user0=(char*)malloc(32);
+            strcpy(cloud_user0,"alfacad");
+
+            cloud_password=(char*)malloc(32);
+            strcpy(cloud_password,"\"engineer4engineers\"");
+            cloud_password0=(char*)malloc(32);
+            strcpy(cloud_password0,"engineer4engineers");
+
+            cloud_share_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_share_url,"\"https://nextcloud.vurplex.com\"");
+            cloud_share0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_share0_url,"https://nextcloud.vurplex.com");
+
+            cloud_ads=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads,"\"ads\"");
+            cloud_ads0=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads0,"ads");
+
+            cloud_ads_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads_url,"\"https://nextcloud.vurplex.com/remote.php/webdav/ads\"");
+            cloud_ads0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads0_url,"https://nextcloud.vurplex.com/remote.php/webdav/ads");
+
+            cloud_upgrade=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade,"\"upgds\"");
+            cloud_upgrade0=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade0,"upgds");
+
+            cloud_upgrade_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade_url,"\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\"");
+            cloud_upgrade0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade0_url,"https://nextcloud.vurplex.com/remote.php/webdav/upgds");
+
+            //getting credentials
+            Get_Private_Profile_Strings_Cloud((T_Fstring)IC_CLOUD, get_cloud);
+
+            if (cloud_connect)  //user wants to connect, to get upgrades etc
             {
-                char list_row[MaxTextLen];
-                FILE *lupgdf=fopen(last_upgd_date_file, "rt");
-                if (lupgdf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lupgdf))
-                    {
-                        ret= sscanf(list_row, "%ld",&last_upgd_date_num);
-                        if ((ret==1) && (last_upgd_date_num>20240000) && (last_upgd_date_num<20300000))
-                        break;
-                        else last_upgd_date_num=0;
-                    }
-                    fclose(lupgdf);
-                }
-                else last_upgd_date_num=0;
-
-            }
-            else last_upgd_date_num=0;
-
-            char time_str[32];
-            long date_num_current, date_num;
-            int32_t ts;
-            //current time
-            timestamp_t current_time = currentTimestamp();
-            ts=sprintf_timestampAsYYYYMMDDHHMMSS ( (char*)&time_str, &date_num_current, current_time);
-            printf("%s  %ld\n",time_str, date_num_current);
-
-            if (date_num_current>last_upgd_date_num + (long)CHECK_DELAY) time_to_update=TRUE;
-
-            if ((!fade_out) && (time_to_update))  //stage 2
-             {
-#ifdef LINUX
-            //checking curl
-            pp = popen("curl -V", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        curl = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            //checking unzip
-            pp = popen("unzip -v", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "unzip") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        unzip = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            //checking sed
-            pp = popen("sed --version", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        sed = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-
-            if ((!curl) || (!unzip) || (!sed))
-            {
-                char tools_to_install[72];
-                tools_ok = FALSE;
-                sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((unzip == 0) ? "unzip" : ""), ((sed == 0) ? "sed" : ""), _TOOLS_TO_INSTALL_);
-                ret = ask_question(1, (char*)_No_, (char*)_Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
-            }
-#endif
-#ifndef LINUX
-            AllocConsole();
-            ShowWindow(GetConsoleWindow(), SW_HIDE);
-            //checking curl
-            pp = _popen("curl -V", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        curl = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            //checking tar
-            pp = _popen("tar --help", "r");
-            if (pp != NULL) 
-            {
-                while (1) 
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-
-                    if ((strstr(strlwr(line), "tar") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        tar = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            //checking sed
-            pp = _popen("sed --version", "r");
-            if (pp != NULL) 
-            {
-                while (1) 
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        sed = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            FreeConsole();
-           
-
-            if ((!curl) || (!tar) || (!sed))
-            {
-                BITMAP* screen_ = screen;
-                global_resized = FALSE;
-
-                char tools_to_install[72];
-                tools_ok = FALSE;
-                sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((tar == 0) ? "tar" : ""),((sed == 0) ? "sed" : ""),_TOOLS_TO_INSTALL_);
-                ret = ask_question(1, _No_, _Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
-
-                if (global_resized) {
-                    destroy_bitmap(second_screen);
-                    second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
-                    if (bmp_add != NULL)
-                        stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
-                            (int)((double)bmp_add->w * scale_x),
-                            (int)((double)bmp_add->h * scale_x));
-                    else clear_to_color(second_screen, 0x000000);
-                    flip_full_screen(second_screen);
-                }
-                else screen = screen_;
-            }
-#endif
-          }  //((!fade_out) && (time_to_update))  //stage 2
-
-          if ((!fade_out) && (tools_ok) && (time_to_update))  //stage 3
-          {
-            //this should be done when image on the screen
-#ifdef LINUX
-            ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, TRUE);
-#endif
-#ifndef LINUX
-            ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, -1);
-#endif
-            if (__file_exists("list.out"))
-                unlink("list.out");
-#ifdef LINUX
-            pp = popen("test -x adslist.sh && echo true || echo false", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if (strstr(strlwr(line), "false") != NULL)
-                    {
-                        sprintf(params, "+x adslist.sh");
-                        SystemSilent("chmod", params);
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            sprintf(params, "");
-            runcode = SystemSilent("./adslist.sh", params);
-#endif
-#ifndef LINUX
-            sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/ads\" --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out");
-            runcode = RunSilent("curl", params);
-            sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" list.out > b.out");
-            //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"s@.*/remote.php/webdav/ads/@@\" bb.out > list.out");
-            runcode = RunSilent("sed", params);
-#endif
-            if (__file_exists("list.out"))
-            {
-                FILE *lf;
-                char list_row[MaxTextLen];
-                int ret;
-                char row_file[MaxTextLen];
-                char row_file_name[MaxTextLen];
-                char row_weekday[6];
-                int row_day;
-                char row_month[6];
-                int row_year;
-                char row_time[12];
-                char row_zone[6];
-                int row_size;
-                char row_type[16];
-                size_t it;
-                BOOL go_download;
-                BOOL was_download = FALSE;
-
-
-                lf = fopen("list.out", "rt");
-                if (lf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lf))
-                    {
-
-                        if ((strlen(list_row) < 32) || (list_row[0] == '#') || (list_row[0] == '\t')) continue;
-#ifndef LINUX
-                        char* ptr = list_row;
-                        ptr = strchr(list_row, '\t');
-                        while (ptr != NULL)
-                        {
-                            *ptr = ' ';
-                            ptr++;
-                            ptr = strchr(ptr, '\t');
+                if (__file_exists(last_upgd_date_file)) {
+                    char list_row[MaxTextLen];
+                    FILE *lupgdf = fopen(last_upgd_date_file, "rt");
+                    if (lupgdf != NULL) {
+                        strcount1 = 0;
+                        while (fgets(list_row, MaxTextLen, lupgdf)) {
+                            ret = sscanf(list_row, "%ld", &last_upgd_date_num);
+                            if ((ret == 1) && (last_upgd_date_num > 20240000) && (last_upgd_date_num < 20300000))
+                                break;
+                            else last_upgd_date_num = 0;
                         }
+                        fclose(lupgdf);
+                    } else last_upgd_date_num = 0;
+
+                } else last_upgd_date_num = 0;
+
+                char time_str[32];
+                long date_num_current, date_num;
+                int32_t ts;
+                //current time
+                timestamp_t current_time = currentTimestamp();
+                ts = sprintf_timestampAsYYYYMMDDHHMMSS((char *) &time_str, &date_num_current, current_time);
+                printf("%s  %ld\n", time_str, date_num_current);
+
+                if (date_num_current > last_upgd_date_num + (long) CHECK_DELAY) time_to_update = TRUE;
+
+                if ((!fade_out) && (time_to_update))  //stage 2
+                {
+#ifdef LINUX
+                    //checking curl
+                    pp = popen("curl -V", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not found") == NULL)) {
+                                curl = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+                    //checking unzip
+                    pp = popen("unzip -v", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "unzip") != NULL) &&
+                                (strstr(strlwr(line), "not found") == NULL)) {
+                                unzip = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+                    //checking sed
+                    pp = popen("sed --version", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not found") == NULL)) {
+                                sed = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+
+                    if ((!curl) || (!unzip) || (!sed)) {
+                        char tools_to_install[72];
+                        tools_ok = FALSE;
+                        sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""),
+                                ((unzip == 0) ? "unzip" : ""), ((sed == 0) ? "sed" : ""), _TOOLS_TO_INSTALL_);
+                        ret = ask_question(1, (char *) _No_, (char *) _Yes_, "Upgrade", tools_to_install, 12,
+                                           (char *) _INSTALL_TOOLS_, 11, 1, 203);
+                    }
 #endif
-                            ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file, &row_weekday, &row_day,
-                                         &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
-
-                            if ((strcmp(row_file, "filelist.txt") == 0) || (ret < 9)) continue;
-                            //checking if file exists
-
-
-                            row_file_name[0] = '\0';
-                            const size_t len = strlen(row_file);
-                            it = uri_decode(row_file, len, row_file_name);
-
-                            ///////////////////////
-                            FILENAMEMAXC = sizeof(row_file_name) + 6;
-                            strarray1 = (char **)realloc(strarray1, (strcount1 + 1) * sizeof(char *));  //LINUX
-                            strarray1[strcount1] = (char *)malloc(FILENAMEMAXC * sizeof(char));
-                            strcpy(strarray1[strcount1], row_file_name);
-                            strcount1++;
-
-                            //////////////////////
-
-                            go_download = TRUE;
-                            for (int i = 0; i < n_list; i++)
+#ifndef LINUX
+                    AllocConsole();
+                    ShowWindow(GetConsoleWindow(), SW_HIDE);
+                    //checking curl
+                    pp = _popen("curl -V", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
                             {
-                                if (strcmp(strarray[i], row_file_name) == 0) //file exists
+                                curl = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    //checking tar
+                    pp = _popen("tar --help", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+
+                            if ((strstr(strlwr(line), "tar") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
+                            {
+                                tar = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    //checking sed
+                    pp = _popen("sed --version", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
+                            {
+                                sed = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    FreeConsole();
+
+
+                    if ((!curl) || (!tar) || (!sed))
+                    {
+                        BITMAP* screen_ = screen;
+                        global_resized = FALSE;
+
+                        char tools_to_install[72];
+                        tools_ok = FALSE;
+                        sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((tar == 0) ? "tar" : ""),((sed == 0) ? "sed" : ""),_TOOLS_TO_INSTALL_);
+                        ret = ask_question(1, _No_, _Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
+
+                        if (global_resized) {
+                            destroy_bitmap(second_screen);
+                            second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
+                            if (bmp_add != NULL)
+                                stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
+                                    (int)((double)bmp_add->w * scale_x),
+                                    (int)((double)bmp_add->h * scale_x));
+                            else clear_to_color(second_screen, 0x000000);
+                            flip_full_screen(second_screen);
+                        }
+                        else screen = screen_;
+                    }
+#endif
+                }  //((!fade_out) && (time_to_update))  //stage 2
+
+                if ((!fade_out) && (tools_ok) && (time_to_update))  //stage 3
+                {
+                    //this should be done when image on the screen
+#ifdef LINUX
+                    ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, TRUE);
+#endif
+#ifndef LINUX
+                    ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, -1);
+#endif
+                    if (__file_exists("list.out"))
+                        unlink("list.out");
+                    flip_full_screen(second_screen);
+                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 3, "");
+#ifdef LINUX
+                    pp = popen("test -x adslist.sh && echo true || echo false", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if (strstr(strlwr(line), "false") != NULL) {
+                                sprintf(params, "+x adslist.sh");
+                                SystemSilent("chmod", params);
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+
+                    sprintf(params, "%s %s %s %s", cloud_share0_url, cloud_ads0, cloud_user0, cloud_password0);
+                    runcode = SystemSilent("./adslist.sh", params);
+#endif
+#ifndef LINUX
+                    //sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/ads\" --connect-timeout 5 -m 5 --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out");
+                    sprintf(params, "%s --connect-timeout 5 -m 5 --user %s:%s --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out",
+                            cloud_ads_url, cloud_user, cloud_password);
+                    //printf("%s\n", params);
+                    runcode = RunSilent("curl", params);
+                    if (__file_size("list.out") > 0)
+                    {
+                        sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" list.out > b.out");
+                        //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"s@.*/remote.php/webdav/%s/@@\" bb.out > list.out", cloud_ads0);
+                        runcode = RunSilent("sed", params);
+                    }
+#endif
+                    if (__file_exists("list.out") && (__file_size("list.out") > 0)) {
+                        FILE *lf;
+                        char list_row[MaxTextLen];
+                        int ret;
+                        char row_file[MaxTextLen];
+                        char row_file_name[MaxTextLen];
+                        char row_weekday[6];
+                        int row_day;
+                        char row_month[6];
+                        int row_year;
+                        char row_time[12];
+                        char row_zone[6];
+                        int row_size;
+                        char row_type[16];
+                        size_t it;
+                        BOOL go_download;
+                        BOOL was_download = FALSE;
+                        int n_ads = 0;
+
+
+                        lf = fopen("list.out", "rt");
+                        if (lf != NULL) {
+                            strcount1 = 0;
+                            while (fgets(list_row, MaxTextLen, lf)) {
+
+                                if ((strlen(list_row) < 32) || (list_row[0] == '#') ||
+                                    (list_row[0] == '\t'))
+                                    continue;
+#ifndef LINUX
+                                char* ptr = list_row;
+                                ptr = strchr(list_row, '\t');
+                                while (ptr != NULL)
                                 {
-                                    sprintf(ad_name, "ads/%s", strarray[i]);
-                                    stat(ad_name, &file_info);
-                                    if (file_info.st_size == row_size) {
-                                        go_download = FALSE;
-                                        break;
+                                    *ptr = ' ';
+                                    ptr++;
+                                    ptr = strchr(ptr, '\t');
+                                }
+#endif
+                                ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file, &row_weekday,
+                                             &row_day,
+                                             &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
+
+                                if ((strcmp(row_file, "filelist.txt") == 0) || (ret < 9)) continue;
+                                //checking if file exists
+
+
+                                row_file_name[0] = '\0';
+                                const size_t len = strlen(row_file);
+                                it = uri_decode(row_file, len, row_file_name);
+
+                                ///////////////////////
+                                FILENAMEMAXC = sizeof(row_file_name) + 6;
+                                strarray1 = (char **) realloc(strarray1, (strcount1 + 1) * sizeof(char *));  //LINUX
+                                strarray1[strcount1] = (char *) malloc(FILENAMEMAXC * sizeof(char));
+                                strcpy(strarray1[strcount1], row_file_name);
+                                strcount1++;
+
+                                //////////////////////
+                                n_ads++;
+
+                                go_download = TRUE;
+                                for (int i = 0; i < n_list; i++) {
+                                    if (strcmp(strarray[i], row_file_name) == 0) //file exists
+                                    {
+                                        sprintf(ad_name, "ads/%s", strarray[i]);
+                                        stat(ad_name, &file_info);
+                                        if (file_info.st_size == row_size) {
+                                            go_download = FALSE;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (go_download) {
+                                    was_download = TRUE;
+                                    flip_full_screen(second_screen);
+                                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name);
+
+                                    sprintf(params, "--connect-timeout 5 -m 20 -u %s:%s \"%s/%s\" -o \"%s/%s\"",
+                                            cloud_user, cloud_password, cloud_ads0_url, row_file, cloud_ads0,
+                                            row_file_name);
+#ifdef LINUX
+                                    runcode = SystemSilent("curl", params);
+#endif
+#ifndef LINUX
+                                    runcode = RunSilent("curl", params);
+#endif
+                                }
+
+                            }
+                            fclose(lf);
+                            //eliminating old files
+                            if (n_ads > 0) {
+                                for (i = 0; i < n_list; i++) {
+                                    if ((strcmp(strarray[i], "filelist.txt") == 0) ||
+                                        (strstr(strarray[i], ".<DIR>") != NULL))
+                                        continue;
+                                    //checking if file exists
+                                    int j;
+                                    for (j = 0; j < strcount1; j++) {
+                                        //if (strcmp(strarray[i], strarray1[j]) == 0) //file exists  //LINUX
+                                        if (strcmp(strarray[i], strarray1[j]) == 0) //file exists
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    if (j == strcount1) {
+                                        sprintf(row_file_name, "ads/%s", strarray[i]);
+                                        unlink(row_file_name);
                                     }
                                 }
                             }
-                            if (go_download)
-                            {
-                                was_download = TRUE;
-                                flip_full_screen(second_screen);
-                                extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name);
+                            for (i = 0; i < strcount1; i++)
+                                free(strarray1[i]);
+                            free(strarray1);
 
-                                sprintf(params,
-                                        "-u \"alfacad\":\"engineer4engineers\" \"https://nextcloud.vurplex.com/remote.php/webdav/ads/%s\" -o \"ads/%s\"",
-                                        row_file, row_file_name);
-#ifdef LINUX
-                                runcode = SystemSilent("curl", params);
-#endif
-#ifndef LINUX
-                                runcode = RunSilent("curl", params);
-#endif
-                            }
-                       
-                    }
-                    fclose(lf);
-                    //eliminating old files
-                        for (i=0; i<n_list; i++)
-                        {
-                            if ((strcmp(strarray[i], "filelist.txt") == 0) || (strstr(strarray[i], ".<DIR>") != NULL))  continue;
-                            //checking if file exists
-                            int j;
-                            for (j = 0; j < strcount1; j++)
-                            {
-                                //if (strcmp(strarray[i], strarray1[j]) == 0) //file exists  //LINUX
-                                if (strcmp(strarray[i], strarray1[j]) == 0) //file exists
-                                {
-                                    break;
-                                }
-                            }
-                            if (j == strcount1)
-                            {
-                                sprintf(row_file_name, "ads/%s", strarray[i]);
-                                unlink(row_file_name);
-                            }
+                            //saving time
+                            FILE *lupgdf = fopen(last_upgd_date_file, "wt");
+                            fprintf(lupgdf, "%ld\n", date_num_current);
+                            fclose(lupgdf);
+
                         }
 
-                    for (i=0; i<strcount1; i++) 
-                       free(strarray1[i]);
-                     free(strarray1);
+                        if (was_download) flip_full_screen(second_screen);
+                    } //__file_exists("list.out")
 
-                     //saving time
-                    FILE *lupgdf=fopen(last_upgd_date_file, "wt");
-                    fprintf(lupgdf, "%ld\n", date_num_current);
-                    fclose(lupgdf);
+                    //Checking upgrades
 
-                }
+                    BOOL go_download_upgds = FALSE;
+                    BOOL was_download_upgds = FALSE;
 
-                if (was_download) flip_full_screen(second_screen);
-            } //__file_exists("list.out")
+                    char row_file_upgds[MaxTextLen];
+                    char row_file_name_upgds[MaxTextLen];
 
-            //Checking upgrades
-
-            BOOL go_download_upgds=FALSE;
-            BOOL was_download_upgds = FALSE;
-
-            char row_file_upgds[MaxTextLen];
-            char row_file_name_upgds[MaxTextLen];
-
-            int language=getlanguage();
+                    int language = getlanguage();
 #ifdef LINUX
-           sprintf(ad_name, "AlfaCAD%s", lang_sufix[language]);
-           sprintf(ad_name_zip, "AlfaCAD%s.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s.zip", lang_sufix[language]);
 #endif
 #ifndef LINUX
 #ifdef BIT64
-            sprintf(ad_name, "AlfaCAD%s4Win64.exe", lang_sufix[language]);
-            sprintf(ad_name_zip, "AlfaCAD%s4Win64.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s4Win64.exe", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s4Win64.zip", lang_sufix[language]);
 #endif
 #ifndef BIT64
-            sprintf(ad_name, "AlfaCAD%s4Win.exe", lang_sufix[language]);
-            sprintf(ad_name_zip, "AlfaCAD%s4Win.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s4Win.exe", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s4Win.zip", lang_sufix[language]);
 #endif
 #endif
 
-            stat(ad_name, &file_info);
-            //file time
+                    stat(ad_name, &file_info);
+                    //file time
 
-            timestamp_t file_time = file_info.st_mtime;
-            ts = sprintf_timestampAsYYYYMMDDHHMMSS((char*)&time_str, &date_num, file_time);
-            printf("%s  %ld\n", time_str, date_num);
+                    timestamp_t file_time = file_info.st_mtime;
+                    ts = sprintf_timestampAsYYYYMMDDHHMMSS((char *) &time_str, &date_num, file_time);
+                    printf("%s  %ld\n", time_str, date_num);
 
-            //downloading zip list
-            ////////////////////////////////////////
-            if (__file_exists("upgdslist.out")) unlink("upgdslist.out");
+                    //downloading zip list
+                    ////////////////////////////////////////
+                    if (__file_exists("upgdslist.out"))
+                        unlink("upgdslist.out");
+                    flip_full_screen(second_screen);
+                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 3, "");
 #ifdef LINUX
-            //checking adslist.sh
-            pp = popen("test -x upgdslist.sh && echo true || echo false", "r");
-            if (pp != NULL)
-            {
-                while (1) {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if (strstr(strlwr(line), "false") != NULL) {
-                        sprintf(params, "+x upgdslist.sh");
-                        SystemSilent("chmod", params);
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            sprintf(params, "");
-            runcode = SystemSilent("./upgdslist.sh", params);
-#endif
-#ifndef LINUX
-            sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\" --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out");
-            runcode = RunSilent("curl", params);
-            sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" upgdslist.out > b.out");
-            //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"s@.*/remote.php/webdav/upgds/@@\" bb.out > upgdslist.out");
-            runcode = RunSilent("sed", params);
-#endif
-            if (__file_exists("upgdslist.out"))
-            {
-                FILE *lf;
-                char list_row[MaxTextLen];
-                int ret;
-                char row_weekday[6];
-                int row_day;
-                char row_month[6];
-                int row_year;
-                char row_time[12];
-                char row_zone[6];
-                int row_size;
-                char row_type[16];
-                size_t it;
-
-                lf = fopen("upgdslist.out", "rt");
-                if (lf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lf)) 
-                    {
-                        if ((strlen(list_row) < 32) || (list_row[0] == '#') || (list_row[0] == '\t')) continue;
-#ifndef LINUX
-                        char* ptr = list_row;
-                        ptr = strchr(list_row, '\t');
-                        while (ptr != NULL)
-                        {
-                            *ptr = ' ';
-                            ptr++;
-                            ptr = strchr(ptr, '\t');
-                        }
-#endif
-                            ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file_upgds, &row_weekday, &row_day,
-                                         &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
-
-                            if ((strcmp(row_file_upgds, "upgdslist.txt") == 0) || (ret < 9)) continue;
-                            //checking if file exists
-
-                            row_file_name_upgds[0] = '\0';
-                            const size_t len = strlen(row_file_upgds);
-                            it = uri_decode(row_file_upgds, len, row_file_name_upgds);
-
-                            go_download_upgds = FALSE;
-                            if (strcmp(ad_name_zip, row_file_name_upgds) == 0) //new file potentially exists
-                            {
-                                //checking time
-                                long upgd_date_num=row_year*10000+int_month(row_month)*100+row_day;
-                                //sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
-                                printf("%s    %s, %02d %s %04d %s\n", time_str, row_weekday, row_day, row_month, row_year, row_time);
-                                printf("%ld   %ld\n", date_num, upgd_date_num);
-
-                                //if (date_num < (upgd_date_num + DAYS_DELAY)) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
-                                if ((upgd_date_num - date_num) > DAYS_DELAY) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
-                                   
-                                break;  //anyway
+                    //checking adslist.sh
+                    pp = popen("test -x upgdslist.sh && echo true || echo false", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if (strstr(strlwr(line), "false") != NULL) {
+                                sprintf(params, "+x upgdslist.sh");
+                                SystemSilent("chmod", params);
+                                break;
                             }
-                        
+                        }
+                        pclose(pp);
                     }
-                    fclose(lf);
 
-                }
-                //saving time
-                FILE *lupgdf=fopen(last_upgd_date_file, "wt");
-                fprintf(lupgdf, "%ld\n", date_num_current);
-                fclose(lupgdf);
-            }  //__file_exists("upgdslist.out")
-            ////////////////////////////////////////
-            if (go_download_upgds)
-            {
-                int key;
-                BITMAP *screen_ = screen;
-                global_resized = FALSE;
-
-                drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
-
-                ret = ask_question(2, (char*)_No_, (char*)_Yes_, "Upgrade", (char *)_UPGRADE_READY_ /*exit_str*/, 12, (char*)_UPGRADE_RESTART_, 11, 1, 202);
-
-                if (global_resized) {
-                    destroy_bitmap(second_screen);
-                    second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
-                    if (bmp_add != NULL)
-                        stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
-                                     (int) ((double) bmp_add->w * scale_x),
-                                     (int) ((double) bmp_add->h * scale_x));
-                    else clear_to_color(second_screen, 0x000000);
-                    flip_full_screen(second_screen);
-                } else screen = screen_;
-
-                if (ret == 1) key = _YES_;
-                else key = _NO_;
-
-                if (key == _YES_ || key == _yes_)
-                {
-                    //downloading
-                    was_download_upgds = TRUE;
-                    flip_full_screen(second_screen);
-                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name_upgds);
-                    sprintf(params,
-                            "-u \"alfacad\":\"engineer4engineers\" \"https://nextcloud.vurplex.com/remote.php/webdav/upgds/%s\" -o \"upgds/%s\"",
-                            row_file_upgds, row_file_name_upgds);
-#ifdef LINUX
-                    runcode = SystemSilent("curl", params);
+                    sprintf(params, "%s %s %s %s", cloud_share0_url, cloud_upgrade0, cloud_user0, cloud_password0);
+                    runcode = SystemSilent("./upgdslist.sh", params);
 #endif
 #ifndef LINUX
+                    //sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\" --connect-timeout 5 -m 5 -user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out");
+                    sprintf(params, "%s --connect-timeout 5 -m 5 --user %s:%s --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out",
+                        cloud_upgrade_url, cloud_user, cloud_password);
                     runcode = RunSilent("curl", params);
+                    if (__file_size("upgdslist.out") > 0)
+                    {
+                        sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" upgdslist.out > b.out");
+                        //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"s@.*/remote.php/webdav/%s/@@\" bb.out > upgdslist.out", cloud_upgrade0);
+                        runcode = RunSilent("sed", params);
+                    }
 #endif
-                    //upgrading
+                    if (__file_exists("upgdslist.out") && (__file_size("upgdslist.out") > 0)) {
+                        FILE *lf;
+                        char list_row[MaxTextLen];
+                        int ret;
+                        char row_weekday[6];
+                        int row_day;
+                        char row_month[6];
+                        int row_year;
+                        char row_time[12];
+                        char row_zone[6];
+                        int row_size;
+                        char row_type[16];
+                        size_t it;
+
+                        lf = fopen("upgdslist.out", "rt");
+                        if (lf != NULL) {
+                            strcount1 = 0;
+                            while (fgets(list_row, MaxTextLen, lf)) {
+                                if ((strlen(list_row) < 32) || (list_row[0] == '#') ||
+                                    (list_row[0] == '\t'))
+                                    continue;
+#ifndef LINUX
+                                char* ptr = list_row;
+                                ptr = strchr(list_row, '\t');
+                                while (ptr != NULL)
+                                {
+                                    *ptr = ' ';
+                                    ptr++;
+                                    ptr = strchr(ptr, '\t');
+                                }
+#endif
+                                ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file_upgds, &row_weekday,
+                                             &row_day,
+                                             &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
+
+                                if ((strcmp(row_file_upgds, "upgdslist.txt") == 0) || (ret < 9)) continue;
+                                //checking if file exists
+
+                                row_file_name_upgds[0] = '\0';
+                                const size_t len = strlen(row_file_upgds);
+                                it = uri_decode(row_file_upgds, len, row_file_name_upgds);
+
+                                go_download_upgds = FALSE;
+                                if (strcmp(ad_name_zip, row_file_name_upgds) == 0) //new file potentially exists
+                                {
+                                    //checking time
+                                    long upgd_date_num = row_year * 10000 + int_month(row_month) * 100 + row_day;
+                                    //sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
+                                    printf("%s    %s, %02d %s %04d %s\n", time_str, row_weekday, row_day, row_month,
+                                           row_year, row_time);
+                                    printf("%ld   %ld\n", date_num, upgd_date_num);
+
+                                    //if (date_num < (upgd_date_num + DAYS_DELAY)) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
+                                    if ((upgd_date_num - date_num) > DAYS_DELAY)
+                                        go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
+
+                                    break;  //anyway
+                                }
+
+                            }
+                            fclose(lf);
+
+                        }
+                        //saving time
+                        FILE *lupgdf = fopen(last_upgd_date_file, "wt");
+                        fprintf(lupgdf, "%ld\n", date_num_current);
+                        fclose(lupgdf);
+                    }  //__file_exists("upgdslist.out")
+                    ////////////////////////////////////////
+                    if (go_download_upgds) {
+                        int key;
+                        BITMAP *screen_ = screen;
+                        global_resized = FALSE;
+
+                        drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+
+                        ret = ask_question(2, (char *) _No_, (char *) _Yes_, "Upgrade",
+                                           (char *) _UPGRADE_READY_ /*exit_str*/, 12, (char *) _UPGRADE_RESTART_,
+                                           11, 1,
+                                           202);
+
+                        if (global_resized) {
+                            destroy_bitmap(second_screen);
+                            second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
+                            if (bmp_add != NULL)
+                                stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
+                                             (int) ((double) bmp_add->w * scale_x),
+                                             (int) ((double) bmp_add->h * scale_x));
+                            else clear_to_color(second_screen, 0x000000);
+                            flip_full_screen(second_screen);
+                        } else screen = screen_;
+
+                        if (ret == 1) key = _YES_;
+                        else key = _NO_;
+
+                        if (key == _YES_ || key == _yes_) {
+                            //downloading
+                            was_download_upgds = TRUE;
+                            flip_full_screen(second_screen);
+                            extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name_upgds);
+                            sprintf(params, "--connect-timeout 5 -m 120 -u %s:%s \"%s/%s\" -o \"%s/%s\"",
+                                    cloud_user, cloud_password, cloud_upgrade0_url, row_file_upgds, cloud_upgrade0,
+                                    row_file_name_upgds);
 #ifdef LINUX
-                    sprintf(params, "-o upgds/%s", row_file_name_upgds);
-                    SystemSilent("unzip", params);
+                            runcode = SystemSilent("curl", params);
 #endif
 #ifndef LINUX
-                    //sprintf(params, "-xf upgds/%s > abc.log", row_file_name_upgds);
-                    //RunSilent("tar", params);
-                    //sprintf(params, "tar -xf upgds/% s > abc.log", row_file_name_upgds);
-                    FILE* gotar;
-                    gotar=fopen("gotar.bat", "wt");
-                    fprintf(gotar, "@echo off\n");
-                    fprintf(gotar, "echo %%1\n");
-                    fprintf(gotar, "echo %%2\n");
-                    fprintf(gotar, "echo %%3\n");
-                    fprintf(gotar, "echo %%4\n");
-                    fprintf(gotar, "echo %%5\n");
-                    fprintf(gotar, "timeout /t 2 /nobreak\n");
-                    fprintf(gotar, "tar -xf upgds/%%1\n");
-                    fprintf(gotar, "start %%2 %%4 %%5\n");
-                    fclose(gotar);
+                            runcode = RunSilent("curl", params);
+#endif
+                            //upgrading
+#ifdef LINUX
+                            sprintf(params, "-o upgds/%s", row_file_name_upgds);
+                            SystemSilent("unzip", params);
+#endif
+#ifndef LINUX
+                            //sprintf(params, "-xf upgds/%s > abc.log", row_file_name_upgds);
+                            //RunSilent("tar", params);
+                            //sprintf(params, "tar -xf upgds/% s > abc.log", row_file_name_upgds);
+                            FILE* gotar;
+                            gotar=fopen("gotar.bat", "wt");
+                            fprintf(gotar, "@echo off\n");
+                            fprintf(gotar, "echo %%1\n");
+                            fprintf(gotar, "echo %%2\n");
+                            fprintf(gotar, "echo %%3\n");
+                            fprintf(gotar, "echo %%4\n");
+                            fprintf(gotar, "echo %%5\n");
+                            fprintf(gotar, "timeout /t 2 /nobreak\n");
+                            fprintf(gotar, "tar -xf upgds/%%1\n");
+                            fprintf(gotar, "start %%2 %%4 %%5\n");
+                            fclose(gotar);
 
-                    sprintf(params, "gotar.bat %s", row_file_name_upgds);
-                    _execlp("gotar.bat", "gotar.bat", row_file_name_upgds, ad_name, *(argv_), *(argv_+1), *(argv_+2), nullptr);
-                    quick_exit(0);
+                            sprintf(params, "gotar.bat %s", row_file_name_upgds);
+                            _execlp("gotar.bat", "gotar.bat", row_file_name_upgds, ad_name, *(argv_), *(argv_+1), *(argv_+2), nullptr);
+                            quick_exit(0);
 #endif
 
 #ifdef LINUX
-                    sprintf(params, "+x %s", ad_name);
-                    SystemSilent("chmod", params);
+                            sprintf(params, "+x %s", ad_name);
+                            SystemSilent("chmod", params);
 #endif
 #ifndef LINUX
-                    /////////////////////////////  TO DO ON WINDOWS
-                   ;
-                   //// RunSilent("chmod", params);
+                            /////////////////////////////  TO DO ON WINDOWS
+                           ;
+                           //// RunSilent("chmod", params);
 #endif
-                    if (bmp_add != NULL) destroy_bitmap(bmp_add);
-                    destroy_bitmap(second_screen);
-                    return 255;  //restart
-                }
-            } //(go_download_upgds)
-            //bitmap not needed anymore
-            destroy_bitmap((BITMAP*)icon_upgrademark_pmem);
-            destroy_bitmap((BITMAP*)icon_noupgrademark_pmem);
-           } //(!fade_out) && (tools_ok) ........  //stage 3
+                            if (bmp_add != NULL) destroy_bitmap(bmp_add);
+                            destroy_bitmap(second_screen);
+                            return 255;  //restart
+                        }
+                    } //(go_download_upgds)
+
+                    flip_full_screen(second_screen);
+
+                    //bitmap not needed anymore
+                    destroy_bitmap((BITMAP *) icon_upgrademark_pmem);
+                    destroy_bitmap((BITMAP *) icon_noupgrademark_pmem);
+
+                    free(cloud_user);
+                    free(cloud_user0);
+                    free(cloud_password);
+                    free(cloud_password0);
+                    free(cloud_share_url);
+                    free(cloud_share0_url);
+                    free(cloud_ads);
+                    free(cloud_ads0);
+                    free(cloud_ads_url);
+                    free(cloud_ads0_url);
+                    free(cloud_upgrade);
+                    free(cloud_upgrade0);
+                    free(cloud_upgrade_url);
+                    free(cloud_upgrade0_url);
+
+                  
+                } //(!fade_out) && (tools_ok) ........  //stage 3
+            }  //cloud connection
 
         }  //fade_out
     } //bmp
@@ -5781,11 +5968,10 @@ void expand_dim(int w_x0, int w_y0, int w_width, int w_height, BOOL redraw_scree
     //checking if doesn't exceed screen baundaries
     ret = get_monitor_dims(&ret_left_x, &ret_right_x, &ret_top_y, &ret_bottom_y, -1);
 
-
+#ifdef LINUX
     dx_new = w_width;
     dy_new = w_height - X11_SCREEN_SHIFT;
 
-#ifdef LINUX
 	x0_new = max(w_x0, ret_left_x);
 	y0_new = max(w_y0, ret_top_y);
 
@@ -5795,6 +5981,9 @@ void expand_dim(int w_x0, int w_y0, int w_width, int w_height, BOOL redraw_scree
     set_origins(x0_new, y0_new);
 	set_resized_window(dx_new, dy_new);
 #else
+    dx_new = w_width;
+    dy_new = w_height; // -X11_SCREEN_SHIFT;
+
 	GFX_MARGINS* gfx_margins;
 
 	ret = get_gfx_margins(&gfx_margins);

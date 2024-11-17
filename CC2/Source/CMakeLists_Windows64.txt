@@ -7,11 +7,11 @@ set(CMAKE_SYSTEM_VERSION 10.0.22621.0 CACHE STRING "" FORCE)
 
 project(AlfaCAD C CXX)
 
-#set(CMAKE_C_FLAGS_RELEASE "-O0")
-#set(CMAKE_CXX_FLAGS_RELEASE "-O0")
+#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O0")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O0")
 
-#set(CMAKE_C_FLAGS "-O0")
-#set(CMAKE_CXX_FLAGS "-O0")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /EHsc")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
@@ -52,47 +52,47 @@ set(CMAKE_CONFIGURATION_TYPES
 ################################################################################
 # Global compiler options
 ################################################################################
-set(CMAKE_C_FLAGS "-O0")
-set(CMAKE_CXX_FLAGS "-O0")
+set(CMAKE_C_FLAGS "-Od")
+set(CMAKE_CXX_FLAGS "-Od")
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O0")
-set(CMAKE_C_FLAGS_RELEASE "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-Od")
+set(CMAKE_C_FLAGS_RELEASE "-Od")
 
-set(CMAKE_CXX_FLAGS_RELEASE_PL "-O0")
-set(CMAKE_C_FLAGS_RELEASE_PL "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE_PL "-Od")
+set(CMAKE_C_FLAGS_RELEASE_PL "-Od")
 
-set(CMAKE_CXX_FLAGS_RELEASE_UA "-O0")
-set(CMAKE_C_FLAGS_RELEASE_UA "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE_UA "-Od")
+set(CMAKE_C_FLAGS_RELEASE_UA "-Od")
 
-set(CMAKE_CXX_FLAGS_RELEASE_ES "-O0")
-set(CMAKE_C_FLAGS_RELEASE_ES "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE_ES "-Od")
+set(CMAKE_C_FLAGS_RELEASE_ES "-Od")
 
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O0")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Od")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Od")
 
 
 if(MSVC)
     # remove default flags provided with CMake for MSVC
-    set(CMAKE_C_FLAGS "-O0")
-    set(CMAKE_C_FLAGS_DEBUG "")
-    set(CMAKE_C_FLAGS_DEBUG_ES "")
-    set(CMAKE_C_FLAGS_DEBUG_PL "")
-    set(CMAKE_C_FLAGS_DEBUG_UA "")
-    set(CMAKE_C_FLAGS_RELEASE "-O0")
-    set(CMAKE_C_FLAGS_RELEASE_ES "")
-    set(CMAKE_C_FLAGS_RELEASE_PL "-O0")
-    set(CMAKE_C_FLAGS_RELEASE_UA "")
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO "")
-    set(CMAKE_CXX_FLAGS "-O0")
-    set(CMAKE_CXX_FLAGS_DEBUG "")
-    set(CMAKE_CXX_FLAGS_DEBUG_ES "")
-    set(CMAKE_CXX_FLAGS_DEBUG_PL "-O0")
-    set(CMAKE_CXX_FLAGS_DEBUG_UA "")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O0")
-    set(CMAKE_CXX_FLAGS_RELEASE_ES "")
-    set(CMAKE_CXX_FLAGS_RELEASE_PL "")
-    set(CMAKE_CXX_FLAGS_RELEASE_UA "")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
+    set(CMAKE_C_FLAGS "-Od")
+    set(CMAKE_C_FLAGS_DEBUG "-Od")
+    set(CMAKE_C_FLAGS_DEBUG_ES "-Od")
+    set(CMAKE_C_FLAGS_DEBUG_PL "-Od")
+    set(CMAKE_C_FLAGS_DEBUG_UA "-Od")
+    set(CMAKE_C_FLAGS_RELEASE "-Od")
+    set(CMAKE_C_FLAGS_RELEASE_ES "-Od")
+    set(CMAKE_C_FLAGS_RELEASE_PL "-Od")
+    set(CMAKE_C_FLAGS_RELEASE_UA "-Od")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Od")
+    set(CMAKE_CXX_FLAGS "-Od")
+    set(CMAKE_CXX_FLAGS_DEBUG "-Od")
+    set(CMAKE_CXX_FLAGS_DEBUG_ES "-Od")
+    set(CMAKE_CXX_FLAGS_DEBUG_PL "-Od")
+    set(CMAKE_CXX_FLAGS_DEBUG_UA "-Od")
+    set(CMAKE_CXX_FLAGS_RELEASE "-Od")
+    set(CMAKE_CXX_FLAGS_RELEASE_ES "-Od")
+    set(CMAKE_CXX_FLAGS_RELEASE_PL "-Od")
+    set(CMAKE_CXX_FLAGS_RELEASE_UA "-Od")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Od")
 endif()
 
 ################################################################################
@@ -430,6 +430,7 @@ set(Source_Files
     "../../../CC2/Source/o_text2PDF.c"
     "../../../CC2/Source/o_animate_dynamics.c"
     "../../../CC2/Source/utf8.c"
+    "../../../CC2/Source/o_slider.c"
    )
 source_group("Source Files" FILES ${Source_Files})
 
@@ -12677,3 +12678,7 @@ set(ADDITIONAL_LIBRARY_DEPENDENCIES
 target_link_libraries(${PROJECT_NAME} PRIVATE "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}4Win64")
+
+
+#string(REPLACE "-O2" "-O0" CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
+#string(REPLACE "-O2" "-O0" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})

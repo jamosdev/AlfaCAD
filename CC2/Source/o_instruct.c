@@ -201,6 +201,7 @@ static TDIALOG instruct_dlg=
 	2, (BUTTON(*)[])&buttons,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

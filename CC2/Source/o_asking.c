@@ -200,6 +200,7 @@ static TDIALOG asking_dlg=
 	2, (BUTTON(*)[])&buttons,
 	0, NULL, /*listbox*/
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -219,6 +220,7 @@ static TDIALOG asking_dlg_static=
                 8, (BUTTON(*)[])&buttons,
                 0, NULL, /*listbox*/
                 2, (COMBOBOX(*)[])&combobox_as,
+                0,NULL, //Sliders
                 NULL,
                 NULL,
                 0,
@@ -238,6 +240,7 @@ static TDIALOG asking1_dlg=
 	0, NULL, //&edit,
 	0, NULL,
 	2, (BUTTON(*)[])&buttons,
+    0,NULL, //Sliders
 	0, NULL,
 	0,NULL,
 	NULL,
@@ -830,6 +833,7 @@ int empty_dlg()
 		0, NULL,
 		0, NULL,
 		0,NULL,
+        0,NULL, //Sliders
 		NULL,
 		NULL,
 		0,

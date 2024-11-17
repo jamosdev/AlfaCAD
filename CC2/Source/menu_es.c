@@ -394,7 +394,7 @@ char _NO_[4] = "N";
 
 const char *_EDIT_[] = { u8"Mover", u8"mover Z", u8"Girar", u8"girar XZ", u8"girar YZ", u8"Escala", u8"Espejo", u8"->saltar", u8"-----" }; 
 
-char* loading_program[] = { u8"Cargando el programa", u8"Cargando recursos..." , u8"Por favor espere. Descargando archivo: "};
+char* loading_program[] = { u8"Cargando el programa", u8"Cargando recursos..." , u8"Por favor espere. Descargando archivo: ", u8"Conectándose a la nube..."};
 
 #define _NO_MOUSE_ "¡El mouse no está instalado!\n"
 

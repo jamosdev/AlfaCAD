@@ -1,16 +1,31 @@
+/*   ______   ___       ___         ____     ______  ____
+ *   /\  _  \ /\_ \    /'___\       /\  _`\  /\  _  \/\  _`\
+ *   \ \ \L\ \\//\ \  /\ \__/   __  \ \ \/\_\\ \ \L\ \ \ \/\ \
+ *    \ \  __ \ \ \ \ \ \ ,__\/'__`\ \ \ \/_/_\ \  __ \ \ \ \ \
+ *     \ \ \/\ \ \_\ \_\ \ \_/\ \L\.\_\ \ \L\ \\ \ \/\ \ \ \_\ \
+ *      \ \_\ \_\/\____\\ \_\\ \__/.\_\\ \____/ \ \_\ \_\ \____/
+ *       \/_/\/_/\/____/ \/_/ \/__/\/_/ \/___/   \/_/\/_/\/___/
+ *
+ *   A CAD
+ *
+ *   By Marek Ratajczak 2024
+ *
+ *   See readme_alfacad.txt for copyright information.
+ *
+ */
+
 #include <stdio.h>
 
 #include <allegro.h>
 #include <forwin.h>
 #include "bib_e.h"
+#include "o_dialog.h"
 
 extern void (*CUR_OFF)(double, double);
 extern void (*CUR_ON)(double, double);
 extern double X,Y;
-extern KOLORY kolory;
-//extern void komunikat_str(char *st);
+extern const KOLORY kolory;
 extern void komunikat_str_short(char *st, BOOL stay);
-
 
 
 int gui_border_dark, gui_border_light;
@@ -100,7 +115,61 @@ int grab_slider(void *dp3, int d2)
 }
 
 
-int d_myslider_proc(int msg, DIALOG *d, int c)
+int my_object_message(SLIDER *dialog, int msg, int c)
+{
+    SLIDER *slider;
+#ifdef ALLEGRO_WINDOWS
+    /* exported address of d_clear_proc */
+   extern int (*_d_clear_proc)(int, DIALOG *, int);
+#endif
+
+    int ret;
+    ASSERT(dialog);
+
+    if (msg == MSG_DRAW) {
+        if (dialog->flags & D_HIDDEN)
+            return D_O_K;
+
+/*
+#ifdef ALLEGRO_WINDOWS
+        if (dialog->proc == _d_clear_proc)
+#else
+        if (dialog->proc == d_clear_proc)
+#endif
+            scare_mouse();
+        else
+            scare_mouse_area(dialog->x, dialog->y, dialog->w, dialog->h);
+*/
+        //select_mouse_cursor(MOUSE_CURSOR_NONE);
+        show_mouse(NULL);
+        acquire_screen();
+    }
+
+
+    slider = dialog->slider;
+    slider->d2 = dialog->d2;
+
+    ret = dialog->proc(msg, dialog, c);
+
+    if (msg == MSG_DRAW) {
+        release_screen();
+        show_mouse(screen);
+        //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+        /*
+        unscare_mouse();
+         */
+    }
+
+    if (ret & D_REDRAWME) {
+        dialog->flags |= D_DIRTY;
+        ret &= ~D_REDRAWME;
+    }
+
+    return ret;
+}
+
+
+int d_myslider_proc(int msg, void *d_, int c)
 {
     BITMAP *gui_bmp = gui_get_screen();
     BITMAP *slhan = NULL;
@@ -123,6 +192,7 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
     int (*proc)(void *cbpointer, int d2value);
     int oldval;
     int mb;
+    SLIDER *d=d_;
     ASSERT(d);
 
     /* check for slider direction */
@@ -141,7 +211,8 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
     hmar = hh/2;
     irange = (vert) ? d->h : d->w;
     slmax = itofix(irange-hh);
-    slratio = slmax / (d->d1);
+    if (d->d1==0) slratio=1;
+    else slratio = slmax / (d->d1);
     slpos = slratio * d->d2;
     slp = fixtoi(slpos);
 
@@ -150,13 +221,14 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
         msg=22;
     }
 
-    switch (msg) {
-
+    switch (msg)
+    {
         case MSG_RPRESS:
             retval = -1;
             break;
 
         case MSG_DRAW:
+
             sfg = (d->flags & D_DISABLED) ? gui_mg_color : d->fg;
 
             if (vert) {
@@ -210,6 +282,7 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
 
             if (d->flags & D_GOTFOCUS) solid_rect(d->x, d->y, d->x+d->w-1, d->y+d->h-1, gui_mg_color, d->bg);  //sfg
             else  solid_rect(d->x, d->y, d->x+d->w-1, d->y+d->h-1, gui_mg_color, d->bg);  //sfg
+
             break;
 
         case MSG_WANTFOCUS:
@@ -222,8 +295,10 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
             else
                 return D_O_K;
 
+            //it's simply not necessary
+/*
         case MSG_CHAR:
-            /* handle movement keys to move slider */
+            // handle movement keys to move slider
             c >>= 8;
 
             if (vert) {
@@ -272,18 +347,19 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
 
                 if (d->d2 < 0)
                     d->d2 = 0;
+
                 if (d->d2 > d->d1)
                     d->d2 = d->d1;
 
                 retval = D_USED_CHAR;
 
                 if (d->d2 != oldval) {
-                    /* call callback function here */
+                    // call callback function here
                     if (d->dp2) {
                         proc = d->dp2;
                         retval |= (*proc)(d->dp3, d->d2);
                     }
-
+                    //gui_set_screen(screen);
                     object_message(d, MSG_DRAW, 0);
                 }
             }
@@ -293,21 +369,24 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
             oldval = d->d2;
             d->d2 = CLAMP(0, d->d2+c, d->d1);
             if (d->d2 != oldval) {
-                /* call callback function here */
+                // call callback function here
                 if (d->dp2) {
                     proc = d->dp2;
                     retval |= (*proc)(d->dp3, d->d2);
                 }
-
+                //gui_set_screen(screen);
                 object_message(d, MSG_DRAW, 0);
             }
             break;
-
+*/
         case MSG_CLICK:
+
+            disable_hardware_cursor();
             /* track the mouse until it is released */
             mp = slp;
 
             while (mb=gui_mouse_b()) {
+
                 if (mb==2) return retval;
                 msx = gui_mouse_x();
                 msy = gui_mouse_y();
@@ -332,12 +411,14 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
                         retval |= (*proc)(d->dp3, d->d2);
                     }
 
-                    object_message(d, MSG_DRAW, 0);
+                    gui_set_screen(screen);
+                    my_object_message(d, MSG_DRAW, 0);
                 }
 
                 /* let other objects continue to animate */
                 broadcast_dialog_message(MSG_IDLE, 0);
             }
+            enable_hardware_cursor();
             break;
     }
 
@@ -347,7 +428,7 @@ int d_myslider_proc(int msg, DIALOG *d, int c)
 #define SLIDER_OBJECT   1
 
 /* here it comes - the big bad ugly DIALOG array for our main dialog */
-DIALOG the_dialog[] =
+SLIDER the_dialog[] =
 {
    /* (dialog proc)        (x)   (y)   (w)   (h) (fg)(bg) (key) (flags)     (d1) (d2)    (dp) (dp2) (dp3) */
    /* this element just clears the screen, therefore it should come before the others */

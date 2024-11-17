@@ -180,6 +180,7 @@ static TDIALOG Config={ 10,1, 420, 145,COLOR_NULL,COLOR_NULL,COLOR_NULL, COLOR_N
 			nof_but,(BUTTON(*)[])&pdBut,
 			0, NULL,
 			0,NULL,
+            0,NULL, //Sliders
 			NULL,
 	        NULL,
 	        0,

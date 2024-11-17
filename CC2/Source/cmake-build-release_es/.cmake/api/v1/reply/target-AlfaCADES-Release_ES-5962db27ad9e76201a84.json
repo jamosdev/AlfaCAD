@@ -2106,7 +2106,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "slider.c",
+			"path" : "o_slider.c",
 			"sourceGroupIndex" : 0
 		}
 	],

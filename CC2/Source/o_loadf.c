@@ -552,6 +552,7 @@ static TDIALOG load_file_dlg =
 	4, &button,
 	0, NULL, //&listbox,		/*listbox*/
 	0, &combobox,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

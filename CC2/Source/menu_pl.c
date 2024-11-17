@@ -392,7 +392,7 @@ char _NO_[4] = "N";
 
 const char *_EDIT_[] = {u8"Przesuń", u8"Przesuń Z", u8"Obrót", u8"Obrót XZ", u8"Obrót YZ", u8"Skala", u8"Lustro", u8"->pomiń", u8"-----"};
 
-char* loading_program[] = { u8"Ładowanie programu", u8"Ładowanie okna..." , u8"Proszę czekać. Trwa pobieranie pliku: "};
+char* loading_program[] = { u8"Ładowanie programu", u8"Ładowanie okna..." , u8"Proszę czekać. Trwa pobieranie pliku: ", u8"Łączenie z chmurą..."};
 
 #define _NO_MOUSE_ "Nie jest zainstalowana mysz !!!!!\n"
 

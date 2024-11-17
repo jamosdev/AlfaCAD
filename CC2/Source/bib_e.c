@@ -11183,6 +11183,11 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 	 PREVIEW2 = create_bitmap(ddx, ddy);  // []
 	 PREVIEW3 = create_bitmap(max(ddx,ddy), max(ddx,ddy));  //==
 
+     set_clip_state(PREVIEW, 1);
+     set_clip_state(PREVIEW1, 1);
+     set_clip_state(PREVIEW2, 1);
+     set_clip_state(PREVIEW3, 1);
+
 
 	 if (PREVIEW && PREVIEW1 && PREVIEW2 && PREVIEW3)
 	 {	 
@@ -11260,7 +11265,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 destroy_bitmap(PREVIEW3);
 	 }
 
-	 Restore_View_Preview();
+	 Restore_View_Preview(); 
 	 if (!snap_)krok_s = jednostkiY(1);
 
 	 return;
@@ -12629,12 +12634,16 @@ void DoneBuffMacro(void)
 
 void my_scare_mouse() 
 {
-    show_mouse(NULL);
+    //show_mouse(NULL);
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    scare_mouse();
 }
 
 void my_unscare_mouse()
 {
-    show_mouse(screen);
+    //show_mouse(screen);
+    //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    unscare_mouse();
 }
 
 void set_cursor_pointer(void)
@@ -13130,7 +13139,6 @@ int my_getch(void)
 
 }
 
-
 int __file_exists(char *name)
 {
 	int ret;
@@ -13139,6 +13147,14 @@ int __file_exists(char *name)
 	return ret;
 }
 
+int __file_size(char* name)
+{
+    int ret, size;
+    struct stat buffer;
+    ret = (stat(name, &buffer) == 0);
+    if (ret) return buffer.st_size;
+    else return 0;
+}
 
 
 int	getdisk(void)

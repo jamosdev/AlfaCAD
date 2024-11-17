@@ -36,6 +36,8 @@
 #include "bgiext.h"
 #include "alf_res.h"
 
+//#include "gui.h"
+
 #include "menu.h"
 #include "dialog.h"
 
@@ -50,6 +52,8 @@ typedef struct tagRECT {
 	LONG bottom;
 } RECT, * PRECT, * NPRECT, * LPRECT;
 #endif
+
+BITMAP *slbitmap=NULL;
 
 static int (*kls)(void);
 static void (*mv)(int x, int y);
@@ -190,6 +194,9 @@ extern void  outtext_r_(BITMAP *ui_screen, char  *textstring);
 extern int get_palette_color(int color);
 
 extern void _free_mouse(void);
+
+extern int d_myslider_proc(int msg, void *d, int c);
+extern int gui_border_dark, gui_border_light;
 
 extern char *BLOCKLIST;
 
@@ -3397,6 +3404,96 @@ void draw_pushed_button(BUTTON *Button)
  }
 
 
+void Draw_Slider(SLIDER *Slider)
+{  int ret;
+    SLIDER Slider_;
+    int x1, y1, x2, y2;
+
+    if (!(Slider->flags & 0xF0)) {
+
+        memmove(&Slider_, Slider, sizeof(SLIDER));
+
+        Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+        Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+        //adopt dimensions
+        Slider_.x = jed_to_piks_x(Slider->x) + pocz_x;
+        Slider_.y = jed_to_piks_y(Slider->y) + pocz_y;
+        Slider_.w = jed_to_piks_x(Slider->w);
+        Slider_.h = jed_to_piks_y(Slider->h);
+		Slider_.slider = Slider;
+
+        ret = Slider->proc(MSG_DRAW, &Slider_, '\0');
+    }
+}
+
+
+static int find_slider(SLIDER *Slider,int SizeSliderT)
+/*------------------------------------------------------------*/
+{ int i, ret=0;
+    SLIDER Slider_;
+    SLIDER *slider;
+
+    gui_set_screen(screen);
+    for(i=0;i<SizeSliderT;i++)
+    {
+        slider=&Slider[i];
+        if (slider->flags & 0xF0) continue;
+        memmove(&Slider_, &Slider[i], sizeof(SLIDER));
+
+        Slider_.fg=palette_color[Slider_.fg /*kolory.inkm*/];
+        Slider_.bg=palette_color[Slider_.bg /*kolory.paperk*/];
+
+        //adopt dimensions
+        Slider_.x = jed_to_piks_x(Slider->x) + pocz_x;
+        Slider_.y = jed_to_piks_y(Slider->y) + pocz_y;
+        Slider_.w = jed_to_piks_x(Slider->w);
+        Slider_.h = jed_to_piks_y(Slider->h);
+		Slider_.slider = Slider;
+
+        if(PozX > Slider_.x && PozX < (Slider_.x + Slider_.w) &&
+              PozY > Slider_.y && PozY < (Slider_.y + Slider_.h))
+            {
+                break;
+            }
+    }
+
+    if (i<SizeSliderT)
+    {
+        ret = Slider[i].proc(MSG_CLICK, &Slider_, '\0');
+        Slider[i].d2 = Slider_.d2;
+    }
+
+    return ret;
+}
+
+
+static void draw_sliders(SLIDER *Slider,int SizeSliderT, BITMAP *dialog_screen) //, int caption)
+/*----------------------------------------------------------------------------------------*/
+{
+    int i ;
+
+
+    gui_set_screen(dialog_screen);
+    setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+    setwritemode(COPY_PUT);
+
+    gui_fg_color = palette_color[kolory.inkm];
+    //gui_mg_color = makecol(128, 128, 128);
+    gui_mg_color = palette_color[180 /*kolory.inkk*/];
+    //gui_bg_color = makecol(200, 240, 200);
+    //gui_bg_color = makecol(200, 200, 200);
+    gui_bg_color = palette_color[98 /*kolory.paperk*/];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    for(i=0;i<SizeSliderT;i++)
+    {
+        Draw_Slider(&(Slider[i]));
+    }
+}
+
 static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
 /*------------------------------------------------------------------*/
 { 
@@ -3488,6 +3585,8 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
   if(dlg->Images != NULL) draw_images(*(dlg->Images),dlg->SizeImageT, tipsmenu);
   if (dlg->Buttons != NULL) draw_buttons(*(dlg->Buttons), dlg->SizeButtonT);
 
+  if (dlg->Sliders != NULL) draw_sliders(*(dlg->Sliders), dlg->SizeSliderT, dialog_screen); //, dlg_kolory->dlg_caption);
+
   blit(dialog_screen, screen, 0, 0, dialog_rect->left, dialog_rect->top, dialog_rect->right-dialog_rect->left, dialog_rect->bottom-dialog_rect->top);
   destroy_bitmap(dialog_screen);
 
@@ -3532,8 +3631,8 @@ void draw_transparent_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, RECT *dialog_r
  void draw_dlg_prev(TDIALOG *dlg)
 	 /*------------------------*/
  {
-	 scare_mouse();
-	 
+
+	 my_scare_mouse();
 
 	 if (dlg->Labels != NULL) draw_labels(*(dlg->Labels), dlg->SizeLabT);
 	 if (dlg->InputLines != NULL) draw_input_lines(*(dlg->InputLines), dlg->SizeInLinT);
@@ -3541,7 +3640,7 @@ void draw_transparent_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, RECT *dialog_r
 	 if (dlg->Buttons != NULL) draw_buttons(*(dlg->Buttons), dlg->SizeButtonT);
 
 	 if (dlg->Groups != NULL) draw_groups(*(dlg->Groups), dlg->SizeGroupT, dlg, TRUE);
-	 unscare_mouse();
+	 my_unscare_mouse();
 	 cur_on(PozX, PozY);
  }
 
@@ -3582,21 +3681,70 @@ static void open_dlg(TDIALOG *dlg, char typ, BITMAP **dialog_screen, RECT *dialo
 
 
 	if (typ == 0)
-	{
+    {
 
-	   dlg->xb = x01;
-	   dlg->yb = y01;
-	   bitmap = create_bitmap(x02 - x01, y02 - y01);
-	   dlg->back = (char *)bitmap;
-	   getimage(x01, y01, x02, y02, dlg->back);
-       if (strcmp(dlg->txt,"^")!=0) 
-	   {
-		   bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
-		   dlg->background = (char*)bitmap_ptr;
-           getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
+        dlg->xb = x01;
+        dlg->yb = y01;
+        bitmap = create_bitmap(x02 - x01, y02 - y01);
+        dlg->back = (char *) bitmap;
+        getimage(x01, y01, x02, y02, dlg->back);
+        if (strcmp(dlg->txt, "^") != 0) {
+            bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
+            dlg->background = (char *) bitmap_ptr;
+            getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
+        }
+    }
+       //if sliders exist
+       for (int i=0; i<dlg->SizeSliderT; i++)
+       {
+           int var1, var2, var3, var4, ret;
+           BITMAP *slbitmap;
+           SLIDER *slider=dlg->Sliders;
+
+           if ((typ==0) || (slider[i].flags & 0x800))
+           {
+               slider[i].flags &= ~0x800;
+
+               int (*SlideFun)(int *, int *, int *, int *);
+               SlideFun = (int (*)(int *, int *, int *, int *)) slider[i].dp3;
+               //int var1=d2;
+               ret = SlideFun(&var1, &var2, &var3, &var4);
+
+               //adjusting slider
+               slider[i].d1 = var3 - (var2 - var1);
+
+               int Slider_h = jed_to_piks_y(slider[i].h);
+               double slratio = (double) Slider_h / (double) (var3); //-(var2-var1));
+               int slbody;
+               if (var3 <= var4) slbody = Slider_h;
+               else slbody = (var2 - var1) * slratio;
+
+               if (slider[i].dp != NULL) destroy_bitmap((BITMAP *) slider[i].dp);
+
+               if (slbody<4) slider[i].flags |= 0xF0;  //hidden
+               else
+               {
+                   slider[i].flags &= ~0xF0;
+                   slbitmap = create_bitmap(jed_to_piks_x(slider[i].w), slbody);
+                   //slider[i].d2=var3-(var2-var1)/2;
+                   slider[i].d2 = var3 - var1 - (var2 - var1);
+
+                   clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
+                   hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
+                   vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
+                   hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
+                   vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
+
+                   hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
+                   vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
+                   hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
+                   vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
+
+                   slider[i].dp = slbitmap;
+               }
+           }
        }
 
-    }
 
   dialog_rect->left=x01;
   dialog_rect->top=y01;
@@ -3947,6 +4095,19 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 	  break;
 	 case 1 :
 	 case 2 :
+
+
+         //if sliders exist
+         for (int i=0; i<Dlg->SizeSliderT; i++)
+         {
+             BITMAP *slbitmap;
+             SLIDER *slider = Dlg->Sliders;
+
+             if (slider[i].flags & 0xF0) continue;
+
+             if (slider[i].dp!=NULL) destroy_bitmap((BITMAP*)slider[i].dp);
+             if (slider[i].dp=NULL);
+         }
 	  
 	  cur_off(PozX, PozY) ; 
 	  ClearErr() ;
@@ -4416,6 +4577,7 @@ continue_lb:
 	  id_b = 0;
 	  if ((ev->Number == ENTER) &&
 		  (
+           (0 != (id = id_il = find_slider(*(dlg->Sliders), dlg->SizeSliderT))) ||
 		   (0 != (id = id_il = find_input_line(*(dlg->InputLines), dlg->SizeInLinT))) ||
 		   (0 != (id = id_cb = find_combo_box(*(dlg->ComboBoxes), dlg->SizeComboBoxT))) ||
 		   (0 != (id = id_lb = find_list_box(*(dlg->ListBoxes), dlg->SizeListBoxT))) ||

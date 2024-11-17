@@ -26,6 +26,11 @@
 #include "alf_res.h"
 #include "o_libfun.h"
 
+#include "gfx.h"
+#include "mouse.h"
+
+//#include "gui.h"
+
 #include "menu.h"
 
 #include "leak_detector_c.h"
@@ -51,13 +56,22 @@ extern void  SetBit( unsigned int A[],  int k );
 extern void  ClearBit( unsigned int A[],  int k );
 extern int TestBit( unsigned int A[],  int k );
 
+extern KOLORY kolory;
+
+extern int d_myslider_proc(int msg, void *d, int c);
+extern void komunikat_str_short(char *st, BOOL stay);
+
+extern void Draw_Slider(SLIDER *Slider);
+//extern int slider_function(int *var);
+//extern int grab_slider(void *dp3, int d2);
+
 #define XpGroup	2
 #define YpGroup 4
 #define DXGroup (XLayerNo + DXLayerNo +\
 	DXCurrentButton+DXLayerName+DXOnOff +\
 	DXPointButton+DXEditButton+DXColor+DXWidthLine+DXTypeLine +\
 	DXBut+13*DXDist - 13)
-int DYGroup = 12*(32+3) + 5;
+int DYGroup = 425;  //12*(32+3) + 5;
 #define XpUp    (XTypeLine+DXTypeLine+DXDist+7) 
 #define YpUp    (4 * DYLayer - 1 + 6)
 #define XpPgUp  XpUp 
@@ -171,6 +185,9 @@ static COMBOBOX combobox [MAXNODIALOGLAYERS * 3];
 static int BLayer=-1;
 static int ELayer=-1;
 static int erase_state=-1;
+
+static int init_slider(int *var1, int *var2, int *var3, int *var4);
+static int grab_slider(void *dp3, int d2);
 
 int up_layer_ (void);
 int dn_layer_ (void);
@@ -338,6 +355,11 @@ static DARK_LIGHT_LINE lines_top[] =
 	{ XpGroup + XTypeLine, 39, DXTypeLine - 30, 1, LINE_NULL, COLOR_NULL},
 };
 
+static SLIDER sliders[] =
+        {
+                {d_myslider_proc,  XpDn + (DXBut - 11)/2, YpDn + DYBut - 7,  18, 415 - YpDn,  0,  98,    0,   0,  100,   0,    NULL , grab_slider, init_slider, NULL},
+        };
+
 static TDIALOG layers_dlg=
 {
 	2 ,  1, 620, 216,COLOR_NULL,COLOR_NULL,COLOR_NULL, COLOR_NULL, 0x40,0,0,
@@ -350,6 +372,7 @@ static TDIALOG layers_dlg=
     213, &buttons,
 	0, NULL,		/*listbox*/
     96, &combobox,
+    1,&sliders, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -367,6 +390,42 @@ static void init_layer_dlg_control (BOOL b_draw);
 static int  proc_dlg_layer (int );
 static void set_layer_to_dlg (int , int );
 static void set_struct_dialog_control (int erase_flag);
+
+static int init_slider(int *var1, int *var2, int *var3, int *var4)
+{
+    *var1=n_first_layer_in_dlg;
+    *var2=n_last_layer_in_dlg+1;
+    //*var3=No_Layers;
+    *var3=no_layers;
+    *var4=NoDialogLayers;
+    return 1;
+}
+
+static int grab_slider(void *dp3, int d2)
+{   char slider_var[32];
+    int var1, var2, var3, var4, ret;
+    int (*SlideFun)(int*, int*, int*, int*);
+
+    SlideFun = (int(*)(int *, int *, int *, int *))dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+    //sprintf(slider_var, "%d-%d", max(0, d2-NoDialogLayers), d2);
+    sprintf(slider_var, "%d-%d", var3 - d2 - (var2-var1) + 1, var3-d2);
+    komunikat_str_short(slider_var, FALSE);
+
+
+    get_dlg_controls_to_layers ();
+    n_first_layer_in_dlg=var3 - d2 - (var2-var1);
+    n_last_layer_in_dlg=var3-d2 - 1;
+    init_layer_dlg_control (FALSE);
+
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    //show_mouse(NULL);
+    Redraw_Dlg(&layers_dlg);
+    //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    //show_mouse(screen);
+    return 0;
+}
 
 
 void reset_BLayerELayer(void)
@@ -446,6 +505,10 @@ static void set_struct_dialog_control (int erase_flag)
   button_Add.y=YpGroup+DYGroup+2;
   button_OK.y=YpGroup+DYGroup+2;
   button_Cancel.y=YpGroup+DYGroup+2;
+
+  sliders[0].x=button_Dn.x + button_Dn.dx/2 - sliders[0].w/2;
+  sliders[0].y=button_Dn.y + button_Dn.dy + 4;
+  sliders[0].h=gr_box[0].y + gr_box[0].dy - button_Dn.y - button_Dn.dy - 8;
 
     button_set_W_all.y=button_set_E_all.y=button_set_P_all.y=YpGroup+DYGroup+2;
     button_reset_W_all.y=button_reset_E_all.y=button_reset_P_all.y=YpGroup+DYGroup+14*2 + 2;
@@ -950,6 +1013,25 @@ static BOOL get_layer_dlg_control (void)
   return ret_val;
 }
 
+
+static void set_slide_flags(void)
+{
+    SLIDER *slider=layers_dlg.Sliders;
+    slider[0].flags |= 0x800;
+}
+
+static void update_slide(void)
+{
+    int var1, var2, var3, var4, ret;
+    SLIDER *slider=layers_dlg.Sliders;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider[0].dp3;
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+    slider[0].d2 = var3 - var1 - (var2 - var1);
+    komunikat_str_short("", FALSE);
+}
+
 static void add_layer (void)
 /*-------------------------*/
 {
@@ -964,18 +1046,29 @@ static void add_layer (void)
   memmove( &(layers[no_layers]), &layer, sizeof(LAYER));
   strcpy (layers [no_layers].name, "");
   no_layers++;
+
+  //No_Layers++;
+
   if (no_layers <= NoDialogLayers)
   {
     no_dlg_line = no_layers -1;
     n_last_layer_in_dlg = no_dlg_line;
     set_layer_to_dlg (no_layers -1, no_dlg_line);
+
+      update_slide();
+      set_slide_flags();
+
     draw_dlg_layer_controls (no_dlg_line);
+    Draw_Slider(layers_dlg.Sliders);
   }
   else
   {
     get_dlg_controls_to_layers ();
     n_first_layer_in_dlg = no_layers - NoDialogLayers;
-    init_layer_dlg_control (TRUE);
+    init_layer_dlg_control (FALSE);
+      update_slide();
+      set_slide_flags();
+      Redraw_Dlg(&layers_dlg);
   }
 }
 
@@ -990,6 +1083,7 @@ static void up_layer (void)
   get_dlg_controls_to_layers ();
   n_first_layer_in_dlg--;
   init_layer_dlg_control (FALSE);
+    update_slide();
   Redraw_Dlg(&layers_dlg);
 }
 
@@ -1005,6 +1099,7 @@ static void dn_layer (void)
   get_dlg_controls_to_layers ();
   n_first_layer_in_dlg++;
   init_layer_dlg_control (FALSE);
+    update_slide();
   Redraw_Dlg(&layers_dlg);
 }
 
@@ -1029,6 +1124,7 @@ static void goto_layer (int to_which)
   }
   n_first_layer_in_dlg = which_layer ;
   init_layer_dlg_control (FALSE);
+    update_slide();
   Redraw_Dlg(&layers_dlg);
 }
 
@@ -1047,6 +1143,7 @@ static void pgup_layer (void)
     n_first_layer_in_dlg = 0 ;
   }
   init_layer_dlg_control (FALSE);
+    update_slide();
   Redraw_Dlg(&layers_dlg);
 }
 
@@ -1067,6 +1164,7 @@ static void pgdn_layer (void)
     n_first_layer_in_dlg =  no_layers - NoDialogLayers ;
   }
   init_layer_dlg_control (FALSE) ;
+    update_slide();
   Redraw_Dlg(&layers_dlg);
 }
 
@@ -1230,6 +1328,8 @@ static int proc_dlg_layer (int n)
 { int ret = Dlg_Ret_Val_Continue, ret1;
   int layer_to_erase;
 
+  //SLIDER *slider=layers_dlg.Sliders;
+
     if (n==ID_OK) {
         if (get_layer_dlg_control() == TRUE) {
             ret = Dlg_Ret_Val_OK;
@@ -1261,7 +1361,7 @@ static int proc_dlg_layer (int n)
         } else layers[n_first_layer_in_dlg + n - BUTTON_BW].bw = 0;
     }
     else if (n==ID_ADD)
-      add_layer ();
+    add_layer ();
     else if (n==ID_GoTo)
       goto_layer (0);
     else if (n==ID_GoTo1)
@@ -1317,7 +1417,8 @@ static int proc_dlg_layer (int n)
 
           if (is_changed)
           {
-              init_layer_dlg_control (TRUE);
+              init_layer_dlg_control (FALSE);
+              Redraw_Dlg(&layers_dlg);
           }
 
           //saving
@@ -1427,6 +1528,9 @@ static int proc_dlg_layer (int n)
                     Get_Default_Color_Dlg(&color_dlg);
                     b_redraw = TRUE;
 
+                    update_slide();
+                    set_slide_flags();
+
                     Redraw_Dlg(&layers_dlg);
                 }
             }
@@ -1523,6 +1627,9 @@ static int proc_dlg_layer (int n)
 
                     Get_Default_Color_Dlg(&color_dlg);
                     b_redraw = TRUE;
+
+                    update_slide();
+                    set_slide_flags();
 
                     Redraw_Dlg(&layers_dlg);
                 }

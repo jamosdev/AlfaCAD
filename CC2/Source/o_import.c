@@ -1179,6 +1179,7 @@ static TDIALOG catalog_dlg =
 	7, &buttons_cat,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -1198,6 +1199,7 @@ static TDIALOG background_dlg =
 	6, &buttons_bkg,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -1217,6 +1219,7 @@ static TDIALOG patterns_dlg =
 	5, &buttons_pattern,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -1236,6 +1239,7 @@ static TDIALOG blocklist_dlg =
                 9, &buttons_blk,
                 0, NULL,
                 0,NULL,
+                0,NULL, //Sliders
                 NULL,
                 NULL,
                 0,

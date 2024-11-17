@@ -796,6 +796,7 @@ TDIALOG printer_dlg=
 	28 , &buttons_p,
 	0, NULL,
 	3,&combobox,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -833,6 +834,7 @@ void Preview(int box, int x01, int y01, int x02, int y02, int x00, int y00)
 	float dscalex, dscaley, dscalexy = 1.0;
 	int x1_, x2_, y1_, y2_;
     double X_max_, Y_max_;
+
 
     X_max_ = (prn_ini_date.xk-prn_ini_date.xp);
     Y_max_ = (prn_ini_date.yk-prn_ini_date.yp);
@@ -2775,7 +2777,7 @@ okno_dial:
   Save_Update_flex(1, &curr_h, &curr_v);
 
 
-  scare_mouse();
+  my_scare_mouse();
 
   ////lock_mouse();
 

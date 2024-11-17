@@ -276,6 +276,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Debug/AlfaCAD4Win.exe</OutputFile>
@@ -285,7 +286,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -319,6 +320,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>DebugUA/AlfaCADUA4Win.exe</OutputFile>
@@ -328,7 +330,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -362,6 +364,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>DebugUA/AlfaCADES4Win.exe</OutputFile>
@@ -371,7 +374,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -405,6 +408,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Debug/AlfaCADPL4Win.exe</OutputFile>
@@ -413,7 +417,7 @@
       <ProgramDatabaseFile>.\Debug/AlfaCADPL4win.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -433,7 +437,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\..\CC2\Source;..\..\..\CC2\Source\include;..\..\..\allegro5-4.4.4\include;..\..\..\allegro5-4.4.4\build\include;..\..\..\allegro5-4.4.4\include\allegro;..\..\..\allegro5-4.4.4\addons\jpgalleg\include;..\..\..\zlib;..\..\..\zlib\build32\;..\..\..\lpng1637;..\..\..\libharu-master\include;..\..\..\libharu-master\build32\include\;..\..\..\libharu-master\win32\include;..\..\..\glyph-keeper32\src;..\..\..\glyph-keeper32\include;..\..\..\glyph-keeper32\freetype\src;..\..\..\glyph-keeper32\freetype\include;..\..\..\CavalierContours\include;..\..\..\CavalierContours\c_api_include;..\..\..\qt5\qt5-build32\qtbase\include;..\..\..\qt5\qt5-build32\qtbase\include\QtGui;..\..\..\qt5\qt5-build32\qtbase\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALF_MAIN;alfpro;ENGLISH;%(PreprocessorDefinitions);</PreprocessorDefinitions>
@@ -449,6 +453,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Release/AlfaCAD4Win.exe</OutputFile>
@@ -457,7 +462,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -476,7 +481,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_UA|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\..\CC2\Source;..\..\..\CC2\Source\include;..\..\..\allegro5-4.4.4\include;..\..\..\allegro5-4.4.4\build\include;..\..\..\allegro5-4.4.4\include\allegro;..\..\..\allegro5-4.4.4\addons\jpgalleg\include;..\..\..\zlib;..\..\..\zlib\build32\;..\..\..\lpng1637;..\..\..\libharu-master\include;..\..\..\libharu-master\build32\include\;..\..\..\libharu-master\win32\include;..\..\..\glyph-keeper32\src;..\..\..\glyph-keeper32\include;..\..\..\glyph-keeper32\freetype\src;..\..\..\glyph-keeper32\freetype\include;..\..\..\CavalierContours\include;..\..\..\CavalierContours\c_api_include;..\..\..\qt5\qt5-build32\qtbase\include;..\..\..\qt5\qt5-build32\qtbase\include\QtGui;..\..\..\qt5\qt5-build32\qtbase\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALF_MAIN;alfpro;ENGLISH;UKRAINIAN;%(PreprocessorDefinitions);</PreprocessorDefinitions>
@@ -492,6 +497,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>ReleaseUA/AlfaCADUA4Win.exe</OutputFile>
@@ -500,7 +506,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -519,7 +525,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_ES|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\..\CC2\Source;..\..\..\CC2\Source\include;..\..\..\allegro5-4.4.4\include;..\..\..\allegro5-4.4.4\build\include;..\..\..\allegro5-4.4.4\include\allegro;..\..\..\allegro5-4.4.4\addons\jpgalleg\include;..\..\..\zlib;..\..\..\zlib\build32\;..\..\..\lpng1637;..\..\..\libharu-master\include;..\..\..\libharu-master\build32\include\;..\..\..\libharu-master\win32\include;..\..\..\glyph-keeper32\src;..\..\..\glyph-keeper32\include;..\..\..\glyph-keeper32\freetype\src;..\..\..\glyph-keeper32\freetype\include;..\..\..\CavalierContours\include;..\..\..\CavalierContours\c_api_include;..\..\..\qt5\qt5-build32\qtbase\include;..\..\..\qt5\qt5-build32\qtbase\include\QtGui;..\..\..\qt5\qt5-build32\qtbase\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALF_MAIN;alfpro;ENGLISH;SPANISH;%(PreprocessorDefinitions);</PreprocessorDefinitions>
@@ -535,6 +541,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>ReleaseES/AlfaCADES4Win.exe</OutputFile>
@@ -543,7 +550,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -562,7 +569,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_PL|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\..\CC2\Source;..\..\..\CC2\Source\include;..\..\..\allegro5-4.4.4\include;..\..\..\allegro5-4.4.4\build\include;..\..\..\allegro5-4.4.4\include\allegro;..\..\..\allegro5-4.4.4\addons\jpgalleg\include;..\..\..\zlib;..\..\..\zlib\build32\;..\..\..\lpng1637;..\..\..\libharu-master\include;..\..\..\libharu-master\build32\include\;..\..\..\libharu-master\win32\include;..\..\..\glyph-keeper32\src;..\..\..\glyph-keeper32\include;..\..\..\glyph-keeper32\freetype\src;..\..\..\glyph-keeper32\freetype\include;..\..\..\CavalierContours\include;..\..\..\CavalierContours\c_api_include;..\..\..\qt5\qt5-build32\qtbase\include;..\..\..\qt5\qt5-build32\qtbase\include\QtGui;..\..\..\qt5\qt5-build32\qtbase\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALF_MAIN;alfpro;%(PreprocessorDefinitions);</PreprocessorDefinitions>
@@ -578,6 +585,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>ReleasePl/AlfaCADPL4Win.exe</OutputFile>
@@ -586,7 +594,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\opengl32.lib;c:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x86\glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -604,7 +612,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -618,6 +626,7 @@
       <ProgramDataBaseFileName>.\Demo/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Demo/AlfPro4winDem.exe</OutputFile>
@@ -625,6 +634,7 @@
       <ProgramDatabaseFile>.\Demo/AlfPro4winDem.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -655,6 +665,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Debug/AlfView4win.exe</OutputFile>
@@ -663,6 +674,7 @@
       <ProgramDatabaseFile>.\Debug/AlfView4win.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -681,7 +693,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Viewer Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS; ALF_MAIN;VIEWER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -696,6 +708,7 @@
       <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Release/AlfView4win.exe</OutputFile>
@@ -703,6 +716,7 @@
       <ProgramDatabaseFile>.\Release/AlfView4win.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -720,7 +734,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Alf-Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>C:\Users\marek\Allegro_win\include;C:\Users\marek\Allegro_win\include\djgpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -736,6 +750,7 @@
       <ProgramDataBaseFileName>.\Alf-Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Alf-Release/Alf4win.exe</OutputFile>
@@ -743,6 +758,7 @@
       <ProgramDatabaseFile>.\Alf-Release/Alf4win.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -760,7 +776,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Aster-Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>C:\Users\marek\Allegro_win\include;C:\Users\marek\Allegro_win\include\djgpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -776,6 +792,7 @@
       <ProgramDataBaseFileName>.\Aster-Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>Aster-Release/Aster4win44.exe</OutputFile>
@@ -783,6 +800,7 @@
       <ProgramDatabaseFile>.\Aster-Release/Aster4win.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -4237,6 +4255,7 @@
     <ClCompile Include="..\..\..\CC2\Source\woods_US.c" />
     <ClCompile Include="..\..\..\CC2\Source\Z_section_US_si.c" />
     <ClCompile Include="..\..\..\glyph-keeper32\src\glyph.c" />
+    <ClCompile Include="..\..\Source\o_slider.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CC2\Source\loadpng.h" />

@@ -356,6 +356,7 @@ static TDIALOG import_DXF_dlg =
 	5, (BUTTON(*)[])&buttons,
 	0, NULL,  //&listbox
 	3, (COMBOBOX(*)[])&combobox,
+    0,NULL, //Sliders
 	PreviewDXF,
 	NULL,
 	0,

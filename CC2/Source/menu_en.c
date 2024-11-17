@@ -390,7 +390,7 @@ char _NO_[4] = "N";
 
 const char *_EDIT_[] = {u8"Move", u8"move Z", u8"Rotate", u8"rotate XZ", u8"rotate YZ", u8"Scale", u8"Mirror", u8"->skip", u8"-----"};
 
-char* loading_program[] = { u8"Loading program", u8"Loading resources...", u8"Please wait. Downloading file: " };
+char* loading_program[] = { u8"Loading program", u8"Loading resources...", u8"Please wait. Downloading file: ", u8"Connecting to the cloud..."};
 
 #define _NO_MOUSE_ "Mouse not installed !!!!!\n"
 

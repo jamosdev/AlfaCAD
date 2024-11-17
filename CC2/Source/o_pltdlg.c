@@ -519,6 +519,7 @@ static TDIALOG ploter_dlg =
 	35, &buttons,
 	0,NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

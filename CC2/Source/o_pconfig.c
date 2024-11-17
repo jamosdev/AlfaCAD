@@ -147,6 +147,7 @@ static TDIALOG Config_profil={ 10,1, WIDTH_WORLD-40,HEIGHT_WORLD-3,COLOR_NULL,CO
 			nof_but,&pdBut,
 			0, NULL,
 			0,NULL,
+            0,NULL, //Sliders
 			NULL,
 	        NULL,
 	        0,
