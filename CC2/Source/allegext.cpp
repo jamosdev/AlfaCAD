@@ -245,6 +245,8 @@ static AWIdnd dnd;
 	int TestRedraw(void);
 	int testCall(int val);
 
+    extern void show__if_DEMO_RECORDING(int newicon);
+
     extern void utf8Upper(char* text);
     extern void change_bs2s(T_Fstring thestring);
     extern BOOL Get_Private_Profile_Strings_Cloud(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring));
@@ -326,6 +328,7 @@ static AWIdnd dnd;
 	extern int now_is_dialog;
 	extern int Get_Global_Menu_Flags(void);
 	extern BOOL BIGCURSOR;
+    extern BOOL BAR_POINTER;
 
 	extern int lineC(long x1, long y1, long x2, long y2);
 	extern int DRAWING_NUMBER;
@@ -1657,6 +1660,7 @@ void GrMouseGetKeys(GrMouseEvent *event, int PozX, int PozY)
             if (((tvtimestamp1.tv_sec-tvtimestamp.tv_sec)*1e6 + (tvtimestamp1.tv_usec-tvtimestamp.tv_usec))>500000)
             {
                 tvtimestamp.tv_sec=0;
+                show__if_DEMO_RECORDING(819);
                 int ret = Expand_flex();
                 event->flags = 0;
                 return;
@@ -1805,6 +1809,7 @@ typedef enum
 	Dtp_autopanorama,
 	Dtp_dynamic_menu,
 	Dtp_desktop_cursor,
+    Dtp_menu_cursor,
     Dtp_desktop_instruction,
 } Dtp_types;
 
@@ -1849,6 +1854,11 @@ static BOOL add_desktop(FILE *stru)
 				key_name, BIGCURSOR, comment))
 				return FALSE;
 			break;
+        case Dtp_menu_cursor:
+                if (EOF == fprintf(stru, "%s=%d\t\t%s\n",
+                                   key_name, BAR_POINTER, comment))
+                    return FALSE;
+                break;
         case Dtp_desktop_instruction:
                 if (EOF == fprintf(stru, "%s=%d\t\t%s\n",
                        key_name, desktop_instruction, comment))
@@ -1866,6 +1876,11 @@ static BOOL add_desktop(FILE *stru)
 void save_dialog_cursor(void)
 {
 	Add_Private_Profile_Group((T_Fstring)IC_DESKTOP, add_desktop);
+}
+
+void save_menu_cursor(void)
+{
+    Add_Private_Profile_Group((T_Fstring)IC_DESKTOP, add_desktop);
 }
 
 void save_desktop_instruction(void)
@@ -3245,7 +3260,6 @@ void set_resized_window_GFX(DRIVER_STRUCT *drv, int dx, int dy)
     XCloseDisplay(display);
 */
 #endif
-
 
 
    h_increase=dx;

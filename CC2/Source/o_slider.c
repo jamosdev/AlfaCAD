@@ -27,7 +27,6 @@ extern double X,Y;
 extern const KOLORY kolory;
 extern void komunikat_str_short(char *st, BOOL stay);
 
-
 int gui_border_dark, gui_border_light;
 
 /* dotted_rect:
@@ -437,7 +436,7 @@ SLIDER the_dialog[] =
    { NULL,                  0,   0,    0,    0,   0,  0,    0,      0,       0,   0,    NULL, NULL, NULL  }
 };
 
-int slider(void)
+static int slider(void)
 {
    /* set up colors */
 

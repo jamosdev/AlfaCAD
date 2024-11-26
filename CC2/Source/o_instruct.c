@@ -61,6 +61,7 @@
 #define DXShiftOr3 49
 #define DXShiftOr4 24
 #define DXShiftOr5 33
+#define DXShiftOr6 17
 
 #define ID_OK             1
 #define ID_STAY         2
@@ -106,14 +107,14 @@ static LABEL lab[]={
 
 {Xp1 + DXShiftOr1, Yp1 + 8, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 {Xp1 + DXShiftOr1, Yp1 + 22, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
-{Xp1 + DXShiftOr1, Yp1 + 36, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
+{Xp1 + DXShiftOr6, Yp1 + 36, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
+{Xp1 + DXShiftOr2, Yp1 + 36, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 {Xp1 + DXShiftOr5, Yp1 + 50, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 {Xp1 + DXShiftOr2, Yp1 + 50, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 {Xp1 + DXShiftOr3, Yp1 + 64, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 {Xp1 + DXShiftOr1, Yp1 + 78, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 
 {Xp1 + DXShiftOr1, Yp1 + 106, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
-
 
 {Xp1 + DXShiftOr4, Yp1 + 148, 0, 0, COLOR_NULL ,COLOR_NULL,instruct_txt[17]},
 };
@@ -145,8 +146,11 @@ static IMAGE images_i [] =
 { Xp1+68, Yp1 + 18, 32, 32, 148, ""},
 
  { Xp1+5, Yp1 + 32, 32, 32, 141, ""},  //Freeing the mouse
- { Xp1+68, Yp1 + 32, 32, 32, 128, ""},
- { Xp1+84, Yp1 + 32, 32, 32, 151, ""},
+ { Xp1+37, Yp1 + 32, 32, 32, 128, ""},
+ { Xp1+53, Yp1 + 32, 32, 32, 151, ""},
+
+ { Xp1+82, Yp1 + 32, 32, 32, 148, ""},  //mouse buttons
+ { Xp1+92, Yp1 + 32, 32, 32, 206, ""},
 
  { Xp1+5, Yp1 + 46, 64, 32, 143, ""},   //Auxiliary menu
  { Xp1+53, Yp1 + 46, 32, 32, 151, ""},
@@ -194,10 +198,10 @@ static TDIALOG instruct_dlg=
 	XpBox1, YpBox1, DXBox1+10, DYBox1+10,COLOR_NULL,COLOR_NULL,COLOR_NULL, COLOR_NULL, 0,  0,0, //XpBox1+(DXBox1/2),YpBox1+(DYBox1/2),
 	instruction,
 	0, NULL, //&line_d_l,
-	26, (LABEL(*)[])&lab,
+	27, (LABEL(*)[])&lab,
 	1, (GROUP_BOX(*)[])&gr_box,
 	0, NULL, //&edit,
-	36, (IMAGE(*)[])&images_i,
+	38, (IMAGE(*)[])&images_i,
 	2, (BUTTON(*)[])&buttons,
 	0, NULL,
 	0,NULL,

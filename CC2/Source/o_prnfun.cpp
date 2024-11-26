@@ -1562,8 +1562,10 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
     double xmin_;
    double xmax_, ymin_, ymax_;
   Print_Rect window_to_print;
+  int x1, y1, x2, y2;
 
   double max_x_clip1;
+  int max_left, max_bottom;
 
   max_x_clip = 0;
   max_x_clip_sheet = 0;
@@ -1807,14 +1809,43 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
                     allegro_prn_bmp->w, allegro_prn_bmp->h);
       clear_matrix(FALSE);
 
+      max_left=jednostki_to_prn_x(xmax-xmin, ymax-ymin) + matrix_head.left_margin;
+      if (max_x_clip<max_left) max_left=max_x_clip;
+      max_bottom=jednostki_to_prn_y(xmax-xmin, ymin);
+      if (max_y_clip<max_bottom) max_bottom=max_y_clip;
+
 	  if (ptrs__prn_ini_date->prn_type != PRN_PDF) {
           if ((ptrs__prn_ini_date->print_window == TRUE) || (ptrs__prn_ini_date->print_sheet == TRUE))
               set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip_sheet, min_y_clip_sheet,
                             max_x_clip_sheet, max_y_clip_sheet);
           else
-              set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip, min_y_clip, max_x_clip, max_y_clip);
+              set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip, min_y_clip, max_left /*max_x_clip*/, max_bottom /*max_y_clip*/);
       }
-	  clear_matrix(TRUE);
+	  //clear_matrix(TRUE);
+      get_clip_rect(allegro_prn_bmp, &x1, &y1, &x2, &y2);
+      int b_color24;
+#ifdef LINUX
+      if (ptrs__prn_ini_date->background) {
+          int b_color;
+          int tmpR, tmpG, tmpB, tmpA;
+          b_color = get_palette_color(kolory.paper);
+          tmpB = b_color & 0xFF;
+          b_color >>= 8;
+          tmpG = b_color & 0xFF;
+          b_color >>= 8;
+          tmpR = b_color & 0xFF;
+          b_color >>= 8;
+          tmpA = b_color & 0xFF; /* dwColor >>= 8; */
+
+          b_color24 = ((tmpB & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpR & 0xff);
+      }
+      else b_color24=makecol(255, 255, 255);
+#else
+          if (ptrs__prn_ini_date->background) b_color24=get_palette_color(kolory.paper);
+          else b_color24=makecol(255, 255, 255);
+#endif
+
+      rectfill(allegro_prn_bmp, x1, y1, x2, y2, b_color24);
 	  
   }
  
@@ -3392,7 +3423,7 @@ static void clear_matrix (BOOL set_background)
 	  }
 	  else
 	  {
-
+#ifdef LINUX
           int b_color;
           int b_color24;
           int tmpR,tmpG,tmpB,tmpA;
@@ -3403,14 +3434,23 @@ static void clear_matrix (BOOL set_background)
           tmpA = b_color & 0xFF; /* dwColor >>= 8; */
 
           b_color24= ((tmpB & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpR & 0xff);
+
+          if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, b_color24);
+#else
+          if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, get_palette_color(kolory.paper));
+#endif
+          else clear_to_color(allegro_prn_bmp, makecol(255, 255, 255));
+
+
+          /*
           r = _dac_normal[b_color24][0] << 2;
           g = _dac_normal[b_color24][1] << 2;
           b = _dac_normal[b_color24][2] << 2;
 
-          b_color24=GetColorAC(kolory.paper);  //opcja
-          r = _dac_normal[b_color24][0] << 2;
-          g = _dac_normal[b_color24][1] << 2;
-          b = _dac_normal[b_color24][2] << 2;
+          //b_color24=GetColorAC(kolory.paper);  //opcja
+          //r = _dac_normal[b_color24][0] << 2;
+          //g = _dac_normal[b_color24][1] << 2;
+          //b = _dac_normal[b_color24][2] << 2;
 
           if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray))  //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
           {
@@ -3435,6 +3475,7 @@ static void clear_matrix (BOOL set_background)
           if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, b_color24);
 
 		  else clear_to_color(allegro_prn_bmp, makecol(255, 255, 255));
+           */
 	  }
 #else
 
@@ -5451,7 +5492,7 @@ static BOOL finish_BMP(int BMP_width, int height_to_fill)
 	char *row_ptr;
 	long bytes_width;
     int bkg_color;
-    unsigned char r,g,b;
+    unsigned char r,g,b,a;
     byte_ intensity;
     float intensity_tab[4] = { 0.2, 1.0, 0.8, 0.6 };
 
@@ -5459,22 +5500,43 @@ static BOOL finish_BMP(int BMP_width, int height_to_fill)
 	if (NULL == (row_ptr = (char *) malloc(bytes_width))) return 0;
 
 
-    if (ptrs__prn_ini_date->background) bkg_color=GetColorAC(kolory.paper);
-            else  bkg_color=0xffffff;
+    //if (ptrs__prn_ini_date->background) bkg_color=GetColorAC(kolory.paper);
+    //        else  bkg_color=GetColorAC(15); //0xffffff;
 
-    r = _dac_normal[bkg_color][0] << 2;
-    g = _dac_normal[bkg_color][1] << 2;
-    b = _dac_normal[bkg_color][2] << 2;
+    ////if (ptrs__prn_ini_date->background) bkg_color=get_palette_color(kolory.paper);
+    ////else  
+		bkg_color=0xffffff;
 
-    if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray)) //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
-    {
-        intensity = 0.2989 * r + 0.5870 * g + 0.1140 * b;
+    //r = _dac_normal[bkg_color][0] << 2;
+    //g = _dac_normal[bkg_color][1] << 2;
+    //b = _dac_normal[bkg_color][2] << 2;
 
-        if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
+	
+#ifdef LINUX
+    r = bkg_color & 0xFF; bkg_color >>= 8;
+#else
+	b = bkg_color & 0xFF; bkg_color >>= 8;
+#endif
 
-        r=g=b=intensity;
+    g = bkg_color & 0xFF; bkg_color >>= 8;
 
-    }
+#ifdef LINUX
+    b = bkg_color & 0xFF; bkg_color >>= 8;
+#else
+	r = bkg_color & 0xFF; bkg_color >>= 8;
+#endif
+
+    a = bkg_color & 0xFF;
+
+    ////if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray)) //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
+    ////{
+    ////    intensity = 0.2989 * r + 0.5870 * g + 0.1140 * b;
+
+    ////    if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
+
+    ////    r=g=b=intensity;
+
+    ////}
 
     for (i = 0; i < (bytes_width); i+=3)
     {
@@ -5636,7 +5698,7 @@ static BOOL draw_matrix_to_file_WINDOWS(void)
 				}
 				else
 				{
-					if ((key2R != 255) && (key2G != 255) && (key2B != 255))
+					if ((key2R != 255) || (key2G != 255) || (key2B != 255))
 					{
 						if (ptrs__prn_ini_date->reflection)
 							PutPixelWinRGB(start_j, finish_j, hdc_height - (i + vertical_i), key2R, key2G, key2B);  //nie jest to kolor bialy
@@ -5657,7 +5719,7 @@ static BOOL draw_matrix_to_file_WINDOWS(void)
 			
 			if (runcount > 0)
 			{
-				if ((keyR != 255) && (keyG != 255) && (keyB != 255))
+				if ((keyR != 255) || (keyG != 255) || (keyB != 255))
 				{
 					if (ptrs__prn_ini_date->reflection)
 					    PutPixelWinRGB(start_j, finish_j, hdc_height - (i + vertical_i), keyR, keyG, keyB);  //nie jest to kolor bialy

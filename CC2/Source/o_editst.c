@@ -89,6 +89,8 @@ extern void set_cursor_edit(void);
 
 BOOL editing_text = FALSE;
 
+static int mouse_x_=0, mouse_y_=0;
+
 
 #define MIDDLE_BUTTON 2
 #define BS 8
@@ -274,7 +276,8 @@ static void put_add_char (int x0, int y0, int fpos, int len, int width, int widt
 {
   int x1, x2;
 
-  my_scare_mouse();
+
+  show_mouse(NULL);
 
   if (expand)
   {
@@ -320,7 +323,8 @@ static void put_add_char (int x0, int y0, int fpos, int len, int width, int widt
     setfillstyle_(SOLID_FILL,kolory.paperk);
 	bar(x1, y0 - y_4_, x2, y0 + ED_INF_HEIGHT - y_3_);  //y_3
   }
-  my_unscare_mouse();
+
+  show_mouse(screen);
 }
 
 
@@ -644,6 +648,22 @@ int findfpostopxl(/*const unsigned*/ char *s, int max_pxl)
 }
 
 
+void my_show_mouse(BITMAP* sc)
+{
+	if (sc == NULL)
+	{
+		show_mouse(NULL);
+		mouse_x_ = mouse_x;
+		mouse_y_ = mouse_y;
+		position_mouse(0, 0);
+	}
+	else
+	{
+		position_mouse(mouse_x_, mouse_y_);
+		show_mouse(sc);
+	}
+}
+
 int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit, int y_4_, int y_3_)
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
 /* Allows the user to edit a string with only certain characters allowed -
@@ -668,7 +688,10 @@ int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL 
 	int width;
     int width_pxl_a;
     BOOL ret;
-	int posm_x;  
+	int posm_x;
+    unsigned char back_s[MaxMultitextLen];
+    int x1, y1, x2, y2;
+	//int mouse_x_, mouse_y_;
 
     _free_mouse();
     set_cursor_edit();
@@ -751,6 +774,10 @@ if (last_edit==TRUE)
    if (fwlen < (width)) m_len = (len - fpos);
    else m_len = (width);
 
+#ifndef LINUX 
+   my_show_mouse(NULL);
+#endif
+
 	outtext_r_e(x0, y0, m_len, &s[fpos], TRUE, y_4_);
 	pos_len_pxl = TTF_text_len_pos(&s[fpos], m_len);
 
@@ -760,6 +787,10 @@ if (last_edit==TRUE)
   
   x = x0 + len_ttf;
   cursorT_On (x, y, insert);
+
+#ifndef LINUX 
+  my_show_mouse(screen);
+#endif
   
   c = getukey();
 
@@ -776,8 +807,12 @@ if (last_edit==TRUE)
   }
 
   if (c == F2) c = ESC ;
+#ifndef LINUX 
+  my_show_mouse(NULL);
+#endif
   cursorT_Off (x, y, insert);
-  if((c == BS) || (c == ENTER) || (c == F11) || (c == F10) || (c == F9) || (c == ESC) || (c == SHTAB) || (c == HOMEKEY) ||
+
+      if((c == BS) || (c == ENTER) || (c == F11) || (c == F10) || (c == F9) || (c == ESC) || (c == SHTAB) || (c == HOMEKEY) ||
      (c == ENDKEY) || (c == LEFTKEY) || (c == INSKEY) || (c == INSKEY1) || (c == RIGHTKEY) ||
      (c == MIDDLE_BUTTON) || (c == DOWNKEY)  || (c == COPYCLIP)  || (c == MOUSEENTER))
    {
@@ -788,15 +823,21 @@ if (last_edit==TRUE)
 	 pos_len_pxl = TTF_text_len_pos(&s[fpos], m_len);
 	 
      if (b_add == TRUE) put_add_char (x0, y0, fpos, len, width, width0, width_w, fwlen, width_pxl_a, pos_len_pxl, expand, y_4_, y_3_);
-  
+
    }
   else
   {
 	 setfillstyle_(SOLID_FILL,kolory.paperk);
-	 len_ttf = TTF_text_len_pos(s+fpos, len- fpos);
+	 len_ttf = TTF_text_len_pos(&s[fpos], len - fpos);
 	
 	 x = x0 + len_ttf;
+
+
 	 bar(x0-1,y0-2,x,y0+ED_INF_HEIGHT - y_3);
+
+
+     strcpy(back_s, s);
+
 	 strcpy (s,"");
      len = fpos = pos = lpos_cur = 0;
 
@@ -807,25 +848,38 @@ if (last_edit==TRUE)
 	  pos_len_pxl = TTF_text_len_pos(&s[fpos], m_len);
 	 
      if (b_add == TRUE) put_add_char (x0, y0, fpos, len, width, width0, width_w, fwlen, width_pxl_a, pos_len_pxl, expand, y_4_, y_3_);
+
   }
+#ifndef LINUX 
+	  my_show_mouse(screen);
+#endif
  }
   else
    {
 	if (fwlen < (width - 1)) m_len = (len - fpos);
 	else m_len = (width - 1);
-
+#ifndef LINUX 
+	my_show_mouse(NULL);
+#endif
 	 outtext_r_e(x0, y0, m_len, &s[fpos], FALSE, y_4_);
 	 pos_len_pxl = TTF_text_len_pos(&s[fpos], m_len);
      
       if (b_add == TRUE) put_add_char (x0, y0, fpos, len, width, width0, width_w, fwlen, width_pxl_a, pos_len_pxl, expand, y_4_, y_3_);
-     
-	
+
 	 len_ttf = TTF_text_len_pos(&s[fpos], pos-fpos);
      
 	 x = x0 + len_ttf;
      cursorT_On (x, y, insert);
 
+#ifndef LINUX  
+	 my_show_mouse(screen);
+#endif
+
      c = getukey();
+
+#ifndef LINUX 
+	 my_show_mouse(NULL);
+#endif
 
 	 if ((c > 127) && (c < 2048))
 	 {
@@ -841,6 +895,9 @@ if (last_edit==TRUE)
 
      if (c == F2) c = ESC ;
      cursorT_Off (x, y, insert);
+#ifndef LINUX  
+	 my_show_mouse(screen);
+#endif
    }
 do
 {
@@ -848,15 +905,35 @@ do
 	switch (c)
 	{
 	case PGDNKEY:
-		if (TRUE == Get_Str_From_List(s, pos, maxlength, x0, y0 - (y0 * 0.25)))
+        get_clip_rect(screen,&x1, &y1, &x2, &y2);
+        set_clip_rect(screen, 0,0, getmaxx(), getmaxy());
+		if (TRUE == Get_Str_From_List(s, pos, maxlength, x0, y0))
 		{
 			setfillstyle_(SOLID_FILL, kolory.paperk);
-			len_ttf = TTF_text_len_pos(s + fpos, len - fpos);
+			len_ttf = TTF_text_len_pos(&s[fpos], len - fpos);
 	
 			x = x0 + len_ttf;
+#ifndef LINUX 
+			my_show_mouse(NULL);
+#endif
 			bar(x0 - 1, y0 - 2, x, y0 + ED_INF_HEIGHT - y_3);
+#ifndef LINUX 
+			my_show_mouse(screen);
+#endif
+
+            _free_mouse();
+            set_cursor_edit();
+            set_clip_rect(screen,x1, y1, x2, y2);
 			goto aa;
 		}
+        else
+        {
+            strcpy(s, back_s);
+            _free_mouse();
+            set_cursor_edit();
+            set_clip_rect(screen,x1, y1, x2, y2);
+            goto aa;
+        }
 		break;
 	case PASTECLIP:
 		if (TRUE == Get_Str_From_Clip(s, pos, maxlength, x0, y0 - (y0 * 0.25)))
@@ -865,7 +942,7 @@ do
 		}
 		break;
 	case COPYCLIP:
-		Put_Str_To_Clip(s); // , pos, maxlength);
+		Put_Str_To_Clip(s);
 		break;
 	case HOMEKEY:
 		pos = 0;
@@ -962,8 +1039,18 @@ do
 	default:
 
         if (((legal[0] == 0) || (strchr(legal, c) != NULL)) &&
-            (c >= ' ') && (wlen < maxlength))
+            (c >= ' ') && ((wlen < maxlength) || ((wlen == maxlength) && (last_edit == TRUE))))
 		{
+            
+			if (last_edit == TRUE)
+			{
+				show_mouse(NULL);
+				setfillstyle_(SOLID_FILL, kolory.paperk);
+				bar(x0 - 1, y0 - 2, x, y0 + ED_INF_HEIGHT - y_3);
+				show_mouse(screen);
+			}
+			
+				
 			if (insert)
 			{
 				if (c <= 256)

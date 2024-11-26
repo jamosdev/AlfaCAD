@@ -87,7 +87,8 @@ BOOL preview_blocked = FALSE;
 #pragma pack (1)
 T_PTR_Prn_Config ptrs_config ;
 T_PTR_Prn_Ini_Date ptrs_ini_date;
-char sz_file [MAXPATH] ;
+static char sz_file [MAXPATH] ;
+char *prn_file;
 char background_name[32];
 
 double x01,y01,x02,y02,dx,dy,dx1,dy1;
@@ -191,7 +192,9 @@ extern T_Prototype  s__prot;
 
 extern int TRANSLUCENCY;
 extern BOOL BIGCURSOR;
+extern BOOL BAR_POINTER;
 extern void set_dialog_cursor(BOOL bigsmall);
+extern void set_menu_cursor(BOOL bar_pointer);
 extern void free_mem_hatch_def_param(void);
 extern void Free_winvar(void);
 extern void find_font_face(char *Font_File);
@@ -1933,11 +1936,13 @@ char *icon_mirror_block_p;
 
  BITMAP* icon_mouse1b;
  BITMAP* icon_mouse2b;
+ BITMAP* icon_mouse1b2b;
  BITMAP* icon_mouse3b;
  BITMAP* icon_mouseRb;
 
  char* icon_mouse1b_p;
  char* icon_mouse2b_p;
+ char* icon_mouse1b2b_p;
  char* icon_mouse3b_p;
  char* icon_mouseRb_p;
 
@@ -2268,6 +2273,13 @@ char *icon_inertia_d48_p;
 BITMAP *icon_dynamics_run;
 char *icon_dynamics_run_p;
 
+BITMAP *icon_menustyle;
+char *icon_menustyle_p;
+BITMAP *icon_cursorstyle;
+char *icon_cursorstyle_p;
+BITMAP *icon_barstyle;
+char *icon_barstyle_p;
+
 
 
         BITMAP *dump_bitmap[MAX_NUMBER_OF_WINDOWS] = { NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
@@ -2337,7 +2349,7 @@ static POLE pmCzcionkaEkran[]={
 TMENU mCzcionkaEkran={36,18,18,13,20,7,0,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmCzcionkaEkran,NULL,NULL};
 
 
-TMENU mOpcje = {10, 0, 0, 42, 1, 3, ICONS | TADD, CMNU, CMBR, CMTX, 0, 0, 0, 0,0,(POLE(*)[]) &pmOpcje, NULL, NULL};
+TMENU mOpcje = {11, 0, 0, 42, 1, 3, ICONS | TADD, CMNU, CMBR, CMTX, 0, 0, 0, 0,0,(POLE(*)[]) &pmOpcje, NULL, NULL};
 
 
 BOOL get_close_button_pressed(void)
@@ -2787,10 +2799,18 @@ return_to_dialog:
    if (kk)
    {
 #ifndef LINUX
-       prn_width_paper = GetPrintPageWidth();
-       prn_height_paper = GetPrintPageHeight();
-	   ptrs_ini_date->width_paper = prn_width_paper;
-	   ptrs_ini_date->height_paper = prn_height_paper;
+	   if (ptrs_ini_date->prn_type == PRN_WINDOWS)
+	   {
+		   prn_width_paper = GetPrintPageWidth();
+		   prn_height_paper = GetPrintPageHeight();
+		   ptrs_ini_date->width_paper = prn_width_paper;
+		   ptrs_ini_date->height_paper = prn_height_paper;
+	   }
+	   else
+	   {
+		   prn_width_paper = ptrs_ini_date->width_paper;
+		   prn_height_paper = ptrs_ini_date->height_paper;
+	   }
 #else
        prn_width_paper = ptrs_ini_date->width_paper;
        prn_height_paper = ptrs_ini_date->height_paper;
@@ -3363,7 +3383,7 @@ error_print:
 void PltOut (void)
 //--------------------------
 {
-  char sz_file [MAXPATH] ;
+  char sz_file_pl [MAXPATH] ;
   char com_no [10];
   BOOL b_to_file, b_to_com ;
   int port_num ;
@@ -3389,13 +3409,13 @@ void PltOut (void)
 
   if (strlen(plt_file0)==0)
   {
-   strcpy (sz_file, zbior_danych) ;
-   File_New_Ext (sz_file, ".plt") ;
+   strcpy (sz_file_pl, zbior_danych) ;
+   File_New_Ext (sz_file_pl, ".plt") ;
   }
-  else strcpy (sz_file, plt_file0);
+  else strcpy (sz_file_pl, plt_file0);
 
 
-  if (FALSE == Plt_Draw_Param (sz_file, &ptrs_config, &ptrs_ini_date ))
+  if (FALSE == Plt_Draw_Param (sz_file_pl, &ptrs_config, &ptrs_ini_date ))
   {
 
 	normalize_text=normalize_text_back;
@@ -3405,26 +3425,26 @@ void PltOut (void)
   b_to_com = FALSE;
   port_num = 1 ;
   strcpy(plt_file0,"");
-  if (strnicmp (sz_file, "LPT", 3) == 0)
+  if (strnicmp (sz_file_pl, "LPT", 3) == 0)
   {
-    if (sscanf (&sz_file [3] , "%d", &port_num) == 1  && (port_num > 0))
+    if (sscanf (&sz_file_pl [3] , "%d", &port_num) == 1  && (port_num > 0))
     {
       b_to_file = FALSE ;
-      strcpy(plt_file0,sz_file);
+      strcpy(plt_file0,sz_file_pl);
     }
   }
   else  /*porty szeregowe*/
    {
-   if (strnicmp (sz_file, "COM", 3) == 0)
+   if (strnicmp (sz_file_pl, "COM", 3) == 0)
     {
       b_to_file = TRUE ;
       b_to_com = TRUE ;
-      strcpy(com_no,sz_file);
+      strcpy(com_no,sz_file_pl);
       strcpy(plt_file0,com_no);
-      strcpy(sz_file, "COM_PLT.TMP");
+      strcpy(sz_file_pl, "COM_PLT.TMP");
     }
    }
-  if (FALSE == Ini_Output_Device (sz_file, b_to_file, port_num, 0))
+  if (FALSE == Ini_Output_Device (sz_file_pl, b_to_file, port_num, 0))
   {
     ErrList (8) ;
 
@@ -5194,31 +5214,31 @@ void out_file_name (void)
 /*---------------------*/
 {
  char *str;
- char sz_file [MAXPATH] ;
+ static char sz_file_out [MAXPATH] ;
  char str_utf8[MAXPATH];
  char *adres1;
 
  if (strlen(zbior_danych)!=0)
  {
-  strcpy(sz_file,zbior_danych);
-  str = strrchr(sz_file, '/' /*'\\'*/);
+  strcpy(sz_file_out,zbior_danych);
+  str = strrchr(sz_file_out, '/' /*'\\'*/);
   if (strlen(zbior_danych_2)>0)
    {
-    strcat(sz_file," + ");
+    strcat(sz_file_out," + ");
     adres1 = strrchr(zbior_danych_2, '/' /*'\\'*/);
     if (adres1 == NULL)
      {
-      strcpy(sz_file,zbior_danych_2);
+      strcpy(sz_file_out,zbior_danych_2);
      }
       else
        {
         adres1++;
-        strcat(sz_file,adres1);
+        strcat(sz_file_out,adres1);
        }
    }
   if (str == NULL)
   {
-    str = sz_file;
+    str = sz_file_out;
   }
   else
   {
@@ -5231,8 +5251,8 @@ void out_file_name (void)
  }
  else
  {
-	 strcpy(sz_file,"");
-	 komunikat0_str (9, sz_file) ;
+	 strcpy(sz_file_out,"");
+	 komunikat0_str (9, sz_file_out) ;
      my_set_window_title(ALF_TITLE);
  }
 }
@@ -5546,8 +5566,8 @@ int Expand_flex()
         }
         save_window_dim(curr_x0, curr_y0, curr_h, curr_v);
 
-		if (curr_h1 < MIN_H) curr_h1 = MIN_H;
-		if (curr_v1 < MIN_V) curr_v1 = MIN_V;
+		if ((curr_h1 > 0) && (curr_h1 < MIN_H)) curr_h1 = MIN_H;
+		if ((curr_v1 > 0) && (curr_v1 < MIN_V)) curr_v1 = MIN_V;
 #ifdef LINUX
         expand_dim(curr_x01, curr_y01, curr_h1, curr_v1);
 #else
@@ -5629,6 +5649,19 @@ void DialogCursorB(void)
 {
 	if (BIGCURSOR) return;
 	set_dialog_cursor(TRUE);
+}
+
+
+void MenuCursorB(void)
+{
+    if (!BAR_POINTER) return;
+    set_menu_cursor(FALSE);
+}
+
+void MenuCursorP(void)
+{
+    if (BAR_POINTER) return;
+    set_menu_cursor(TRUE);
 }
 
 
@@ -5849,11 +5882,11 @@ static  void auto_pan_off(void)
 
 static void (*COMNDO[])(void)=
 {
-  Konfig, nooop, Wsp_Autopan, nooop, nooop, Open_Backgrounds, nooop, nooop, Save_Last_Window_Settings, nooop, Expand_hor, Expand_ver, Expand_diag, Expand_flex0, Expand_last,
+  Konfig, nooop, Wsp_Autopan, nooop, nooop, Open_Backgrounds, nooop, nooop, nooop, Save_Last_Window_Settings, nooop, Expand_hor, Expand_ver, Expand_diag, Expand_flex0, Expand_last,
   Translucency,Translucency,Translucency,Translucency,Translucency,Translucency,Translucency,Translucency, DialogCursorS, DialogCursorB,
   DemoModeOn, DemoModeOff,
   nooop, wysokosc_znaku_TTF, width_factor_TTF,
-  auto_pan_on, auto_pan_off,DesktopFontTTF,DesktopFontOTF,
+  auto_pan_on, auto_pan_off, MenuCursorB, MenuCursorP, DesktopFontTTF,DesktopFontOTF,
 } ;
 
 void uaktualnij_pola_file (void)
@@ -5938,8 +5971,12 @@ void Opcje(void)
   else strcpy(sk, smallcursor);
   menu_par_new((*mOpcje.pola)[6].txt, sk);
 
-  if (DEMO_RECORDING == TRUE) menu_par_new((*mOpcje.pola)[6].txt, _YES__);
-  else menu_par_new((*mOpcje.pola)[7].txt, _NO__);
+  if (!BAR_POINTER) strcpy(sk, barstyle);
+  else strcpy(sk, cursorstyle);
+  menu_par_new((*mOpcje.pola)[7].txt, sk);
+
+  if (DEMO_RECORDING == TRUE) menu_par_new((*mOpcje.pola)[8].txt, _YES__);
+  else menu_par_new((*mOpcje.pola)[8].txt, _NO__);
 
   sprintf(sk, "%d", HEIGHT);
   menu_par_new((*mCzcionkaEkranTTF.pola)[1].txt, sk);

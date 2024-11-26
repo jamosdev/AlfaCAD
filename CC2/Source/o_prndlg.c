@@ -246,7 +246,7 @@ static T_Prn_Ini_Date   prn_ini_date=
    0
 };
 
-static char *prn_file ;
+extern char *prn_file;
 
 static BOOL     add_value (FILE *) ;
 static BOOL     get_config_prn (void) ;
@@ -836,6 +836,9 @@ void Preview(int box, int x01, int y01, int x02, int y02, int x00, int y00)
     double X_max_, Y_max_;
 
 
+	show_mouse(NULL);
+
+
     X_max_ = (prn_ini_date.xk-prn_ini_date.xp);
     Y_max_ = (prn_ini_date.yk-prn_ini_date.yp);
 
@@ -1228,6 +1231,8 @@ void Preview(int box, int x01, int y01, int x02, int y02, int x00, int y00)
 		setcolor(DARKGRAY);
 		LINE(x1, y2, x2, y1);
 	}
+
+	show_mouse(screen);
 
 	return;
 }

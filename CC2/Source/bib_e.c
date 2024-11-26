@@ -148,6 +148,7 @@ typedef unsigned int GrColor;
 #define DEFAULT_SPRITE_H   16
 
 BOOL BIGCURSOR = FALSE;
+extern BOOL BAR_POINTER;
 
 BOOL enforce_redraw = FALSE;
 
@@ -416,6 +417,7 @@ extern int my_poll_keyboard(void);
 extern void Save_View_Preview(void);
 extern BOOL get_config_sectors(void);
 extern void save_dialog_cursor(void);
+extern void save_menu_cursor(void);
 extern void convert_and_deposit_bitmap(BITMAP *PREVIEW, int x1, int y1, int x2, int y2, char *drawing_file, int client_number);
 extern void reset_special_background(char *file_pcx);
 extern BITMAP* load_memory_pcx(AL_CONST void* buffer, PALETTE* pal);
@@ -12627,6 +12629,12 @@ void set_dialog_cursor(BOOL bigsmall)
 	save_dialog_cursor();
 }
 
+void set_menu_cursor(BOOL bar_pointer)
+{
+    BAR_POINTER = bar_pointer;
+    save_menu_cursor();
+}
+
 void DoneBuffMacro(void)
 {
     if (bufor_makra != NULL) free(bufor_makra);
@@ -12634,16 +12642,16 @@ void DoneBuffMacro(void)
 
 void my_scare_mouse() 
 {
-    //show_mouse(NULL);
+    show_mouse(NULL);
     //select_mouse_cursor(MOUSE_CURSOR_NONE);
-    scare_mouse();
+    //scare_mouse();
 }
 
 void my_unscare_mouse()
 {
-    //show_mouse(screen);
+    show_mouse(screen);
     //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
-    unscare_mouse();
+    //unscare_mouse();
 }
 
 void set_cursor_pointer(void)

@@ -33,6 +33,8 @@ extern int utf82unicode(unsigned char *utf8text, unsigned char *unicodetext);
 extern void unicode2win(char *unicodetext, char *wintext, int count);
 extern int32_t valid_utf8 (const uint8_t * input, int32_t input_length);
 extern void decodingwin(char *text);
+extern float jednostkiX0_(long pixels);
+extern float jednostkiY0_(long pixels);
 
 
 static POLE *pmList_String ;
@@ -151,7 +153,8 @@ BOOL Add_String_To_List (char *ptr_string)
 static BOOL check_mem_list (void)
 /*------------------------------*/
 {
-  long l_free, l_size ;
+    unsigned long_long l_free;
+    unsigned int l_size;
   BOOL b_ret ;
 
   b_ret = FALSE ;
@@ -241,6 +244,7 @@ BOOL Get_Str_From_List (char *ptrsz_buf,
   BOOL b_ret ;
   char sz_tmp [MaxTextLen] ;
   char *ptrsz_tmp ;
+  double X__, Y__;
 
   if (NULL == s_string_list.ptrsz_list || s_string_list.string_no == 0)
   {
@@ -252,8 +256,14 @@ BOOL Get_Str_From_List (char *ptrsz_buf,
   }
   set_list_string () ;
   b_ret = FALSE ;
-  mList_String.xpcz = xpcz / (8 * SKALA) ;
-  mList_String.ypcz = 2 + ypcz / (8 * SKALA) ;
+  //mList_String.xpcz = xpcz / (8 * SKALA) ;
+  //mList_String.ypcz = 2 + ypcz / (8 * SKALA) ;
+    mList_String.xpcz = xpcz;
+    mList_String.ypcz = ypcz;
+    X__=X;
+    Y__=Y;
+    X=jednostkiX0_(xpcz);
+    Y=jednostkiY0_(ypcz);
   if ((n = Simple_Menu_Proc (&mList_String) - 1) >= 0)
   {
     b_ret = TRUE ;
@@ -265,6 +275,8 @@ BOOL Get_Str_From_List (char *ptrsz_buf,
     strncat (ptrsz_buf, sz_tmp, i_buflen - i_poz - i_len) ;
     ptrsz_buf [i_buflen - 1] = '\0' ;
   }
+    X=X__;
+    Y=Y__;
   free_mem_list () ;  
   return b_ret ;
 }

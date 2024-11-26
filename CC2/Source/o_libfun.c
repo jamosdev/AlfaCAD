@@ -109,6 +109,7 @@ extern void Set_Dist_Free_mouse(int distx, int disty);
 extern void Set_Mouse_Speed(float m_speed);
 extern void getcolor_RGB(int *red, int *green, int *blue, int color);
 extern int cursor_color0;
+extern BOOL BAR_POINTER;
 
 int check_dim_line(LINIA *L) {
 //checking if line is dimensioning line
@@ -1240,7 +1241,8 @@ int Get_Svga_Mode (void)
 }
 
 
-void change_bs2s(T_Fstring thestring)
+//void change_bs2s(T_Fstring thestring)
+void change_bs2s(char *thestring)
 { int i;
 #ifndef LINUX
 	for (i=0; i<strlen(thestring); i++)
@@ -1577,6 +1579,15 @@ static BOOL get_desktop(T_Fstring key_name, T_Fstring ret_string)
                         ((val_int == 0) || (val_int == 1)))
                     {
                         BIGCURSOR = val_int;
+                    }
+                }
+            else
+                if (stricmp(key_name, IC_MENU_STYLE) == 0)
+                {
+                    if ((sscanf(ret_string, "%d", &val_int) == 1) &&
+                        ((val_int == 0) || (val_int == 1)))
+                    {
+                        BAR_POINTER = val_int;
                     }
                 }
             else

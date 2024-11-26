@@ -1813,11 +1813,13 @@ extern char* icon_spline_points_end_p;
 
 extern BITMAP* icon_mouse1b;
 extern BITMAP* icon_mouse2b;
+extern BITMAP* icon_mouse1b2b;
 extern BITMAP* icon_mouse3b;
 extern BITMAP* icon_mouseRb;
 
 extern char* icon_mouse1b_p;
 extern char* icon_mouse2b_p;
+extern char* icon_mouse1b2b_p;
 extern char* icon_mouse3b_p;
 extern char* icon_mouseRb_p;
 
@@ -2143,6 +2145,13 @@ extern char *icon_inertia_d48_p;
 
 extern BITMAP *icon_dynamics_run;
 extern char *icon_dynamics_run_p;
+
+extern BITMAP *icon_menustyle;
+extern char *icon_menustyle_p;
+extern BITMAP *icon_cursorstyle;
+extern char *icon_cursorstyle_p;
+extern BITMAP *icon_barstyle;
+extern char *icon_barstyle_p;
 
 extern BITMAP *icon_yes_dmem;
 extern BITMAP *icon_no_dmem;
@@ -4838,6 +4847,7 @@ if (child==0)
       {&icon_spline_points_end,"spline_points_end",&icon_spline_points_end_p },
       {&icon_mouse1b,"mouse1b",&icon_mouse1b_p },
       {&icon_mouse2b,"mouse2b",&icon_mouse2b_p },
+      {&icon_mouse1b2b,"mouse1b2b",&icon_mouse1b2b_p },
       {&icon_mouse3b,"mouse3b",&icon_mouse3b_p },
       {&icon_mouseRb,"mouseRb",&icon_mouseRb_p },
       {&icon_education,"education",&icon_education_p },
@@ -4976,6 +4986,9 @@ if (child==0)
       {&icon_vibrations_d48,"vibrations_d48",&icon_vibrations_d48_p },
       {&icon_inertia_d48,"inertia_d48",&icon_inertia_d48_p },
       {&icon_dynamics_run,"dynamics_run",&icon_dynamics_run_p },
+      {&icon_menustyle,"menustyle",&icon_menustyle_p },
+      {&icon_cursorstyle,"cursorstyle",&icon_cursorstyle_p },
+      {&icon_barstyle,"barstyle",&icon_barstyle_p },
   };
 
     int bitmaps_size = sizeof(bitmap_load) / sizeof(bitmap_load[0]);
@@ -5068,6 +5081,9 @@ for (int i = 0; i < bitmaps_size; i++)
   dialog_cursor(0);
   lock_mouse();
    */
+
+  _free_mouse();
+  lock_mouse();
 
   //MAIN LOOP
 

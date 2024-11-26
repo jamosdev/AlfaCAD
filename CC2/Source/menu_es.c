@@ -501,7 +501,7 @@ static POLE pmTTF_OTF[] = {
    {u8"fuentes OpenType",'O',704,NULL},
 };
 
-static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,5,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
+static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,7,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
 
 static POLE pmCzcionkaEkranTTF[] = {
    {u8"Tipo de fuente  \0", 'T',111,&mTTF_OTF},
@@ -509,7 +509,7 @@ static POLE pmCzcionkaEkranTTF[] = {
    {u8"Factor de anchura \0 \0", 'F',230,NULL},
 };
 
-TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,27,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
+TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,28,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
 
 static POLE pmWindow[] = {
    {u8"expandir Horizontalmente",'H',467,NULL},
@@ -519,7 +519,7 @@ static POLE pmWindow[] = {
    {u8"restaurar Último",'U',471,NULL},
 };
 
-static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,10,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
+static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,11,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
 
 
 static POLE pmDialogCursor[] = {
@@ -527,10 +527,20 @@ static POLE pmDialogCursor[] = {
    {u8"Grande",'G',592,NULL},
 };
 
-static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,23,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
-
 #define smallcursor u8"Pequeño"
 #define bigcursor u8"Grande"
+
+static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,24,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
+
+static POLE pmMenuCursor[] = {
+   {u8"Barra",'B',821,NULL},
+   {u8"Cursor",'C',822,NULL},
+};
+
+static TMENU mMenuCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,33,0,0,0,(POLE(*)[]) &pmMenuCursor,NULL,NULL };  //22
+
+#define barstyle u8"Barra"
+#define cursorstyle u8"Cursor"
 
 static POLE pmTranslucency[] = {
    {u8"100%",'0',546,NULL},
@@ -544,12 +554,12 @@ static POLE pmTranslucency[] = {
 };
 
 
-static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,15,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
+static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,16,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
 
 
-static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,25,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
+static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
 
-static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,30,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
+static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,31,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
 
 POLE pmOpcje[] = {
 	{u8"configuración del Tablero de dibujo\0",'T',109,NULL},
@@ -560,6 +570,7 @@ POLE pmOpcje[] = {
 	//{u8"fuente de Escritorio\0 ",'E',111,NULL},
 	{u8"fondo de Escritorio\0 ",'E',527,NULL},
 	{u8"Cursor de diálogo\0 ",'C',590,&mDialogCursor},
+    {u8"estilo de Menú\0",'M',820,&mMenuCursor},
 	{u8"modo de Demostración educativo\0 No\0",'D',661,&mDemoSelect},
 	{u8"Guardar configuración de ventana\0",'G',530,NULL},
 	{u8"configuración de Ventana\0",'V',478,&mWindow},
@@ -1560,11 +1571,12 @@ char *object_txt[]={u8"Imagen",u8"Línea",u8"Texto",u8"Arco",u8"Círculo",u8"Dis
 
 static char* desktop_data_param[] =
 {
-   "Fondo de pantalla",
-   "Panorama",
-   "Menú dinámico",
-   "Cursor de escritorio",
-   "Instrucción",
+   (char*)u8"Fondo de pantalla",
+   (char*)u8"Panorama",
+   (char*)u8"Menú dinámico",
+   (char*)u8"Cursor de escritorio",
+   (char*)u8"Estilo de menú",
+   (char*)u8"Instrucción",
 };
 
 static int no_desktop_data_param = sizeof(desktop_data_param) / sizeof(desktop_data_param[0]);
@@ -1573,9 +1585,10 @@ static char* desktop_data_param_comment[] =
 {
 	";",
 	//";Screen saver delay in min or 0 (off)",
-	";factor de panoramización automática de escritorio",
+	(char*)u8";factor de panoramización automática de escritorio",
 	";",
-	"; pequeño 0, grande 1",
+	(char*)u8"; pequeño 0, grande 1",
+    (char*)u8"; barra 0, puntero 1",
     "; mostrando instrucciones breves sobre el inicio",
 };
 
@@ -2873,8 +2886,9 @@ POLE pmHelp[] = {
 	 {u8"Editar valores numéricos",' ',363,NULL},
 	 {u8"Aumentar el tamaño del puntero",' ',361,NULL},
 	 {u8"Reducir el tamaño del puntero",' ',360,NULL},
-	 {u8"Libera el mouse / atrapa el mouse",' ',386,NULL},
-	 {u8"Libera el mouse / atrapa el mouse",24,353,NULL},
+	 {u8"Libera el mouse",' ',386,NULL},
+	 {u8"Libera el mouse",24,353,NULL},
+     {u8"Libera el mouse (mantenga presionado el derecho 0,5 s)",819 + _1920_, 658,NULL},
 	 {u8"Cambiar el tamaño y la posición de la ventana",25,353,NULL},
 	 {u8"Detener la grabación de macros",28,353,NULL},
 	 {u8"Ortogonalidad",565 + _1920_,353,NULL},

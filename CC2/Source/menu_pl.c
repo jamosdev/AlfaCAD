@@ -500,7 +500,7 @@ static POLE pmTTF_OTF[] = {
    {u8"czcionki OpenType",'O',704,NULL},
 };
 
-static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,5,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
+static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,7,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
 
 static POLE pmCzcionkaEkranTTF[] = {
    {u8"Czcionka\0\0 ",'C', 111,&mTTF_OTF},
@@ -508,7 +508,7 @@ static POLE pmCzcionkaEkranTTF[] = {
    {u8"Szerokość wsp.\0\0 ",'S',230,NULL},      //25
 };
 
-TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,27,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
+TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,28,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
 
 static POLE pmWindow[] = {
    {u8"rozszerz Horyzontalnie",'H',467,NULL},
@@ -518,7 +518,7 @@ static POLE pmWindow[] = {
    {u8"przywróć Poprzednie",'P',471,NULL},
 };
 
-static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,10,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
+static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,11,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
 
 
 static POLE pmDialogCursor[] = {
@@ -526,10 +526,20 @@ static POLE pmDialogCursor[] = {
    {u8"Duży",'D',592,NULL},
 };
 
-static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,23,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
-
 #define smallcursor u8"Mały"
 #define bigcursor u8"Duży"
+
+static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,24,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
+
+static POLE pmMenuCursor[] = {
+   {u8"Ramka",'R',821,NULL},
+   {u8"Kursor",'K',822,NULL},
+};
+
+static TMENU mMenuCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,33,0,0,0,(POLE(*)[]) &pmMenuCursor,NULL,NULL };  //22
+
+#define barstyle u8"Ramka"
+#define cursorstyle u8"Kursor"
 
 static POLE pmTranslucency[] = {
    {u8"100%",'0',546,NULL},
@@ -542,11 +552,11 @@ static POLE pmTranslucency[] = {
    {u8"30%",'3',539,NULL},
 };
 
-static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,15,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
+static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,16,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
 
-static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,25,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
+static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
 
-static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,30,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
+static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,31,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
 
 POLE pmOpcje[] = {
 	{u8"konfiguracja kolorów Pulpitu\0",'P',109,NULL},
@@ -557,6 +567,7 @@ POLE pmOpcje[] = {
 	//{u8"Czcionka pulpitu \0 ",'C',111,&mCzcionkaEkran},
 	{u8"Tło pulpitu \0 ",'T',527,NULL},
 	{u8"Kursor w oknach dialogowych \0",'K',590,&mDialogCursor},
+    {u8"styl Menu\0",'M',820,&mMenuCursor},
 	{u8"Edukacyjny tryb demonstracyjny \0 N\0",'E',661,&mDemoSelect},
 	{u8"Zapisz ustawienie okna \0",'Z',530,NULL},
 	{u8"ustawienie Okna \0",'O',478,&mWindow},
@@ -1570,6 +1581,7 @@ static char* desktop_data_param[] =
   "Panorama",
   "Dynamiczne menu",
   "Kursor",
+  "Styl menu",
   "Instrukcja",
 };
 
@@ -1581,8 +1593,9 @@ static char* desktop_data_param_comment[] =
 	//";min or 0 (off)",
 	";faktor autopanoramy",
 	";",
-	"; mały 0, duży 1",
-    "; wyświetlanie krótkiej instrukcji na starcie",
+	(char*)u8"; mały 0, duży 1",
+    (char*)u8"; ramka 0, wskaźnik 1",
+    (char*)u8"; wyświetlanie krótkiej instrukcji na starcie",
 };
 
 
@@ -2878,8 +2891,9 @@ POLE pmHelp[] = {
 	 {u8"Edycja wartości numerycznych",' ',363,NULL},
 	 {u8"Zwiększ rozmiar celownika",' ',361,NULL},
 	 {u8"Pomniejsz rozmiar celownika",' ',360,NULL},
-	 {u8"Uwolnij myszkę / złap myszkę",' ',386,NULL},
-	 {u8"Uwolnij myszkę / złap myszkę",24,353,NULL},
+	 {u8"Uwolnij myszkę",' ',386,NULL},
+	 {u8"Uwolnij myszkę",24,353,NULL},
+     {u8"Uwolnij myszkę (przytrzymaj prawy przycisk przez 0,5 s)",819 + _1920_, 658,NULL},
 	 {u8"Zmień rozmiar i położenie okna",25,353,NULL},
 	 {u8"Zakończ zapis makra",28,353,NULL},
 	 {u8"Ortogonalność",565 + _1920_,353,NULL},

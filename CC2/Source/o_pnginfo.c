@@ -42,8 +42,10 @@
 static B_PCX *adr_pcx;
 static unsigned int dlugosc_bloku_pcx;
 
+#ifdef LINUX
 extern long filelength(int f);
-extern void InitBufPCX(unsigned long_long buffer_size);
+#endif;
+extern void InitBufPCX(unsigned long buffer_size);
 extern void FreeBufPCX(void);
 
 #ifndef LINUX

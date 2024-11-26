@@ -1,6 +1,7 @@
 #define IC_KOREKTA_BLOKOW u8"ПРАВИЛЬНІ БЛОКИ"
 #define IC_DYNAMIC_MENU u8"ДИНАМІЧНЕ МЕНЮ" //"Динамічне меню"
 #define IC_DIALOG_CURSOR u8"КУРСОР" //"Курсор на робочому столі"
+#define IC_MENU_STYLE u8"СТИЛЬ МЕНЮ"
 #define IC_INSTRUCTION "ІНСТРУКЦІЯ"
 #define IC_PAN u8"ПАНОРАМА" //"Панорама"
 #define IC_TOOLS u8"TOOLS"
