@@ -114,6 +114,7 @@ BOOL deleted_TTF = FALSE;
 BOOL deleted_pattern = FALSE;
 BOOL bitmap_exist=FALSE;
 BOOL bitmap_png_exist = FALSE;
+BOOL bitmap_vector_exist = FALSE;
 BOOL bitmap_pattern_exist = FALSE;
 BOOL solid_translucent_exist = FALSE;
 BOOL bitmap_on_front_exist = FALSE;

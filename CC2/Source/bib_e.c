@@ -5764,6 +5764,8 @@ void Draw_Vector (AVECTOR *ptrs_vector, int mode, int kolor, int redraw_obj)
 
 #define arrowf 1.0
 
+    if ((ptrs_vector->style > 9) && (ptrs_vector->style < 16) && (kolor)) bitmap_vector_exist = TRUE;
+
     if (redraw_obj)
     {
         if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0)) {
@@ -9484,6 +9486,7 @@ static void rysuj_obiekty(void)
   int grubosc;
   BOOL bitmap_exist_o;
   BOOL bitmap_png_exist_o;
+  BOOL bitmap_vector_exist_o;
   BOOL bitmap_pattern_exist_o;
   char *end_block;
   int n_changes;
@@ -9552,9 +9555,11 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
 
  bitmap_exist_o=bitmap_exist || bitmap_pattern_exist || bitmap_pattern_exist;
  bitmap_png_exist_o = bitmap_png_exist || bitmap_exist || bitmap_pattern_exist;
+ bitmap_vector_exist_o = bitmap_vector_exist;
  bitmap_pattern_exist_o = bitmap_pattern_exist || bitmap_exist || bitmap_png_exist;
  bitmap_exist = FALSE;
  bitmap_png_exist = FALSE;
+ bitmap_vector_exist = FALSE;
  bitmap_pattern_exist = FALSE;
  solid_translucent_exist = FALSE;
  bitmap_on_front_exist = FALSE;
@@ -9594,6 +9599,7 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
 						b_break = TRUE;
 						bitmap_exist = bitmap_exist_o;
 						bitmap_png_exist = bitmap_png_exist_o;
+                        bitmap_vector_exist = bitmap_vector_exist_o;
 						bitmap_pattern_exist = bitmap_pattern_exist_o;
 					}
 
@@ -10341,30 +10347,31 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
                licznik_obiektow++;
                ptrs_vector = (AVECTOR*)nag ;
 
-               if (!(ptrs_vector->widoczny = Vector_Selected (ptrs_vector))) break ;
-               if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0))
+               if ((ptrs_vector->atrybut != Ausuniety) &&
+                   (ptrs_vector->atrybut != Abad))
                {
-                   if ((ptrs_vector->atrybut == Ablok) ||
-                       ((dragging_quad_move == TRUE) && (ptrs_vector->atrybut == Aoblok)))
-                   {
-                       setcolor(kolory.blok);
-                       setfillstyle_(SOLID_FILL,kolory.blok);
-                   }
-                   else
-                   {
-                       SetColorAC(ptrs_vector->kolor);
-                       setfillstyle_(SOLID_FILL, GetColorAC(ptrs_vector->kolor));
-                   }
-               }
-               else
-               {
-                   SetColorAC(8);
-                   setfillstyle_(SOLID_FILL, GetColorAC(8));
-               }
+                   if ((ptrs_vector->style > 9) && (ptrs_vector->style < 16)) bitmap_vector_exist = TRUE;
 
-               select_color_type(ptrs_vector);
+                   if (!(ptrs_vector->widoczny = Vector_Selected(ptrs_vector))) break;
 
-               Draw_Vector (ptrs_vector, mode, 1, 1) ;
+                   if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0)) {
+                       if ((ptrs_vector->atrybut == Ablok) ||
+                           ((dragging_quad_move == TRUE) && (ptrs_vector->atrybut == Aoblok))) {
+                           setcolor(kolory.blok);
+                           setfillstyle_(SOLID_FILL, kolory.blok);
+                       } else {
+                           SetColorAC(ptrs_vector->kolor);
+                           setfillstyle_(SOLID_FILL, GetColorAC(ptrs_vector->kolor));
+                       }
+                   } else {
+                       SetColorAC(8);
+                       setfillstyle_(SOLID_FILL, GetColorAC(8));
+                   }
+
+                   select_color_type(ptrs_vector);
+
+                   Draw_Vector(ptrs_vector, mode, 1, 1);
+               }
 
                break;
     case Opcx :
@@ -11197,7 +11204,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW1, 0/*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, y2 - y1, x2 - x1);////
 			 if (gray) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /* ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /* ddy*/, gray_sat /*0*/);  //0 gives black, and it was changed to get always gray background if any
 			 rotate_sprite(PREVIEW3, PREVIEW1, 0, 0, itofix(64));  //0,0
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11217,7 +11224,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, x2 - x1, y2 - y1); ////
 			 if (gray) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat /*0*/);
 			 rotate_sprite(PREVIEW2, PREVIEW, 0, 0, itofix(128));
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11231,7 +11238,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW1, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, y2 - y1, x2 - x1); ////
 			 if (gray) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat /*0*/);
 			 rotate_sprite(PREVIEW3, PREVIEW1, 0, 0, itofix(192));
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11245,7 +11252,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, ddx, ddy);
 			 if (gray) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat /*0*/);
 			
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
 			 {

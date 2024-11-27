@@ -4111,6 +4111,7 @@ int Restore_params(void)
 	Change = Drawing_Params[DRAWING_NUMBER].Change;
 	bitmap_exist = Drawing_Params[DRAWING_NUMBER].bitmap_exist;
 	bitmap_png_exist = Drawing_Params[DRAWING_NUMBER].bitmap_png_exist;
+    bitmap_vector_exist = Drawing_Params[DRAWING_NUMBER].bitmap_vector_exist;
 	bitmap_pattern_exist = Drawing_Params[DRAWING_NUMBER].bitmap_pattern_exist;
 	solid_translucent_exist = Drawing_Params[DRAWING_NUMBER].solid_translucent_exist;
 	bitmap_on_front_exist = Drawing_Params[DRAWING_NUMBER].bitmap_on_front_exist;
@@ -4256,6 +4257,7 @@ int Deposit_params(void)
 	Drawing_Params[DRAWING_NUMBER].Change = Change;
 	Drawing_Params[DRAWING_NUMBER].bitmap_exist= bitmap_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_png_exist = bitmap_png_exist;
+    Drawing_Params[DRAWING_NUMBER].bitmap_vector_exist = bitmap_vector_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_pattern_exist = bitmap_pattern_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_on_front_exist = bitmap_on_front_exist;
 

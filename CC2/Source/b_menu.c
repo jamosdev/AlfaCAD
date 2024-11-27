@@ -1988,6 +1988,9 @@ static void  pusk(int x,int y)
     int i,x1,y1,x2,y2,size,xr,yd, poz1, dx, dy, x11, x12, y11, y12;
     int mouse_xx, mouse_yy;
     TMENU *tmenu;
+
+    if (menu_level==0)  return;  //just for a case
+
     tmenu=menu_address[menu_level-1];
 
     size=tmenu->maxw?tmenu->maxw:tmenu->max;

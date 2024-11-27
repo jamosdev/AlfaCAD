@@ -865,7 +865,34 @@ int Print2Page(int WINPRINT_DEF)
 	strncpy(temp1, szPName, 32)	;
 	temp2=(LPCTSTR)temp1;
 	winspooltext="WINSPOOL";
+
 	hDC = CreateDC(winspooltext, temp2, NULL, NULL);
+
+    /*
+    CString printerName = szPName;
+    DWORD infoSize, numBytes;
+    HANDLE hPrinter;
+    bool ok = OpenPrinter(printerName.GetBuffer(), (LPHANDLE)&hPrinter, 0);
+    if (!ok)
+    {
+        printf("QWin32PrintEngine::initialize: OpenPrinter failed\n");
+    }
+    GetPrinter(hPrinter, 2, NULL, 0, &infoSize);
+    HGLOBAL hMem;
+    hMem = GlobalAlloc(GHND, infoSize);
+    PRINTER_INFO_2* pInfo;
+    pInfo = (PRINTER_INFO_2*)GlobalLock(hMem);
+    ok = GetPrinter(hPrinter, 2, (LPBYTE)pInfo, infoSize, &numBytes);
+    if (!ok)
+    {
+        printf("QWin32PrintEngine::initialize: GetPrinter failed\n");
+    }
+    DEVMODE* devMode;
+    devMode = pInfo->pDevMode;
+    HDC hdc = NULL;
+    hdc = CreateDC(NULL, printerName.GetString(), 0, devMode);
+    hDC = hdc;
+    */
 
     cups_printer.printer_name = temp1;
 

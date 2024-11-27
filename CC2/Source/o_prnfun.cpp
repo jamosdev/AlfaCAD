@@ -1565,7 +1565,11 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
   int x1, y1, x2, y2;
 
   double max_x_clip1;
-  int max_left, max_bottom;
+  int max_right, max_bottom;
+
+    byte_ int_intensity;
+    byte_ intensity;
+    float intensity_tab[4] = { 0.2, 1.0, 0.8, 0.6 };
 
   max_x_clip = 0;
   max_x_clip_sheet = 0;
@@ -1809,8 +1813,8 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
                     allegro_prn_bmp->w, allegro_prn_bmp->h);
       clear_matrix(FALSE);
 
-      max_left=jednostki_to_prn_x(xmax-xmin, ymax-ymin) + matrix_head.left_margin;
-      if (max_x_clip<max_left) max_left=max_x_clip;
+      max_right=jednostki_to_prn_x(xmax-xmin, ymax-ymin) + matrix_head.left_margin;
+      if (max_x_clip<max_right) max_right=max_x_clip;
       max_bottom=jednostki_to_prn_y(xmax-xmin, ymin);
       if (max_y_clip<max_bottom) max_bottom=max_y_clip;
 
@@ -1819,7 +1823,7 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
               set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip_sheet, min_y_clip_sheet,
                             max_x_clip_sheet, max_y_clip_sheet);
           else
-              set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip, min_y_clip, max_left /*max_x_clip*/, max_bottom /*max_y_clip*/);
+              set_clip_rect(allegro_prn_bmp, matrix_head.left_margin + left_clip, min_y_clip, max_right /*max_x_clip*/, max_bottom /*max_y_clip*/);
       }
 	  //clear_matrix(TRUE);
       get_clip_rect(allegro_prn_bmp, &x1, &y1, &x2, &y2);
@@ -1829,19 +1833,72 @@ BOOL Draw_Window (double xmin, double ymin, double xmax, double ymax,
           int b_color;
           int tmpR, tmpG, tmpB, tmpA;
           b_color = get_palette_color(kolory.paper);
-          tmpB = b_color & 0xFF;
-          b_color >>= 8;
-          tmpG = b_color & 0xFF;
-          b_color >>= 8;
-          tmpR = b_color & 0xFF;
-          b_color >>= 8;
+          tmpB = b_color & 0xFF; b_color >>= 8;
+          tmpG = b_color & 0xFF; b_color >>= 8;
+          tmpR = b_color & 0xFF; b_color >>= 8;
           tmpA = b_color & 0xFF; /* dwColor >>= 8; */
 
-          b_color24 = ((tmpB & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpR & 0xff);
+          b_color24 = ((tmpR & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpB & 0xff);
+
+          if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray))  //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
+          {
+              intensity = 0.2989 * tmpR + 0.5870 * tmpG + 0.1140 * tmpB;
+
+              if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
+
+              int_intensity = (byte_)intensity;
+              b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+
+          }
+          else if (!(ptrs__prn_ini_date->color_print))
+          {
+              if ((tmpB < 252) && (tmpG < 252) && (tmpB < 252))
+              {
+                  //int_intensity = 0xFF;
+                  //int_intensity = 0;
+                  //b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+                  b_color24=makecol(255, 255, 255);
+              }
+          }
       }
       else b_color24=makecol(255, 255, 255);
 #else
-          if (ptrs__prn_ini_date->background) b_color24=get_palette_color(kolory.paper);
+      if (ptrs__prn_ini_date->background)
+          {
+			  int b_color;
+			  int tmpR, tmpG, tmpB, tmpA;
+
+			  b_color = get_palette_color(kolory.paper);
+
+			  tmpR = b_color & 0xFF; b_color >>= 8;
+			  tmpG = b_color & 0xFF; b_color >>= 8;
+			  tmpB = b_color & 0xFF; b_color >>= 8;
+			  tmpA = b_color & 0xFF; /* dwColor >>= 8; */
+
+			  b_color24 = ((tmpR & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpB & 0xff);
+
+              if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray))  //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
+              {
+				  intensity = 0.2989 * tmpR + 0.5870 * tmpG + 0.1140 * tmpB;
+
+                  if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
+
+                  int_intensity = (byte_)intensity;
+                  b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+
+              }
+              else if (!(ptrs__prn_ini_date->color_print))
+              {
+                  if ((tmpR < 252) && (tmpG < 252) && (tmpB < 252))
+                  {
+                      //int_intensity = 0xFF;
+                      //int_intensity = 0;
+                      //b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+                      b_color24=makecol(255, 255, 255);
+                  }
+              }
+
+          }
           else b_color24=makecol(255, 255, 255);
 #endif
 
@@ -3412,7 +3469,8 @@ static void clear_matrix (BOOL set_background)
     byte_ int_intensity;
     byte_ intensity;
     float intensity_tab[4] = { 0.2, 1.0, 0.8, 0.6 };
-    int r,g,b;
+    //int r,g,b;
+    int b_color24, kolor256;
 
 #ifdef ALLEGRO_PRN_BMP
   if ((ptrs__prn_ini_date->prn_type == PRN_PCX) || (ptrs__prn_ini_date->prn_type == PRN_WINDOWS))
@@ -3424,58 +3482,76 @@ static void clear_matrix (BOOL set_background)
 	  else
 	  {
 #ifdef LINUX
+      if ((set_background) && (ptrs__prn_ini_date->background))
+      {
           int b_color;
-          int b_color24;
-          int tmpR,tmpG,tmpB,tmpA;
+          int tmpR, tmpG, tmpB, tmpA;
           b_color = get_palette_color(kolory.paper);
           tmpB = b_color & 0xFF; b_color >>= 8;
           tmpG = b_color & 0xFF; b_color >>= 8;
           tmpR = b_color & 0xFF; b_color >>= 8;
           tmpA = b_color & 0xFF; /* dwColor >>= 8; */
 
-          b_color24= ((tmpB & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpR & 0xff);
-
-          if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, b_color24);
-#else
-          if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, get_palette_color(kolory.paper));
-#endif
-          else clear_to_color(allegro_prn_bmp, makecol(255, 255, 255));
-
-
-          /*
-          r = _dac_normal[b_color24][0] << 2;
-          g = _dac_normal[b_color24][1] << 2;
-          b = _dac_normal[b_color24][2] << 2;
-
-          //b_color24=GetColorAC(kolory.paper);  //opcja
-          //r = _dac_normal[b_color24][0] << 2;
-          //g = _dac_normal[b_color24][1] << 2;
-          //b = _dac_normal[b_color24][2] << 2;
+          b_color24 = ((tmpB & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpR & 0xff);
 
           if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray))  //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
           {
-              intensity = 0.2989 * r + 0.5870 * g + 0.1140 * b;
+              intensity = 0.2989 * tmpR + 0.5870 * tmpG + 0.1140 * tmpB;
 
               if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
 
-              int_intensity = (byte_)intensity;
+              int_intensity = (byte_) intensity;
               b_color24 = makecol(int_intensity, int_intensity, int_intensity);
 
-          }
-          else if (!(ptrs__prn_ini_date->color_print))
-          {
-              if ((r < 252) && (g < 252) && (b < 252))
-              {
+          } else if (!(ptrs__prn_ini_date->color_print)) {
+              if ((tmpB < 252) && (tmpG < 252) && (tmpB < 252)) {
                   //int_intensity = 0xFF;
-                  int_intensity = 0;
-                  b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+                  //int_intensity = 0;
+                  //b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+                  b_color24 = makecol(255, 255, 255);
               }
           }
+      }
+      else b_color24=makecol(255, 255, 255);
+#else
+          if ((set_background) && (ptrs__prn_ini_date->background))
+          {
+              int b_color;
+              int tmpR, tmpG, tmpB, tmpA;
 
-          if ((set_background) && (ptrs__prn_ini_date->background)) clear_to_color(allegro_prn_bmp, b_color24);
+              b_color = get_palette_color(kolory.paper);
 
-		  else clear_to_color(allegro_prn_bmp, makecol(255, 255, 255));
-           */
+              tmpR = b_color & 0xFF; b_color >>= 8;
+              tmpG = b_color & 0xFF; b_color >>= 8;
+              tmpB = b_color & 0xFF; b_color >>= 8;
+              tmpA = b_color & 0xFF; /* dwColor >>= 8; */
+
+              b_color24 = ((tmpR & 0xff) << 16) + ((tmpG & 0xff) << 8) + (tmpB & 0xff);
+
+              if ((ptrs__prn_ini_date->gray_print) || !(ptrs__prn_ini_date->color_print) || (ptrs__prn_ini_date->PCX_gray))  //|| (ptrs__prn_ini_date->PCX_gray) this is not clear if should be
+              {
+                  intensity = 0.2989 * tmpR + 0.5870 * tmpG + 0.1140 * tmpB;
+
+                  if (intensity < 252) intensity *= intensity_tab[ptrs__prn_ini_date->gray_saturation];
+
+                  int_intensity = (byte_)intensity;
+                  b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+
+              }
+              else if (!(ptrs__prn_ini_date->color_print))
+              {
+                  if ((tmpR < 252) && (tmpG < 252) && (tmpB < 252))
+                  {
+                      //int_intensity = 0xFF;
+                      //int_intensity = 0;
+                      //b_color24 = makecol(int_intensity, int_intensity, int_intensity);
+                      b_color24=makecol(255, 255, 255);
+                  }
+              }
+          }
+          else b_color24=makecol(255, 255, 255);
+#endif
+          clear_to_color(allegro_prn_bmp, b_color24);
 	  }
 #else
 
@@ -7708,7 +7784,7 @@ BOOL Draw_to_Prn_Proc_Exe (char *ptrsz_file,
      memcpy(&ptrs__prn_ini_date_archive,ptrs__prn_ini_date,sizeof(T_Prn_Ini_Date));
 
 	 if (((ptrs__prn_ini_date->color_print == FALSE) || (ptrs__prn_ini_date->gray_print == TRUE)) &&
-		 (!bitmap_png_exist))
+		 (!bitmap_png_exist) && (!bitmap_vector_exist))
 	 {
 		 BITS_PER_DOT = 8;
 		 BYTES_PER_DOT = BITS_PER_DOT / 8;

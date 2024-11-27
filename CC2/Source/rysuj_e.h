@@ -107,6 +107,7 @@ extern BOOL deleted_TTF;
 extern BOOL deleted_pattern;
 extern BOOL bitmap_exist;
 extern BOOL bitmap_png_exist;
+extern BOOL bitmap_vector_exist;
 extern BOOL bitmap_pattern_exist;
 extern BOOL solid_translucent_exist;
 extern BOOL bitmap_on_front_exist;

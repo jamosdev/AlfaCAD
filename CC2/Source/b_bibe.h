@@ -87,6 +87,7 @@ typedef struct DRAWING_PARAMS
 	BOOL Change;
 	BOOL bitmap_exist;
 	BOOL bitmap_png_exist;
+    BOOL bitmap_vector_exist;
 	BOOL bitmap_pattern_exist;
 	BOOL solid_translucent_exist;
 	BOOL bitmap_on_front_exist;

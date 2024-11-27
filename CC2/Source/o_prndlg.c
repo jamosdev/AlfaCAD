@@ -2478,7 +2478,8 @@ static int proc_dlg_prn_ini_date( int n)
 	case BUT_GRAY_3:
 		Check_Radio_Button(&printer_dlg, BUT_GRAY_1, BUT_GRAY_3, n, TRUE);
 		check1 = Get_Check_Button(&printer_dlg, BUT_GRAY_PRINT);
-		if (check1) draw_dlg_prev(&printer_dlg);
+        check2 = Get_Check_Button(&printer_dlg, BUT_BW_PRINT);
+		if ((check1) || (check2)) draw_dlg_prev(&printer_dlg);
 		ret = Dlg_Ret_Val_Continue;
 		break;
 	case LS_PAPER_FORMAT:
