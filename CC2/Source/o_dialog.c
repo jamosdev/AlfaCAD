@@ -63,6 +63,7 @@ static void (*CUR)(int ,int);
 static TMENU *cur_tipsmenu=NULL;
 
 static int xmousex, ymousey;
+static p_point bar_center;
 
 static BOOL block_changed=FALSE;
 static TDIALOG *Dlg=NULL;
@@ -71,8 +72,8 @@ static int x001[4], y001[4], x002[4], y002[4];
 static int dx_mov, dy_mov;
 static int Dlg_xb, Dlg_yb;
 static int Typ=0;
-static int set_listbox_slider;
-static char *listbox_address;
+static int set_listbox_slider=0;
+static char *listbox_address=NULL;
 
 extern int d_myslider_proc(int msg, void *d_, int c);
 
@@ -1391,6 +1392,9 @@ static void baronoff(LISTBOX  * listbox)
       moveto(PozX + pocz_x, PozY + pocz_y);
       MVCUR(0, 0);
   }
+
+    bar_center.x=(x1+x2)/2;
+    bar_center.y=(y1+y2)/2;
    
 }
 
@@ -1805,6 +1809,41 @@ void draw_listbox_slider(SLIDER *slider)
     ret = slider->proc(MSG_DRAW, &Slider_, '\0');
 }
 
+void redraw_listbox_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    gui_mg_color = palette_color[180];
+    gui_bg_color = palette_color[98];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+    slider->d2 = var3 - var1 - (var2 - var1);
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[slider->fg];
+    Slider_.bg = palette_color[slider->bg];
+
+    Slider_.slider = slider;
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+}
+
+
  /*wyswietlenie okna wraz z trescia*/
 static int open_listbox(LISTBOX  * listbox)
 /*---------------------------------------*/
@@ -1898,10 +1937,45 @@ static void  close_listbox(LISTBOX  * listbox)
       {
           destroy_bitmap((BITMAP *) listbox_slider.dp);
           listbox_slider.dp = NULL;
+          set_listbox_slider=0;
       }
   }
 
   if (BAR_POINTER) show_mouse(screen);
+}
+
+static void shift_cursor(LISTBOX  * listbox)
+{  float yd, xr;
+    int x1,y1,x2,y2,w,h;
+    int size;
+    int mouse_x_, mouse_y_;
+    SLIDER *Slider;
+
+    size=listbox->maxw?listbox->maxw:listbox->max;
+
+    x1 = jed_to_piks_x(listbox->x)+pocz_x;
+    x2 = jed_to_piks_x(listbox->x + listbox->dx) /*- 1*/ +pocz_x;
+    y1 = jed_to_piks_y(listbox->y)+pocz_y-2;
+    y2 = jed_to_piks_y(listbox->y + listbox->dy * size) - 1+pocz_y + 2;
+
+    mouse_x_=mouse_x;
+    mouse_y_=mouse_y;
+    if ((mouse_x >= x1) && (mouse_x<= x2))
+    {
+        if ((mouse_y >= y1) && (mouse_y <= y2))
+        {
+            position_mouse(mouse_x_, bar_center.y);
+        }
+    }
+    //if (listbox->max > listbox->maxw)
+    if (set_listbox_slider)
+    {
+        Slider=&listbox_slider;
+        gui_set_screen(screen);
+        setwritemode(COPY_PUT);
+        redraw_listbox_slider(Slider);
+    }
+
 }
 
 
@@ -1924,6 +1998,7 @@ static int  cnext(LISTBOX *listbox)
 		   }
 	 }
    baron(listbox);
+    if (BAR_POINTER) shift_cursor(listbox);
    return 0;
 }
 
@@ -1945,6 +2020,7 @@ static int  cprev(LISTBOX *listbox)
 	   listbox->poz=0;
 	 }
    baron(listbox);
+    if (BAR_POINTER) shift_cursor(listbox);
    return 0;
  }
  
@@ -1971,6 +2047,7 @@ static int  cpgnext(LISTBOX *listbox)
      if(listbox->poz >= listbox->max) listbox->poz=listbox->max?listbox->max-1 : 0;
    }
  baron(listbox);
+ if (BAR_POINTER) shift_cursor(listbox);
  return 0;
 }
 
@@ -2014,6 +2091,7 @@ static int  cpgprev(LISTBOX *listbox)
 	 GrMouseEraseCursor();
    }
  baron(listbox);
+ if (BAR_POINTER) shift_cursor(listbox);
  return 0;
 }
 
@@ -2047,6 +2125,7 @@ static int  cbegin(LISTBOX * listbox)
 	  GrMouseEraseCursor();
     }
   baron(listbox);
+  if (BAR_POINTER) shift_cursor(listbox);
   return 0;
 }
 
@@ -2079,6 +2158,7 @@ static int  cend(LISTBOX * listbox)
 	  GrMouseEraseCursor();
     }
   baron(listbox);
+  if (BAR_POINTER) shift_cursor(listbox);
   return 0;
 }
 

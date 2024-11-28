@@ -61,6 +61,8 @@ static float mouse_speed = 1.0;
 
 static int curr_h, curr_v;
 
+static p_point bar_center;
+
 BOOL altkey = FALSE;
 BOOL altgrkey = FALSE;
 
@@ -125,6 +127,8 @@ extern TMENU mBlok_Imp;
 
 extern int PozX, PozY;
 extern int i__font_nomax;
+
+extern void Move_Mouse (int, int) ;
 
 extern int my_kbhit(void);
 extern int my_getch(void);
@@ -292,7 +296,7 @@ static int menu_init_slider(int *var1, int *var2, int *var3, int *var4);
 
 
 #define MAXMENULEVEL 6
-static  int set_slider[MAXMENULEVEL];
+static  int set_slider[MAXMENULEVEL]={0,0,0,0,0,0};
 SLIDER slider[MAXMENULEVEL]={{d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
                              {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
                              {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
@@ -2753,18 +2757,29 @@ void frame_on(TMENU * menu)
 
 int frame_down(TMENU * menu)
 {
-	int x0, y0, xm, ym, x1, y1, a, b;
-  int nn;
-  int cn;
+	int x0, y0, xm, ym, x1, y1, x2, y2, a, b;
+    int nn;
+    int cn;
+    int mouse_x_, mouse_y_;
+    float yd, xr;
+    int size;
 
     nn = nsteps;
 
+    size=menu->maxw?menu->maxw:menu->max;
+
 	if ((menu->flags&ICONS) && (menu->poz < (menu->max)))
 	{
+        xr = ((menu->flags&NVERT) ? size * 2 : 2);
+        yd=((menu->flags&NVERT)?1:size);
+
 		x1 = (menu->xpcz - 1)*WIDTH /*8*/ * SKALA + GR + 1;
 		x0 = x1;
 		y1 = (menu->ypcz - 1) * 32 + GR + 1 + YP - 1;
 		y0 = y1;
+
+        x2 = x1 + xr * 32 * SKALA + 2 * (GR + 1);
+        y2=  y1+yd*32  +2*GR;
 		
 		if (menu->flags&NVERT)
 		{
@@ -2839,6 +2854,22 @@ int frame_down(TMENU * menu)
 				frame_count = 0;
 				frame_counter = 0;
 				cn=cnext_(menu);
+
+                /*
+                if (BAR_POINTER)
+                {
+                    mouse_x_=mouse_x;
+                    mouse_y_=mouse_y;
+                    if ((mouse_x >= x1) && (mouse_x<= x2))
+                    {
+                        if ((mouse_y >= y1) && (mouse_y <= y2))
+                        {
+                             position_mouse(mouse_x_, (xy.y2-xy.y1)/2);
+                        }
+                    }
+                }
+                 */
+
 				return 1;
 			}
 			
@@ -2968,6 +2999,9 @@ void baronoff_(TMENU  * menu)
         }
     }
     else RECTFILL(x1,y1,x1+a,y1+b);
+
+    bar_center.x=x1+a/2;
+    bar_center.y=y1+b/2;
 
     frame_on(menu);
 }
@@ -4427,55 +4461,92 @@ void draw_menu_slider(SLIDER *slider)
     gui_border_dark = palette_color[8];
     gui_border_light = palette_color[15];
 
-        slider->flags &= ~0x800;
+    slider->flags &= ~0x800;
 
-        int (*SlideFun)(int *, int *, int *, int *);
-        SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
 
-        ret = SlideFun(&var1, &var2, &var3, &var4);
+    ret = SlideFun(&var1, &var2, &var3, &var4);
 
-        //adjusting slider
-        slider->d1 = var3 - (var2 - var1);
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
 
-        int Slider_h = slider->h;
-        double slratio = (double) Slider_h / (double) (var3);
-        int slbody;
-        if (var3 <= var4) slbody = Slider_h;
-        else slbody = (var2 - var1) * slratio;
+    int Slider_h = slider->h;
+    double slratio = (double) Slider_h / (double) (var3);
+    int slbody;
+    if (var3 <= var4) slbody = Slider_h;
+    else slbody = (var2 - var1) * slratio;
 
-        if (slider->dp != NULL) destroy_bitmap((BITMAP *) slider->dp);
+    if (slider->dp != NULL) destroy_bitmap((BITMAP *) slider->dp);
 
-        if (slbody<4) slider->flags |= 0xF0;  //hidden
-        else
-        {
-            slider->flags &= ~0xF0;
-            slbitmap = create_bitmap(slider->w, slbody);
-            slider->d2 = var3 - var1 - (var2 - var1);
+    if (slbody < 4) slider->flags |= 0xF0;  //hidden
+    else
+    {
+        slider->flags &= ~0xF0;
+        slbitmap = create_bitmap(slider->w, slbody);
+        slider->d2 = var3 - var1 - (var2 - var1);
 
-            clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
-            hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
-            vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
-            hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
-            vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
+        clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
+        hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
+        vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
+        hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
+        vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
 
-            hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
-            vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
-            hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
-            vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
+        hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
+        vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
+        hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
+        vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
 
-            slider->dp = slbitmap;
-        }
+        slider->dp = slbitmap;
+    }
 
+    memmove(&Slider_, slider, sizeof(SLIDER));
 
-        memmove(&Slider_, slider, sizeof(SLIDER));
+    Slider_.flags=0;
+    Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+    Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
 
-        Slider_.flags=0;
-        Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
-        Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+    Slider_.slider = slider;
 
-        Slider_.slider = slider;
+    disable_hardware_cursor();
 
-        ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+
+    enable_hardware_cursor();
+}
+
+void redraw_menu_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    gui_mg_color = palette_color[180];
+    gui_bg_color = palette_color[98];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+    slider->d2 = var3 - var1 - (var2 - var1);
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[slider->fg];
+    Slider_.bg = palette_color[slider->bg];
+
+    Slider_.slider = slider;
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
 }
 
  /*wyswietlenie okna wraz z trescia*/
@@ -4513,12 +4584,12 @@ int openwh(TMENU *menu)
 	 y2=y1+yd*HEIGHT * SKALA +2*GR;
  }
 
- set_slider[menu_level]=0;
+ set_slider[menu_level-1]=0;
  if ((BAR_POINTER) && (menu->maxw>0) && (menu->maxw<menu->max))
  {
      if (menu->flags&NVERT) y2+=20;
      else x2+=20;
-     set_slider[menu_level]=1;
+     set_slider[menu_level-1]=1;
  }
 
  if ((menu_back = create_bitmap(x2 - x1 + 1, y2 - y1 + 36)) == NULL) return 0;
@@ -4529,9 +4600,9 @@ getimage(x1,y1-18,x2,y2+18,menu->back);
 if (BAR_POINTER) show_mouse(screen);
 
 draww(menu);
-if (set_slider[menu_level])
+if (set_slider[menu_level-1])
 {
-    Slider=&slider[menu_level];
+    Slider=&slider[menu_level-1];
     if (menu->flags&NVERT)
     {
         Slider->x = x1;
@@ -4726,6 +4797,17 @@ void  openw(TMENU *menu)
 void  closew(TMENU *menu)
 {
   int ret;
+
+  if (set_slider[menu_level-1])
+  {
+      if (slider[menu_level-1].dp!=NULL)
+      {
+          destroy_bitmap(slider[menu_level - 1].dp);
+          slider[menu_level-1].dp=NULL;
+      }
+      set_slider[menu_level-1]=0;
+  }
+
   menu_level--;
 
   if(menu->back)
@@ -5614,7 +5696,12 @@ static int  cnext_min(TMENU *menu)
 
 static int  cnext_min_count(TMENU *menu, int count)
 {
-int i;
+int i, cn;
+
+    if (BAR_POINTER) {
+        cn = cnext_(menu);
+        return 0;
+    }
     for (i = 0; i < abs(count); i++)
 	    if (frame_down(menu)) break;
 	return 0;
@@ -5626,6 +5713,62 @@ static int  cnext(TMENU *menu)
 	int cnm;
 	cnm=cnext_min_count(menu, step*nsteps);
 	return 0;
+}
+
+
+static void shift_cursor(TMENU *menu)
+{  float yd, xr;
+    int x01,y01,x02,y02,w,h;
+    int size;
+    int mouse_x_, mouse_y_;
+    SLIDER *Slider;
+
+    size=menu->maxw?menu->maxw:menu->max;
+    if (menu->flags&ICONS)
+    {
+
+        menu->xdl = (int)(64 * SKALA);
+
+        xr = ((menu->flags&NVERT) ? size * 2 : 2);
+        yd=((menu->flags&NVERT)?1:size);
+        x01=(menu->xpcz-1)*WIDTH /*8*/ * SKALA;
+        y01=(menu->ypcz-1)*32 + YP;
+
+        x02 = x01 + xr * 32 * SKALA + 2 * (GR + 1);
+        y02=y01+yd*32  +2*GR;
+        //b2 = 32 * SKALA/ 3;
+    }
+    else
+    {
+        xr=((menu->flags&NVERT)?size*menu->xdl:menu->xdl);
+        yd=((menu->flags&NVERT)?1:size);
+        x01=(menu->xpcz-1)*WIDTH /*8*/ * SKALA;
+        y01=(menu->ypcz-1)*HEIGHT * SKALA + YP;
+        x02=x01+xr*WIDTH /*8*/ * SKALA  +2*(GR+1);
+        y02=y01+yd*HEIGHT * SKALA  +2*GR;
+        //b2 = HEIGHT * SKALA / 3;
+    }
+
+    mouse_x_=mouse_x;
+    mouse_y_=mouse_y;
+    if ((mouse_x_ >= x01) && (mouse_x_ <= x02))
+    {
+        if ((mouse_y_ >= y01) && (mouse_y_ <= y02))
+        {
+            if (menu->flags&NVERT)
+                position_mouse(bar_center.x, mouse_y_);
+            else position_mouse(mouse_x_, bar_center.y);
+        }
+    }
+    //if (menu->max > menu->maxw)
+    if (set_slider[menu_level-1])
+    {
+        Slider=&slider[menu_level-1];
+        gui_set_screen(screen);
+        setwritemode(COPY_PUT);
+        redraw_menu_slider(Slider);
+    }
+
 }
 
 
@@ -5660,12 +5803,15 @@ static int  cnext_(TMENU *menu)
        menu->foff++ ;
        menu->poz-- ;
 	  frame_off(menu);
+      show_mouse(NULL);
 	  draww_scroll (menu, TRUE) ;
 	  frame_on(menu);
+      show_mouse(screen);
 
      }
    }
    baron (menu) ;
+   if (BAR_POINTER) shift_cursor(menu);
    get_mouse_mickeys(&mickeyx, &mickeyy);
    return 0 ;
 }
@@ -5679,7 +5825,11 @@ static int  cprev_min(TMENU *menu)
 
 static int  cprev_min_count(TMENU *menu, int count)
 {
-	int i;
+	int i, cn;
+    if (BAR_POINTER) {
+        cn = cprev_(menu);
+        return 0;
+    }
 	for (i = 0; i < abs(count); i++)
 		if (frame_up(menu)) break;
 	return 0;
@@ -5717,15 +5867,17 @@ static int  cprev_(TMENU *menu)
 	 menu->foff-- ;
 
 	 menu->poz = 0 ;  /*wykorzystane w draww_scroll*/
+     show_mouse(NULL);
 	 frame_off(menu);
 	 draww_scroll (menu, FALSE) ;
 	 frame_on(menu);
+     show_mouse(screen);
        }
        menu->poz=0;
      }
   }
   baron(menu);
-
+   if (BAR_POINTER) shift_cursor(menu);
   get_mouse_mickeys(&mickeyx, &mickeyy);
 
   return 0;
@@ -5756,6 +5908,7 @@ static int  cpgnext(TMENU *menu)
      if (menu->poz >= menu->max) menu->poz=menu->max?menu->max-1 : 0;
    }
  baron(menu);
+ if (BAR_POINTER) shift_cursor(menu);
  return 0;
 }
 
@@ -5779,6 +5932,7 @@ static int  cpgprev(TMENU *menu)
 	 draww(menu);
    }
  baron(menu);
+ if (BAR_POINTER) shift_cursor(menu);
  return 0;
 }
 
@@ -5798,6 +5952,7 @@ static int  cbegin(TMENU * menu)
       draww(menu);
     }
   baron(menu);
+  if (BAR_POINTER) shift_cursor(menu);
   return 0;
 }
 
@@ -5823,6 +5978,7 @@ static int  cend(TMENU * menu)
       draww(menu);
     }
   baron(menu);
+  if (BAR_POINTER) shift_cursor(menu);
   return 0;
 }
 
@@ -7732,9 +7888,9 @@ int  getcom(TMENU *menu)
 		test_aktmakro();
 		if (opwin || aktmakro != NULL)
 		{
-            if (set_slider[menu_level])
+            if (set_slider[menu_level-1])
             {
-                if (find_menu_slider(menu, &slider[menu_level]))
+                if (find_menu_slider(menu, &slider[menu_level-1]))
                 {
                     zn='\0';
                     n=-1;
