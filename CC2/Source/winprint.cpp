@@ -150,8 +150,6 @@ void Done_CUPS_Printers(void);
 BOOL SetDefaultPrinter_(char* printer_name);
 }
 
-extern int VeryMy_GetOpenFolder(char* f_name, char* sz__current_path_file, char* sz__default_path_file, char* sz__current_mask, char* dlg_name); 
-
 extern int win2unicodefactory(char* wintext, char* unicodetext, int codepage);
 extern void unicode2utf8(char* unicodetext, unsigned char* utf8text);
 
@@ -162,8 +160,10 @@ extern int win2unicode(char *wintext, char *unicodetext);
 
 
 #ifndef LINUX
-static HDC hDC;
+extern int VeryMy_GetOpenFolder(HWND hwnd, char* f_name, char* sz__current_path_file, char* sz__default_path_file, char* sz__current_mask, char* dlg_name);
+static HDC hDC=NULL;
 static LPDEVMODE devmode;
+extern HWND win_get_window_(void);
 #endif
 static BOOL hdc_deleted=TRUE;
 
@@ -683,35 +683,34 @@ int My_GetOpenFolder(char *f_name, char *sz__current_path_file, char *sz__defaul
     char const* folder_name;
     int ret;
     static int curr_h, curr_v;
+    double PozX0, PozY0;
 
     ret=Save_Update_flex(0, &curr_h, &curr_v);
-#ifndef LINUX
-    ret = VeryMy_GetOpenFolder(f_name, sz__current_path_file, sz__default_path_file, sz__current_mask, dlg_name); // , int font_height, int font_width, char *font_name)
-#else
-    double PozX0, PozY0;
 
     get_posXY(&PozX0, &PozY0);
     _free_mouse();
     dialog_cursor(1);
 
+#ifndef LINUX
+    HWND hwnd = win_get_window_();
+    ret = VeryMy_GetOpenFolder(hwnd, f_name, sz__current_path_file, sz__default_path_file, sz__current_mask, dlg_name); // , int font_height, int font_width, char *font_name)
+#else
+
     folder_name = tinyfd_selectFolderDialog(
             dlg_name , /* "" */
             sz__current_path_file ) ; /* "" */
+    if (folder_name!=NULL)
+        strcpy(f_name, folder_name);
+#endif
 
     dialog_cursor(0);
     lock_mouse();
     CUR_ON(PozX0,PozY0);
 
-    if (!folder_name)
-    {
-        ret=Save_Update_flex(1, &curr_h, &curr_v);
-        return 0;
-    }
+    ret = Save_Update_flex(1, &curr_h, &curr_v);
 
-    strcpy(f_name, folder_name);
-#endif
-
-    ret=Save_Update_flex(1, &curr_h, &curr_v);
+    //if (!folder_name) return 0;
+    if (strlen(f_name)==0) return 0;
     return 1;
 }
 
@@ -844,7 +843,7 @@ int Print2Page(int WINPRINT_DEF)
     cups_printer_no = 0;
 
 #ifndef LINUX
-  static char temp1[32+1];
+  static char temp1[64+1];
   CUPS_PRINTERS cups_printer;
   LPCSTR temp2;
   int Error1;
@@ -866,7 +865,10 @@ int Print2Page(int WINPRINT_DEF)
 	temp2=(LPCTSTR)temp1;
 	winspooltext="WINSPOOL";
 
+
 	hDC = CreateDC(winspooltext, temp2, NULL, NULL);
+    ASSERT(hDC);
+    //DWORD err=GetLastError();
 
     /*
     CString printerName = szPName;
@@ -923,6 +925,7 @@ int Print2Page(int WINPRINT_DEF)
 
 	hDC = CreateDC(winspooltext, temp2, NULL, NULL); //devmode1); //NULL);
 	ASSERT(hDC);
+   //DWORD err = GetLastError();
 
  }
 

@@ -148,30 +148,36 @@ extern void set_client_flag(int client_no, unsigned char flag);
 extern int deposit_hbitmap(char *dump_file, int real_x1, int real_y1, int real_x2, int real_y2, char *drawing_file);
 extern int return_active_clients_no(void);
 extern int return_hbitmap(int client, char *dump_file, int *real_x1, int *real_y1, int *real_x2, int *real_y2, char *drawing_file);
-unsigned char get_client_flag(void);
+extern unsigned char get_client_flag(void);
 extern void startup(LPCSTR lpApplicationName, LPSTR lpParams);
 extern int get_rotation_inversion(void);
+
+extern BOOL get_editor_on(void);
 
 static int last_mouse_b = 0;
 static int cur_mouse_b = 0;
 static BOOL global_resized=FALSE;
+static int attr_x=0,attr_y=0;
+static BOOL is_hidden=FALSE;
+int hidden_dy=3000;
 
 #ifdef LINUX
 static Display *main_display;
 static Window main_root_window;
-#endif
-
-#ifdef LINUX
 static int X11_SCREEN_SHIFT=36;
 Display *display00=NULL;
-
 #else
+extern RECT get_editbox_geometry_win(int opt);
+extern HWND get_editor_hWnd(void);
 static int X11_SCREEN_SHIFT = 32;  //standard for Windows
 static int WIN_WINDOW_T_B = 9; //standard window top margin for Windows
 _xdnd_struct *xdnd_buf=NULL;
 #endif
 
 static int curr_w=0, curr_w_=0, curr_h=0, curr_h_=0;
+
+static int x_win_orig_, y_win_orig_, win_width_, win_height_;
+static BOOL is_in=TRUE;
 
 #define DEFAULT_SPRITE_W   16
 #define DEFAULT_SPRITE_H   16
@@ -224,6 +230,13 @@ char alfa_mouse_arrow_data_x[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
    0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+#ifndef LINUX
+HWND win_get_window_(void)
+{
+    return win_get_window();
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -241,11 +254,19 @@ static AWIdnd dnd;
     char *atomtype (Atom x);
 #endif
 
-	int GoRegRedraw(void(*ptr)(void));
+    void Check_ConfigureNotify(void);
+
+    int GoRegRedraw(void(*ptr)(void));
 	int TestRedraw(void);
 	int testCall(int val);
 
-    extern void show__if_DEMO_RECORDING(int newicon);
+    extern int wmctrl (int argc, char **argv);
+    extern int edit_text_flag;
+
+extern void show__if_DEMO_RECORDING(int newicon);
+    extern char _EDIT_TEXT_[];
+    extern void get_editbox_origin(int *x, int *y);
+    extern void get_editbox_origin_line(int *x, int *y);
 
     extern void utf8Upper(char* text);
     extern void change_bs2s(T_Fstring thestring);
@@ -433,6 +454,9 @@ extern char** argv_;
 
     void Set_Screenplay(BITMAP *ctx_bitmap);
 
+#ifndef LINUX
+    int get_monitor_dims(int* ret_left_x, int* ret_right_x, int* ret_top_y, int* ret_bottom_y, int monitor);
+#endif
 
 int	global_mode;
 
@@ -559,6 +583,7 @@ typedef struct
 } SOLID_PATTERN_COPY;
 
 #ifndef LINUX
+
 void init_file_dropped_fill_buf(void)
 {
 	char* ptr;
@@ -2468,8 +2493,177 @@ void reset_if_resized(void)
 
 }
 
+#ifndef LINUX
+struct MonitorRects
+{
+    std::vector<RECT>   rcMonitors;
+
+    static BOOL CALLBACK MonitorEnum(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData)
+    {
+        MonitorRects* pThis = reinterpret_cast<MonitorRects*>(pData);
+        pThis->rcMonitors.push_back(*lprcMonitor);
+        return TRUE;
+    }
+
+    MonitorRects()
+    {
+        EnumDisplayMonitors(0, 0, MonitorEnum, (LPARAM)this);
+    }
+};
+#endif
+
+int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height)
+{
+#ifndef LINUX
+    HWND wnd;
+	GFX_MARGINS* gfx_margins;
+	int ret;
+	int margin_v, e_h=0, e_h1=0;  //e_h=0;
+	HDC hdc;
+	LPCRECT lprcClip;
+	//MONITORENUMPROC lpfnEnum;
+	LPARAM dwData;
+	RECT actualscreen;
+	int w1, h1;
+#else
+    typedef struct tagRECT
+    {
+        LONG    left;
+        LONG    top;
+        LONG    right;
+        LONG    bottom;
+    } RECT;
+#endif
+
+    RECT wndRect;
+    RECT clnRect;
+    int  w,h;
+
+    int ret_ref = 0;
+
+
+    if (GFX_WIN==1)
+    {
+#ifndef LINUX
+        wnd = win_get_window(); //WINDOWS
+
+    GetWindowRect(wnd, &wndRect);  //WINDOWS
+    GetClientRect(wnd, &clnRect);  //WINDOWS
+
+	ret = get_gfx_margins(&gfx_margins);
+	ret_ref = gfx_margins->maximize_flag;
+
+	BOOL found_mon = FALSE;
+	int i;
+	MonitorRects monitors;
+
+	if (gfx_margins->maximize_flag == 2) {
+
+		//check if multiple monitor
+		//int sm_monitors = GetSystemMetrics(SM_CMONITORS);
+
+		//MonitorRects monitors;
+		//printf("%X\n", monitors.rcMonitors.size());
+		for (i = 0; i < monitors.rcMonitors.size(); i++)
+		{
+			if (((wndRect.left + gfx_margins->l_b) >= monitors.rcMonitors[i].left) && ((wndRect.left + gfx_margins->l_b) <= monitors.rcMonitors[i].right) &&
+				((wndRect.top + gfx_margins->t_b) >= monitors.rcMonitors[i].top) && ((wndRect.top + gfx_margins->t_b) <= monitors.rcMonitors[i].bottom))
+			{
+				found_mon = TRUE;
+				if (i > 0) e_h1 = 0; // 1;  //????? check it out !!!
+				break;
+			}
+		}
+
+		margin_v = gfx_margins->t_b; e_h = 1;
+	}
+	else margin_v = 0;
+
+	w = (int)(clnRect.right - clnRect.left);
+	h = (int)(clnRect.bottom - clnRect.top) - margin_v - e_h;
+
+	if (found_mon)
+	{
+		w1 = (int)(monitors.rcMonitors[i].right - monitors.rcMonitors[i].left);
+		h1 = (int)(monitors.rcMonitors[i].bottom - monitors.rcMonitors[i].top) - gfx_margins->t_btb - e_h - e_h1;
+		if (w1 < w)
+			w = w1;
+		if (h1 < h)
+			h = h1;
+	}
+
+
+	*x_win_orig = (int)wndRect.left;
+	*y_win_orig = (int)wndRect.top + margin_v;
+	*win_width = w;  //client
+	*win_height = h;  //client
+
+	X11_SCREEN_SHIFT = (wndRect.bottom - wndRect.top) - (clnRect.bottom - clnRect.top);
+	WIN_WINDOW_T_B = gfx_margins->t_b;
+
+
+	gfx_margins->maximize_flag = 0;
+#else
+
+        Display *display;
+        Window focus, toplevel_parent_of_focus, root_window;
+        XWindowAttributes attr;
+        int revert;
+        int ret;
+
+        display = XOpenDisplay(NULL);
+
+        root_window=DefaultRootWindow(display);
+
+        XRRScreenResources* sr = XRRGetScreenResources(display, root_window);
+        XRRCrtcInfo* ci = XRRGetCrtcInfo(display, sr, sr->crtcs[0]);
+        XRROutputInfo* oi = XRRGetOutputInfo(display, sr, sr->outputs[0]);
+
+        focus=_xwin.window;
+        toplevel_parent_of_focus = get_toplevel_parent(display, focus);
+        ////toplevel_parent_of_focus = get_my_window(display, root_window, Window_Name);
+        ret = XGetWindowAttributes(display,  toplevel_parent_of_focus, &attr);
+
+        wndRect.left=attr.x;
+        wndRect.top=attr.y;
+        wndRect.right=attr.x+attr.width;
+        wndRect.bottom=attr.y+attr.height;
+
+        //TEMPORARAY // TO DO
+        clnRect.left=attr.x;
+        clnRect.top=attr.y;
+        clnRect.right=attr.x+attr.width;
+        clnRect.bottom=attr.y+attr.height;
+
+        XRRFreeOutputInfo(oi);
+        XRRFreeCrtcInfo(ci);
+        XRRFreeScreenResources(sr);
+
+        XCloseDisplay(display);
+
+        w = (int)(clnRect.right - clnRect.left);
+        h = (int)(clnRect.bottom - clnRect.top);
+
+        *x_win_orig = (int)wndRect.left;
+        *y_win_orig = (int)wndRect.top;
+        *win_width = w;  //client
+        *win_height = h;  //client
+
+#endif
+        return ret_ref;
+    }
+    return 0;
+}
+
+
 void lock_mouse_switch_callback(void)
 { int k;
+    int ret;
+
+    //when window is getting focus back
+    //ret= get_window_origin_and_size(&x_win_orig_, &y_win_orig_, &win_width_, &win_height_);
+
+    is_in=TRUE;
 
   return;
 
@@ -2546,8 +2740,10 @@ int return_and_convert_bitmap(int client, char *dump_file, int *x1, int *y1, int
 }
 
 void free_mouse_switch_callback(void)
-{
-
+{  int ret;
+    //when window is loosing focus
+    //ret= get_window_origin_and_size(&x_win_orig_, &y_win_orig_, &win_width_, &win_height_);
+    is_in=FALSE;
    return;
 
   //free_mouse_switch();
@@ -2573,27 +2769,6 @@ void free_mouse_switch_callback(void)
  
 }
 
-#ifndef LINUX
-
-struct MonitorRects
-{
-	std::vector<RECT>   rcMonitors;
-
-	static BOOL CALLBACK MonitorEnum(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData)
-	{
-		MonitorRects* pThis = reinterpret_cast<MonitorRects*>(pData);
-		pThis->rcMonitors.push_back(*lprcMonitor);
-		return TRUE;
-}
-
-	MonitorRects()
-	{
-		EnumDisplayMonitors(0, 0, MonitorEnum, (LPARAM)this);
-	}
-};
-
-#endif
-
 #ifdef LINUX
 void xwin_set_hints(int dx, int dy) {
     _xwin_set_hints(dx, dy);
@@ -2614,149 +2789,407 @@ Window get_allegro_window(void)
 {
     return _xwin.window;
 }
+
+//#define GET_SHADED_STATE   //TO DO
+
+#ifdef GET_SHADED_STATE
+/* window states */
+
+typedef enum {
+    WINDOW_STATE_NONE               = 0,
+    WINDOW_STATE_MODAL              = (1 << 0),
+    WINDOW_STATE_STICKY             = (1 << 1),
+    WINDOW_STATE_MAXIMIZED_VERT     = (1 << 2),
+    WINDOW_STATE_MAXIMIZED_HORZ     = (1 << 3),
+    WINDOW_STATE_MAXIMIZED          = (WINDOW_STATE_MAXIMIZED_VERT | WINDOW_STATE_MAXIMIZED_HORZ),
+    WINDOW_STATE_SHADED             = (1 << 4),
+    WINDOW_STATE_SKIP_TASKBAR       = (1 << 5),
+    WINDOW_STATE_SKIP_PAGER         = (1 << 6),
+    WINDOW_STATE_HIDDEN             = (1 << 7),
+    WINDOW_STATE_FULLSCREEN         = (1 << 8),
+    WINDOW_STATE_ABOVE              = (1 << 9),
+    WINDOW_STATE_BELOW              = (1 << 10),
+    WINDOW_STATE_DEMANDS_ATTENTION  = (1 << 11),
+    WINDOW_STATE_FOCUSED            = (1 << 12),
+    WINDOW_STATE_SIZE               = 13,
+} window_state_t;
+
+static char* WINDOW_STATE_NAMES[] = {
+        "_NET_WM_STATE_MODAL",
+        "_NET_WM_STATE_STICKY",
+        "_NET_WM_STATE_MAXIMIZED_VERT",
+        "_NET_WM_STATE_MAXIMIZED_HORZ",
+        "_NET_WM_STATE_SHADED",
+        "_NET_WM_STATE_SKIP_TASKBAR",
+        "_NET_WM_STATE_SKIP_PAGER",
+        "_NET_WM_STATE_HIDDEN",
+        "_NET_WM_STATE_FULLSCREEN",
+        "_NET_WM_STATE_ABOVE",
+        "_NET_WM_STATE_BELOW",
+        "_NET_WM_STATE_DEMANDS_ATTENTION",
+        "_NET_WM_STATE_FOCUSED"
+};
+
+
+typedef struct {
+
+    Display *dpy;
+    Window id;
+
+    struct {
+        Atom NET_WM_STATE;
+        Atom NET_WM_STATES[WINDOW_STATE_SIZE];
+    } atoms;
+
+} window_t;
+
+int window_is_minimized(Display *display, Window window) {
+
+    Atom wmState = XInternAtom(display, "_NET_WM_STATE", True);
+
+    Atom actual_type;
+    int actual_format;
+    unsigned long i, num_items, bytes_after, num_states=0;
+    Atom* states = NULL;
+    long max_length = 1024;
+    unsigned int flags = 0;
+    unsigned char *properties = NULL;
+
+    window_t win;
+    win.dpy=display;
+    win.id=window;
+
+    int status;
+
+    do {
+        status = XGetWindowProperty(display, window, wmState, 0, max_length, False, AnyPropertyType, &actual_type, &actual_format, &num_items, &bytes_after, &properties);   //XA_ATOM
+        if (status == Success && actual_type == 4 && properties && actual_format == 32 && num_items)  //XA_ATOM
+        {
+            {
+                Atom *atoms = (Atom *) properties;
+                int maximized = 0;
+                int fullscreen = 0;
+
+#define  ALFA_WINDOW_HIDDEN  0x00000008;             //< window is not visible
+#define  ALFA_WINDOW_MINIMIZED  0x00000040;          //< window is minimized
+#define  ALFA_WINDOW_MAXIMIZED  0x00000080;          //< window is maximized
+
+                Atom _NET_WM_STATE_HIDDEN = XInternAtom(display, "_NET_WM_STATE_HIDDEN", True);
+                Atom _NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", True);
+                Atom _NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", True);
+
+                for (i = 0; i < num_items; ++i) {
+                    if (atoms[i] == _NET_WM_STATE_HIDDEN) {
+                        flags |= ALFA_WINDOW_HIDDEN;
+                    } else if (atoms[i] == _NET_WM_STATE_MAXIMIZED_VERT) {
+                        maximized |= 1;
+                    } else if (atoms[i] == _NET_WM_STATE_MAXIMIZED_HORZ) {
+                        maximized |= 2;
+                    }
+                }
+                if (maximized == 3) {
+                    flags |= ALFA_WINDOW_MAXIMIZED;
+                }
+
+            }
+        }
+       } while (bytes_after);
+
+    XFree(properties);
+    return 0;
+
+}
+#endif  //GET_SHADED_STATE
+
 #endif
 
-int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height)
-{   
-#ifndef LINUX
-	HWND wnd;
-	GFX_MARGINS* gfx_margins;
-	int ret;
-	int margin_v, e_h=0, e_h1=0;  //e_h=0;
-	HDC hdc;
-	LPCRECT lprcClip;
-	//MONITORENUMPROC lpfnEnum;
-	LPARAM dwData;
-	RECT actualscreen;
-	int w1, h1;
+void set_attr_x_attr_y(int x, int y)
+{
+    attr_x = x;
+    attr_y = y;
+}
+
+void Check_ConfigureNotify(void)
+{
+    int ret;
+#ifdef LINUX
+
+    ///////////////////////
+    XWindowAttributes attr;
+    Window toplevel_parent_of_focus;
+    char params[128];
+    char params1[128];
+    char params2[128];
+    int e_x, e_y;
+
+    _xwin_type *_xwin_ = &_xwin;
+
+    if (edit_text_flag==1)  //text editor is open and no skip_taskbar
+    {
+
+        sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+        char *args[] = {
+                "wmctrl",
+                (char*)"-r",
+                params1,
+                (char*)"-b",
+                (char*)"add,skip_taskbar",
+                NULL
+        };
+        ret=wmctrl(5, args);
+
+        edit_text_flag=0;
+    }
+
+    toplevel_parent_of_focus = get_toplevel_parent(_xwin.display, _xwin.window);
+    ret = XGetWindowAttributes(_xwin.display,  toplevel_parent_of_focus, &attr);
+
+    if ((attr.x!=attr_x) || (attr.y!=attr_y)) {
+        printf("origin %d %d\n",attr.x-attr_x,attr.y-attr_y);
+
+        get_editbox_origin(&e_x, &e_y);
+
+        //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -e 0,%d,%d,-1,-1", _EDIT_TEXT_, Client_number, attr.x-attr_x, attr.y-attr_y);
+        //SystemSilent("./wmctrl", params);
+
+        sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+        sprintf(params2, "0,%d,%d,-1,-1", attr.x-attr_x, attr.y-attr_y);
+        char *args[] = {
+                "wmctrl",
+                (char*)"-r",
+                params1,
+                (char*)"-e",
+                params2,
+                NULL
+        };
+        ret=wmctrl(5, args);
+        attr_x=attr.x;
+        attr_y=attr.y;
+    }
+
+
+//#ifdef GET_SHADED_STATE
+    //if (window_is_minimized(_xwin.display, toplevel_parent_of_focus))
+        if (_xwin_->state_change_flag==1)
+        { // state is set
+            if (is_hidden==FALSE)
+            {
+                //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -b add,shaded", _EDIT_TEXT_, Client_number,attr.x - attr_x, attr.y - attr_y);
+                //SystemSilent("./wmctrl", params);
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                /*
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,iconify",
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                char *args1[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,below",
+                        NULL
+                };
+                ret=wmctrl(5, args1);
+                 */
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                sprintf(params2, "0,0,%d,-1,-1", hidden_dy);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-e",
+                        params2,
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                is_hidden=TRUE;
+            }
+        }
+        else
+        {
+            if (is_hidden==TRUE)
+            {
+                //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -b add,shaded", _EDIT_TEXT_, Client_number,attr.x - attr_x, attr.y - attr_y);
+                //SystemSilent("./wmctrl", params);
+                /*
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,resize",
+                        NULL
+                };
+                ret=wmctrl(5, args);
+
+                char *args1[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,above",
+                        NULL
+                };
+                ret=wmctrl(5, args1);
+                 */
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                sprintf(params2, "0,0,%d,-1,-1", -hidden_dy);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-e",
+                        params2,
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                is_hidden=FALSE;
+            }
+        }
+//#endif
+
+
+    ///////////////////
 #else
-	typedef struct tagRECT
-	{
-		LONG    left;
-		LONG    top;
-		LONG    right;
-		LONG    bottom;
-	} RECT;
-#endif
 
-	RECT wndRect;
-	RECT clnRect;
-    int  w,h;
+HWND wnd;
 
-	int ret_ref = 0;
-	
+if ((GFX_WIN == 1)  && (get_editor_on()))
+{
+    int curr_x0, curr_y0, curr_h, curr_v;
+    int ret_ref;
+    int ret_left_x, ret_right_x, ret_top_y, ret_bottom_y;
+    int x, y;
+    int width, height;
+    int e_x, e_y;
+    BOOL ret = FALSE;
 
-  if (GFX_WIN==1)
-  {
-#ifndef LINUX
-    wnd = win_get_window(); //WINDOWS
+    wnd = win_get_window();
+
+
+    BOOL is_iconic = IsIconic(wnd);
+    if (is_iconic)
+    {
+        if (is_hidden == FALSE)
+        {
+            if (get_editor_on())
+            {
+                SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                ret = TRUE;
+            }
+        }
+        is_hidden = TRUE;
+    }
+    else
+    {
+        if (is_hidden == TRUE)
+        {
+            if (get_editor_on())
+            {
+                //SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SW_RESTORE, 0);
+                ShowWindow(get_editor_hWnd(), TRUE);
+                ret = TRUE;
+            }
+        }
+        is_hidden = FALSE;
     
-    GetWindowRect(wnd, &wndRect);  //WINDOWS
-    GetClientRect(wnd, &clnRect);  //WINDOWS
+    }
 
-	ret = get_gfx_margins(&gfx_margins);
-	ret_ref = gfx_margins->maximize_flag;
+    if (ret == TRUE) return;
 
-	BOOL found_mon = FALSE;
-	int i;
-	MonitorRects monitors;
+    ret = FALSE;
+    is_iconic = IsIconic(get_editor_hWnd());
+    if (is_iconic)
+    {
+        if (is_hidden == FALSE)
+        {
+            if (get_editor_on())
+            {
+                SendMessage(wnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                ret = TRUE;
+            }
+        }
+        is_hidden = TRUE;
+    }
+    else
+    {
+        if (is_hidden == TRUE)
+        {
+            if (get_editor_on())
+            {
+                //SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SW_RESTORE, 0);
+                ShowWindow(wnd, TRUE);
+                ret = TRUE;
+            }
+        }
+        is_hidden = FALSE;
+    }
 
-	if (gfx_margins->maximize_flag == 2) {
+    if (ret == TRUE) return;
 
-		//check if multiple monitor
-		//int sm_monitors = GetSystemMetrics(SM_CMONITORS);
+    ret_ref = get_window_origin_and_size(&curr_x0, &curr_y0, &curr_h, &curr_v);
 
-		//MonitorRects monitors;
-		//printf("%X\n", monitors.rcMonitors.size());
-		for (i = 0; i < monitors.rcMonitors.size(); i++)
-		{
-			if (((wndRect.left + gfx_margins->l_b) >= monitors.rcMonitors[i].left) && ((wndRect.left + gfx_margins->l_b) <= monitors.rcMonitors[i].right) &&
-				((wndRect.top + gfx_margins->t_b) >= monitors.rcMonitors[i].top) && ((wndRect.top + gfx_margins->t_b) <= monitors.rcMonitors[i].bottom))
-			{
-				found_mon = TRUE;
-				if (i > 0) e_h1 = 0; // 1;  //????? check it out !!!
-				break;
-			}
-		}
-
-		margin_v = gfx_margins->t_b; e_h = 1;
-	}
-	else margin_v = 0;
-
-	w = (int)(clnRect.right - clnRect.left);
-	h = (int)(clnRect.bottom - clnRect.top) - margin_v - e_h;
-
-	if (found_mon)
-	{
-		w1 = (int)(monitors.rcMonitors[i].right - monitors.rcMonitors[i].left);
-		h1 = (int)(monitors.rcMonitors[i].bottom - monitors.rcMonitors[i].top) - gfx_margins->t_btb - e_h - e_h1;
-		if (w1 < w) 
-			w = w1;
-		if (h1 < h) 
-			h = h1;
-	}
+    if ((curr_x0 == -32000) || (curr_y0 == -32000) || (curr_h == 0) || (curr_v == 0)) return;
 
 
-	*x_win_orig = (int)wndRect.left;
-	*y_win_orig = (int)wndRect.top + margin_v;
-	*win_width = w;  //client
-	*win_height = h;  //client
+    if ((curr_x0 != attr_x) || (curr_y0 != attr_y)) {
 
-	X11_SCREEN_SHIFT = (wndRect.bottom - wndRect.top) - (clnRect.bottom - clnRect.top);
-	WIN_WINDOW_T_B = gfx_margins->t_b;
+        x = curr_x0 - attr_x;
+        y = curr_y0 - attr_y;
+
+        printf("origin %d %d\n", x, y);
+
+        //get_editbox_origin(&e_x, &e_y);
 
 
-	gfx_margins->maximize_flag = 0;
-#else
+        int opt = 0;
+        RECT lpRect = get_editbox_geometry_win(opt);
+        e_x = lpRect.left;
+        e_y = lpRect.top;
 
-      Display *display;
-      Window focus, toplevel_parent_of_focus, root_window;
-      XWindowAttributes attr;
-      int revert;
-      int ret;
+        HWND editor = get_editor_hWnd();
 
-      display = XOpenDisplay(NULL);
+        ret = get_monitor_dims(&ret_left_x, &ret_right_x, &ret_top_y, &ret_bottom_y, -1);
 
-      root_window=DefaultRootWindow(display);
+        RECT rect;
+        
+        GetWindowRect(get_editor_hWnd(), &rect);
 
-      XRRScreenResources* sr = XRRGetScreenResources(display, root_window);
-      XRRCrtcInfo* ci = XRRGetCrtcInfo(display, sr, sr->crtcs[0]);
-      XRROutputInfo* oi = XRRGetOutputInfo(display, sr, sr->outputs[0]);
+        int x_ = rect.left + x;
+        int y_ = rect.top + y;
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
 
-      focus=_xwin.window;
-      toplevel_parent_of_focus = get_toplevel_parent(display, focus);
-      ////toplevel_parent_of_focus = get_my_window(display, root_window, Window_Name);
-      ret = XGetWindowAttributes(display,  toplevel_parent_of_focus, &attr);
+        //char rap[64];
 
-      wndRect.left=attr.x;
-      wndRect.top=attr.y;
-      wndRect.right=attr.x+attr.width;
-      wndRect.bottom=attr.y+attr.height;
+        //sprintf(rap,"%d, %d\n",x_,y_);
+        //fputs(rap, stderr);
 
-      //TEMPORARAY // TO DO
-      clnRect.left=attr.x;
-      clnRect.top=attr.y;
-      clnRect.right=attr.x+attr.width;
-      clnRect.bottom=attr.y+attr.height;
+        if ((x_ + width) > ret_right_x) x_ = ret_right_x - width;
+        if (x_ < ret_left_x) x_ = ret_left_x;
+        if ((y_ + height) > ret_bottom_y) y_ = ret_bottom_y - height;
+        if (y_ < ret_top_y) y_ = ret_top_y;
 
-      XRRFreeOutputInfo(oi);
-      XRRFreeCrtcInfo(ci);
-      XRRFreeScreenResources(sr);
 
-      XCloseDisplay(display);
+        ret_ref = MoveWindow(get_editor_hWnd(), x_, y_, width, height, TRUE);
+         
 
-	  w = (int)(clnRect.right - clnRect.left);
-	  h = (int)(clnRect.bottom - clnRect.top);
+        attr_x = curr_x0;
+        attr_y = curr_y0;
 
-	  *x_win_orig = (int)wndRect.left;
-	  *y_win_orig = (int)wndRect.top;
-	  *win_width = w;  //client
-	  *win_height = h;  //client
+    }
+
+    
+}
 
 #endif
-	return ret_ref;
-  }
-  return 0;
 }
 
 
@@ -2766,6 +3199,7 @@ void Check_XNextEvent(void) {
     int ret;
 
 #ifdef LINUX
+
     if (xdnd_buf.mflag==1)  //there is something new
     {
         CURL *curl = curl_easy_init();
@@ -2840,6 +3274,8 @@ int set_window_origin(int x_win_orig, int y_win_orig)
 	RECT clnRect;
 	
     int  w,h;
+
+    set_attr_x_attr_y(x_win_orig, y_win_orig);
 
 
   if (GFX_WIN==1)

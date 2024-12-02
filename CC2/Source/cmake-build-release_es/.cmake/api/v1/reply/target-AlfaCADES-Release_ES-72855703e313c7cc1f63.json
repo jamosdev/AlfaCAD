@@ -27,25 +27,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 498,
+				"line" : 499,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 13618,
+				"line" : 13637,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 1318,
+				"line" : 1337,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 803,
+				"line" : 804,
 				"parent" : 0
 			}
 		]
@@ -235,6 +235,14 @@
 				{
 					"backtrace" : 4,
 					"path" : "/usr/include/qt/QtDBus"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/include/glib-2.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/lib/glib-2.0/include"
 				},
 				{
 					"backtrace" : 4,
@@ -466,6 +474,14 @@
 				},
 				{
 					"backtrace" : 4,
+					"path" : "/usr/include/glib-2.0"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/usr/lib/glib-2.0/include"
+				},
+				{
+					"backtrace" : 4,
 					"path" : "/home/marek/CC2/Source/../../clip"
 				},
 				{
@@ -627,7 +643,8 @@
 				182,
 				183,
 				184,
-				186
+				186,
+				187
 			]
 		}
 	],
@@ -696,6 +713,16 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "-lcurl",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lXmu",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lglib-2.0",
 				"role" : "libraries"
 			},
 			{
@@ -975,7 +1002,8 @@
 				182,
 				183,
 				184,
-				186
+				186,
+				187
 			]
 		},
 		{
@@ -2107,6 +2135,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
 			"path" : "o_slider.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "o_wmctrl.c",
 			"sourceGroupIndex" : 0
 		}
 	],

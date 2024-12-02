@@ -4446,8 +4446,8 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 
 	  if ((Dlg->flags & 0x40))
 	  {
-		  PozX = jed_to_piks_x(Dlg->dx / 2);
-		  PozY = jed_to_piks_y(Dlg->dy / 2);
+		  PozX = jed_to_piks_x(Dlg->dx / 2)  + pocz_x;
+		  PozY = jed_to_piks_y(Dlg->dy / 2)  + pocz_y;
 		  if (Dlg->pozx == 0 && Dlg->pozy == 0)
 		  {
 			  PozX = jed_to_piks_x(Dlg->dx / 2) + pocz_x;

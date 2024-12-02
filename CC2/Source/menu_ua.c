@@ -34,6 +34,8 @@ char __A_TO_CENTRE__[]=u8"Відрегулювати до центру";
 char __HIDDEN__[]=u8"Прихований";
 char __COPY_TEXT__[]=u8"Копіювати текст із буфера обміну";
 
+char _EDIT_TEXT_[]=u8"Редагування тексту";
+
 #endif
 
 #ifdef __WINPRINT__

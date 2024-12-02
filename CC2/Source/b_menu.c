@@ -6871,6 +6871,7 @@ int inkeys(TMENU *menu, BOOL search_ok)
   char *txt;
   char txt_[2]=" ";
   char *ptr;
+  static int a=0;
 
     if (menu!=NULL) {
         if (menu->flags & 0x100)
@@ -9279,6 +9280,9 @@ int choose_object(int type_address_no, TYPE_ADDRESS *type_address)
         strcpy(&(*mObjectSelected.pola)[i].txt, txt);
         mObjectSelected.max++;
     }
+
+    mObjectSelected.maxw=0;
+    mObjectSelected.maxw0=mObjectSelected.max;
 
     n = Simple_Menu_Proc(&mObjectSelected);
 
@@ -11853,49 +11857,39 @@ int Simple_Menu_Proc (TMENU *menu)
   EVENT *ev ;
   int x0, y0, x00, y00;
 
-  if (dynamic_menu == TRUE)
-  {
-	  x00 = pikseleX0(X); // + 20;
-	  y00 = pikseleY0(Y); // + HEIGHT;  //+get_pYk() - 24;
+    if (dynamic_menu==TRUE)
+    {
+        x00 = pikseleX0(X) +20;
+        y00 = pikseleY0(Y) +get_pYk() - 24;
 
-      /*
-	  if (menu->flags >= 0)
-	  {
-		  x0 = x00 / (WIDTH *SKALA);
+        if (menu->flags>=0)
+        {
+            x0=x00/(WIDTH *SKALA);
 
-		  if (x0 < 1) x0 = 1;
-		  if (menu_level > 1)
-			  menu->xpcz = x0 + (menu_level * 4); //5
-		  else menu->xpcz = x0;
-	  }
-	  if (menu->flags&ICONS)
-	  {
-		  if (menu->maxw == 0) y0 = (y00 / (32)) - menu->max - 1;
-		  else y0 = (y00 / (32)) - menu->maxw - 1;
-	  }
-	  else
-	  {
-		  if (menu->maxw == 0) y0 = (y00 / (HEIGHT*SKALA)) - menu->max - 1;
-		  else y0 = (y00 / (HEIGHT*SKALA)) - menu->maxw - 1;
-	  }
-	  if (y0 < 3) y0 = 3;
-	  if (menu_level > 1) menu->ypcz = y0 + 1; else menu->ypcz = y0;
-       */
+            if (x0<1) x0=1;
+            if (menu_level>1)
+                menu->xpcz=x0+(menu_level*4);
+            else menu->xpcz=x0;
+        }
+        if (menu->flags&ICONS)
+        {
+            if (menu->maxw==0)
+                y0 = (y00 - menu->max*(32))/32;
+            else
+                y0 = (y00 - menu->maxw*(32))/32;
+        }
+        else
+        {
+            if (menu->maxw==0) y0=(y00/(HEIGHT*SKALA)) - menu->max - 1;
+            else y0=(y00/(HEIGHT*SKALA)) - menu->maxw - 1;
+        }
+        if (y0<3) y0=3;
+        if (menu_level>1) menu->ypcz=y0+1; else menu->ypcz=y0;
+    }
 
-      menu->xpcz = x00/WIDTH + 1;
-      menu->ypcz = y00/HEIGHT + 2;
+    menu->flags = menu->flags | NAWOPEN;
 
-  }
-
-
-  if (menu_level > 4)
-  {
-      int a = 0;
-  }
-
-  menu_level++;
   menu_address[menu_level - 1] = menu;
-
 
   show_mouse(NULL);
   openwh (menu) ;
@@ -11921,8 +11915,11 @@ int Simple_Menu_Proc (TMENU *menu)
       show_mouse(screen);
       show_mouse(NULL);
       ini_simple_menu (1) ;
-      show_mouse(screen);
-      set_cursor_edit();
+      if (editing_text)
+      {
+          show_mouse(screen);
+          set_cursor_edit();
+      }
 
       return  ev->Number == 0 ? 0 : menu->foff + menu->poz + 1 ;
   }

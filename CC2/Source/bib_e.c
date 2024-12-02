@@ -493,7 +493,7 @@ static double krok_old;
 static BOOL snap_changed=FALSE;
 static BOOL redraw_again=FALSE;
 
-static BITMAP *ctx_bitmap[32];
+static BITMAP *ctx_bitmap[32]={NULL};
 
 int key_buffer=-1;
 
@@ -11485,9 +11485,10 @@ void get_posXY(double *pozx, double *pozy)
 
 void set_posXY(double pozx, double pozy)
 {
-    Odczyt_licznikow();
+    //Odczyt_licznikow();
     X=pozx;
     Y=pozy;
+    Odczyt_licznikow();
 }
 
 int get_cursor_posX(void)

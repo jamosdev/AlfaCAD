@@ -34,6 +34,8 @@ char __A_TO_CENTRE__[]=u8"Ajustar al centro";
 char __HIDDEN__[]=u8"Oculto";
 char __COPY_TEXT__[]=u8"Copiar texto del portapapeles";
 
+char _EDIT_TEXT_[]=u8"Edición de texto";
+
 #endif
 
 #ifdef __WINPRINT__

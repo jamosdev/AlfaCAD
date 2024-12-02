@@ -108,12 +108,25 @@ Thanks for contributions, bug corrections & thorough testing to:
 static char editbox_geometry_file[32]={"640x400+400+250"};
 static char editbox_geometry_text[32]={"640x400+400+250"};
 static char editbox_geometry_line[32]={"800x80+50+50"};
+
+#ifdef LINUX
+typedef bool BOOL;
+#endif
+
+BOOL editbox_geometry_file_set=FALSE;
+BOOL editbox_geometry_text_set=FALSE;
+BOOL editbox_geometry_line_set=FALSE;
+
+int edit_text_flag=0;
+
 static char *editbox_geometry;
 //static char lBuff[MAX_TEXT_SIZE];   //MAX_TEXT_SIZE  MAX_PATH_OR_CMD
 
 static int global_cursor_pos=0;
 
 char tinyfd_version[8] = "3.8.8";
+
+extern void set_geometry(int single);
 
 /******************************************************************************************************/
 /**************************************** UTF-8 on Windows ********************************************/
@@ -198,6 +211,12 @@ char tinyfd_needs[] = "\
 #pragma warning(disable:4706) /* allows usage of strncpy, strcpy, strcat, sprintf, fopen */
 #endif
 
+void set_editbox_geometry_set(void)
+{
+    editbox_geometry_file_set = TRUE;
+    editbox_geometry_text_set = TRUE;
+}
+
 void set_editbox_geometry(int x, int y)
 {
     //editbox_geometry_file[32]={"640x400+400+250"};
@@ -206,9 +225,27 @@ void set_editbox_geometry(int x, int y)
     sprintf(editbox_geometry_text, "640x400+%d+%d", x, y);
 }
 
+
+void get_editbox_origin(int *x, int *y)
+{
+    int w, h;
+    sscanf(editbox_geometry_text, "%dx%d+%d+%d", &w,&h,x,y);
+}
+
+void set_editbox_geometry_line_set(void)
+{
+    editbox_geometry_line_set = TRUE;
+}
+
 void set_editbox_geometry_line(int x, int y)
 {
     sprintf(editbox_geometry_line, "800x80+%d+%d", x, y);
+}
+
+void get_editbox_origin_line(int *x, int *y)
+{
+    int w, h;
+    sscanf(editbox_geometry_line, "%dx%d+%d+%d", &w,&h,x,y);
 }
 
 static int getenvDISPLAY(void)
@@ -6239,10 +6276,22 @@ char * tinyfd_editBox(
 
     if (strcmp(etype,"TEXT")==0)  //cut cursor position
     {
-        if (*single==1) editbox_geometry=&editbox_geometry_line;
-        else editbox_geometry=&editbox_geometry_text;
+        if (*single==1)
+        {
+            if (!editbox_geometry_line_set) set_geometry(1);
+            editbox_geometry=&editbox_geometry_line;
+        }
+        else
+        {
+            if (!editbox_geometry_text_set) set_geometry(0);
+            editbox_geometry=&editbox_geometry_text;
+        }
     }
-    else editbox_geometry=&editbox_geometry_file;
+    else
+    {
+        if (!editbox_geometry_file_set) set_geometry(0);
+        editbox_geometry=&editbox_geometry_file;
+    }
 
     if (!aTitle && !aMessage && !aDefaultInput) return lBuff; /* now I can fill lBuff from outside */
 
@@ -6795,7 +6844,8 @@ frontmost of process \\\"Python\\\" to true' ''');");
     }
 
   ////  if (tinyfd_verbose)
-        printf( "lDialogString: %s\n" , lDialogString ) ;
+    printf( "lDialogString: %s\n" , lDialogString ) ;
+    edit_text_flag=1;
     lIn = popen( lDialogString , "r" );
     if ( ! lIn  )
     {

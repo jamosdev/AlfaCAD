@@ -34,6 +34,8 @@ char __A_TO_CENTRE__[]=u8"Adjust to the centre";
 char __HIDDEN__[]=u8"Hidden";
 char __COPY_TEXT__[]=u8"Copy text from clipboard";
 
+char _EDIT_TEXT_[]=u8"Edit text";
+
 #endif
 
 #ifdef __WINPRINT__

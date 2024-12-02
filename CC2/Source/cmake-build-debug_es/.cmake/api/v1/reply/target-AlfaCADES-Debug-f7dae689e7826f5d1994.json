@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "AlfaCAD"
+			"path" : "AlfaCADES"
 		}
 	],
 	"backtrace" : 1,
@@ -28,31 +28,37 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 498,
+				"line" : 499,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 13618,
+				"line" : 13637,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 1318,
+				"line" : 1337,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 242,
+				"line" : 253,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 254,
 				"parent" : 0
 			},
 			{
 				"command" : 4,
 				"file" : 0,
-				"line" : 803,
+				"line" : 804,
 				"parent" : 0
 			}
 		]
@@ -89,6 +95,10 @@
 					"define" : "QT_WIDGETS_LIB"
 				},
 				{
+					"backtrace" : 5,
+					"define" : "SPANISH"
+				},
+				{
 					"backtrace" : 3,
 					"define" : "_MBCS"
 				},
@@ -100,159 +110,167 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/."
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CC2/Source"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../zlib"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../zlib/build"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libpng1637"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libharu-master/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libharu-master/build/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/src"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/freetype/src"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/freetype/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/include/allegro"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/addons/jpgalleg/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CavalierContours/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CavalierContours/c_api_include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../wxWidgets-3.1.6/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../wxWidgets-3.1.6/include/msvc"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtWidgets"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtGui"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtPrintSupport"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KDELibs4Support"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KWidgetsAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/SonnetUi"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KI18n"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KNotifications"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KIOCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KCoreAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KConfigCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KIconThemes"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KGuiAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KWindowSystem"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtDBus"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/ruby-3.0.0"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/ruby-3.0.0/x86_64-linux"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
+					"path" : "/usr/include/glib-2.0"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/usr/lib/glib-2.0/include"
+				},
+				{
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../clip"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source"
 				}
 			],
@@ -321,6 +339,10 @@
 					"define" : "QT_WIDGETS_LIB"
 				},
 				{
+					"backtrace" : 5,
+					"define" : "SPANISH"
+				},
+				{
 					"backtrace" : 3,
 					"define" : "_MBCS"
 				},
@@ -332,159 +354,167 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/."
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CC2/Source"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../zlib"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../zlib/build"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libpng1637"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libharu-master/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../libharu-master/build/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/src"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/freetype/src"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../glyph-keeper/freetype/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/include/allegro"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../allegro5-4.4.3/addons/jpgalleg/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CavalierContours/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../CavalierContours/c_api_include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../wxWidgets-3.1.6/include"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../wxWidgets-3.1.6/include/msvc"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtWidgets"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtGui"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtPrintSupport"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KDELibs4Support"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KWidgetsAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/SonnetUi"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KI18n"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KNotifications"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KIOCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KCoreAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KConfigCore"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KIconThemes"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KGuiAddons"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/KF5/KWindowSystem"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/qt/QtDBus"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/ruby-3.0.0"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/ruby-3.0.0/x86_64-linux"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
+					"path" : "/usr/include/glib-2.0"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/usr/lib/glib-2.0/include"
+				},
+				{
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source/../../clip"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/marek/CC2/Source"
 				}
 			],
@@ -642,11 +672,12 @@
 				182,
 				183,
 				184,
-				186
+				186,
+				187
 			]
 		}
 	],
-	"id" : "AlfaCAD::@6890427a1f51a3e7e1df",
+	"id" : "AlfaCADES::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -711,6 +742,16 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "-lcurl",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lXmu",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lglib-2.0",
 				"role" : "libraries"
 			},
 			{
@@ -796,8 +837,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "AlfaCAD",
-	"nameOnDisk" : "AlfaCAD",
+	"name" : "AlfaCADES",
+	"nameOnDisk" : "AlfaCADES",
 	"paths" : 
 	{
 		"build" : ".",
@@ -990,7 +1031,8 @@
 				182,
 				183,
 				184,
-				186
+				186,
+				187
 			]
 		},
 		{
@@ -2122,6 +2164,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
 			"path" : "o_slider.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "o_wmctrl.c",
 			"sourceGroupIndex" : 0
 		}
 	],

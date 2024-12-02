@@ -119,6 +119,7 @@ extern GLYPH_FACE *face_ttf[128];
 extern BOOL TTF_redraw;
 extern int empty_dlg();
 
+extern void Check_ConfigureNotify(void);
 
 extern void _free_mouse(void);
 extern void dialog_cursor(int on);
@@ -263,6 +264,8 @@ extern int Expand_flex();
 extern int get_window_origin_and_size_(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height);
 extern void set_editbox_geometry(int x, int y);
 extern void set_editbox_geometry_line(int x, int y);
+extern void set_editbox_geometry_set(void);
+extern void set_editbox_geometry_line_set(void);
 extern int Get_X11_SCREEN_SHIFT(void);
 extern int Get_WIN_WINDOW_T_B(void);
 
@@ -3666,6 +3669,36 @@ int delete_all_client_bitmaps(void)
     }
 }
 
+
+void set_geometry(int single)
+{   int x_edit;
+    int y_edit;
+    int curr_x01, curr_y01, curr_h1, curr_v1;
+    get_window_origin_and_size_(&curr_x01, &curr_y01, &curr_h1, &curr_v1);
+    if (!single) {
+        x_edit = curr_x01 + 200;
+        y_edit = curr_y01 + 200;
+#ifdef LINUX
+        set_editbox_geometry(x_edit, y_edit);
+#else
+        set_editbox_geometry_win(x_edit, y_edit);
+#endif
+        set_editbox_geometry_set();
+    }
+else {
+        x_edit = curr_x01 + 2;
+
+        y_edit = curr_y01 + Get_X11_SCREEN_SHIFT() + ED_INF_HEIGHT * 2;
+#ifdef LINUX
+        set_editbox_geometry_line(x_edit, y_edit);
+#else
+        y_edit -= Get_WIN_WINDOW_T_B();
+          set_editbox_geometry_line_win(x_edit, y_edit);
+#endif
+        set_editbox_geometry_line_set();
+    }
+}
+
 void DoneArgs(void)
 {
 
@@ -5049,7 +5082,6 @@ for (int i = 0; i < bitmaps_size; i++)
 
   x_edit=curr_x01+2;
 
-
   y_edit=curr_y01+Get_X11_SCREEN_SHIFT()+ED_INF_HEIGHT*2;
 #ifdef LINUX
   set_editbox_geometry_line(x_edit, y_edit);
@@ -5081,6 +5113,8 @@ for (int i = 0; i < bitmaps_size; i++)
   dialog_cursor(0);
   lock_mouse();
    */
+
+  install_int(Check_ConfigureNotify, 1000);
 
   _free_mouse();
   lock_mouse();

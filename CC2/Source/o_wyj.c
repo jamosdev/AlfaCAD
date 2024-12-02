@@ -361,6 +361,8 @@ extern float cups_prn_height_paper;
 
 extern int findfpostopxl(/*const unsigned*/ char *s, int max_pxl);
 
+extern void Check_ConfigureNotify(void);
+
 
 static BITMAP *second_screen_bak_=NULL;
 
@@ -5061,6 +5063,8 @@ void Koniec(void)
 	 {
 		 komunikat_str("Goodbye");
 	 }
+
+   remove_int(Check_ConfigureNotify);
 
    DoneBuffers1();
    komunikat_str("@ 2");  // !!!!!!!!!
