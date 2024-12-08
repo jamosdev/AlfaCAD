@@ -1085,22 +1085,21 @@ BOOL get_dragging_quad(void)
 static void	cur_onq(double	x,double	y)
 {
     PLINIA	PL;
+    cursel_on(x, y);
     L.x2=x; L.y2=y;
     outlineor(&L,COPY_PUT,1);
     parametry_linior (&L,	&PL);
     DX = PL.dl *	PL.cos;	DY= PL.dl *	PL.sin;
     out_blok1(DX,DY,0,0,Tprzesuw,0);
-
     //block transformation
-
     blokquad(ADPQ, ADKQ, Aoblok, COPY_PUT, 1);
-
     cursel_on(x, y);
 }
 
 static void	cur_onk(double	x,double	y)
 {
   PLINIA	PL;
+  cursel_on(x, y);
   L.x2=x; L.y2=y;
   outlineor(&L,COPY_PUT,1);
   parametry_linior (&L,	&PL);
@@ -1160,6 +1159,7 @@ static void  cur_onv5(double x,double y)
 static void	cur_onkZ(double	x,double	y)
 {
   PLINIA	PL;
+  cursel_on(x, y);
   L.x2=x; L.y2=y;
   outlineor(&L,XOR_PUT,1);
   parametry_linior (&L,	&PL);

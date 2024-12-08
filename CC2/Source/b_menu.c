@@ -63,6 +63,8 @@ static int curr_h, curr_v;
 
 static p_point bar_center;
 
+BOOL XORBAR=FALSE;
+
 BOOL altkey = FALSE;
 BOOL altgrkey = FALSE;
 
@@ -295,9 +297,12 @@ static int menu_grab_slider(void *dp3, int d2);
 static int menu_init_slider(int *var1, int *var2, int *var3, int *var4);
 
 
-#define MAXMENULEVEL 6
-static  int set_slider[MAXMENULEVEL]={0,0,0,0,0,0};
+#define MAXMENULEVEL 8
+static  int set_slider[MAXMENULEVEL]={0,0,0,0,0,0,0,0};
 SLIDER slider[MAXMENULEVEL]={{d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
                              {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
                              {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
                              {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
@@ -2317,6 +2322,26 @@ static void ramka_m(int x1,int y1,int x2,int y2)
    LINE(x2, y2, x2-GR+1, y2-GR+1);
 }
 
+
+void invert_bitmap(BITMAP *bmp)
+{
+    int x, y;
+    int k, r, g, b;
+    for (y = 0; y < bmp->h; y++) {
+        for (x = 0; x < bmp->w; x++) {
+            k=getpixel(bmp, x, y);
+            r = k & 0xFF;
+            g = (k >> 8) & 0xFF;
+            b = (k >> 16) & 0xFF;
+            // Invert color values
+            r = 255 - r;
+            g = 255 - g;
+            b = 255 - b;
+            putpixel(bmp, x, y, makecol(r, g, b));
+        }
+    }
+}
+
 void show_hide_tip(TMENU * menu, BOOL show)
 {
   int x0, x1, y1, x2, y2, a, b;
@@ -2985,11 +3010,13 @@ void baronoff_(TMENU  * menu)
         else setcolor(15);
     }
 
-    setwritemode(XOR_PUT);
-    setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+    ////setwritemode(XOR_PUT);
+    ////setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
 
     if (color_bar)
     {
+        setwritemode(XOR_PUT);
+        setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
         for (int i = 0; i < l_no; i++)
         {
             LINE(x1 + i, y1 + i, x1 + a - i, y1 + i);
@@ -2998,7 +3025,23 @@ void baronoff_(TMENU  * menu)
             LINE(x1 +i, y1 + b - i, x1 + i, y1 + i);
         }
     }
-    else RECTFILL(x1,y1,x1+a,y1+b);
+    else
+    {
+        if (XORBAR)
+        {
+            setwritemode(XOR_PUT);
+            setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+            RECTFILL(x1, y1, x1 + a, y1 + b);
+        }
+        else {
+            setwritemode(COPY_PUT);
+            BITMAP *barbitmap;
+            barbitmap = create_bitmap(a, b);
+            getimage(x1, y1, x1 + a, y1 + b, barbitmap);
+            invert_bitmap(barbitmap);
+            putimage(x1, y1, barbitmap, COPY_PUT);
+        }
+    }
 
     bar_center.x=x1+a/2;
     bar_center.y=y1+b/2;

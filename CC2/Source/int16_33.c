@@ -195,6 +195,7 @@ void  Odczyt_licznikow(void) {
     d_mouse_x = abs(mouse_x - gmaxx2);
     d_mouse_y = abs(mouse_y - gmaxy2);
 
+    ///// shaking
     if (!Get_Global_Dialog_Flag()) {
 
         currentmousetimestamp = time(NULL);
@@ -254,6 +255,7 @@ void  Odczyt_licznikow(void) {
         }
     }
 
+    /////
 	  if ((mouse_out == FALSE) && (sleep_state == TRUE) && ((abs(WspX) > 20) || (abs(WspY) > 20)))
 	  {
 		  sleep_state = FALSE;

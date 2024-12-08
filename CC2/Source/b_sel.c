@@ -268,6 +268,7 @@ void cursel_on_pcx(double x, double y)
 {
 	out_cur_on(x, y);
 	out_blok1_pcx(x, y, 0, 0, Tprzesuw, 0);
+    ////out_cur_on(x, y);
 }
 
 double Get_Point_Size (void)

@@ -610,6 +610,7 @@ static void  cur_offS_(double x,double y)
 
 static void  cur_onS(double x,double y)
 {
+  cursel_on(x, y); ////
   L.x2=x; L.y2=y;
   outlineor(&L,XOR_PUT,0);
   ks1 = ks2 = 10*sqrt((x-Px)*(x-Px)+(y-Py)*(y-Py))/(Xk-Xp);
@@ -619,11 +620,12 @@ static void  cur_onS(double x,double y)
 }
 
 static void  cur_onS_(double x,double y)
-{ cursel_on(x,y);
+{   cursel_on(x,y);
     L.x2=x; L.y2=y;
     outlineor(&L,XOR_PUT,0);
     ks1 = ks2 = 10*sqrt((x-Px)*(x-Px)+(y-Py)*(y-Py))/(Xk-Xp);
     out_blok1(Px,Py, ks1, ks2, Tskala,0);
+    cursel_on(x,y);
 }
 
 static int el_k (BOOL b_graph_value)
@@ -768,6 +770,7 @@ static void  cur_onO(double x,double y)
   if(kat<0) kat=2*Pi+kat;
   out_parametry_skali(kat*180/Pi);
   out_blok1(Px,Py,kos,koc,Tobrot,0);
+  cursel_on(x,y);
 }
 
 static void  cur_onOXZ(double x,double y)
@@ -781,6 +784,7 @@ static void  cur_onOXZ(double x,double y)
   if(kat<0) kat=2*Pi+kat;
   out_parametry_skali(kat*180/Pi);
   out_blok1(Px,Py,kos,koc,TobrotXZ,Z0);
+  cursel_on(x,y);
 }
 
 static void  cur_onOYZ(double x,double y)
@@ -794,6 +798,7 @@ static void  cur_onOYZ(double x,double y)
   if(kat<0) kat=2*Pi+kat;
   out_parametry_skali(kat*180/Pi);
   out_blok1(Px,Py,kos,koc,TobrotYZ,Z0);
+  cursel_on(x,y);
 }
 
 

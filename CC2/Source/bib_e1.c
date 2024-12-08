@@ -181,8 +181,11 @@ void outline (LINIA *L,int mode,int pl)
     return;
   }
   okno_r();
-  setwritemode(mode);
+  //setwritemode(mode);
   if (mode==XOR_PUT) linestyle_xor(L->typ); else linestyle(L->typ);
+
+  setwritemode(COPY_PUT);
+
 /*  linestyle(L->typ); */
   SetColorAC(L->kolor);
   lineC (pikseleX0 (L->x1),pikseleY0 (L->y1), pikseleX0 (L->x2),pikseleY0 (L->y2));
@@ -203,8 +206,11 @@ void outlineor (LINIA *L,int mode,int pl)
     return;
   }
   okno_r();
-  setwritemode(mode);
+  ////setwritemode(mode);
   if (mode==XOR_PUT) linestyle_xor(L->typ); else linestyle(L->typ);
+
+  setwritemode(COPY_PUT);
+
   if (L->kolor == 0) SetColorAC(15);
   else SetColorAC(L->kolor);
 

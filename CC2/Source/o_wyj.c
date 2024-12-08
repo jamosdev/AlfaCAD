@@ -5143,7 +5143,11 @@ void Koniec(void)
 
    return;
   }
- else return;
+ else
+  {
+     lock_mouse();
+     return;
+  }
 
 }
 

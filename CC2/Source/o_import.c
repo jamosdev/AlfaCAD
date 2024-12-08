@@ -934,6 +934,7 @@ static void cur_offpkisel__(double x, double y)
 
 static void cur_onpki(double x,double y)
 {
+  cursel_on(x, y);
   DX=x-Px;  DY=y-Py;
   out_blok1(DX,DY,0,0,Tprzesuw,0);
   cursel_on(x, y);
@@ -941,7 +942,7 @@ static void cur_onpki(double x,double y)
 
 static void cur_onpkisel(double x, double y)
 {
-	
+    cursel_on(x, y);
 	DX = x - Px;  DY = y - Py;
 	out_blok1(DX, DY, 0, 0, Tprzesuw, 0);
 	cursel_on(x, y);

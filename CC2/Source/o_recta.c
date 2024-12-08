@@ -231,6 +231,7 @@ static void  cur_offPB__(double x,double y)
 static void  cur_onPB(double x,double y)
 {
   DX=x-Px;  DY=y-Py;
+  cursel_on(x, y);
   out_blok1(DX,DY,0,0,Tprzesuw,0);
   cursel_on(x, y);
 }

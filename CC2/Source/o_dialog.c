@@ -75,6 +75,9 @@ static int Typ=0;
 static int set_listbox_slider=0;
 static char *listbox_address=NULL;
 
+extern void invert_bitmap(BITMAP *bmp);
+extern BOOL XORBAR;
+
 extern int d_myslider_proc(int msg, void *d_, int c);
 
 static int listbox_grab_slider(void *dp3, int d2);
@@ -1366,10 +1369,12 @@ static void baronoff(LISTBOX  * listbox)
        } 
         else setcolor(15);
         
-  setwritemode(XOR_PUT);
-  setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+  ////setwritemode(XOR_PUT);
+  ////setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
   if (color_bar)
   {
+      setwritemode(XOR_PUT);
+      setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
       for (int i = 0; i < 3; i++)
       {
           LINE(x1 + i, y1 + i, x2 - i, y1 + i);
@@ -1379,8 +1384,22 @@ static void baronoff(LISTBOX  * listbox)
       }
   }
   else {
-      for (bb = y1; bb <= y2; bb++) {
-          LINE(x1, bb, x2, bb);
+      if (XORBAR)
+      {
+          setwritemode(XOR_PUT);
+          setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+          for (bb = y1; bb <= y2; bb++) {
+              LINE(x1, bb, x2, bb);
+          }
+      }
+      else
+      {
+          setwritemode(COPY_PUT);
+          BITMAP *barbitmap;
+          barbitmap = create_bitmap(x2-x1, y2-y1);
+          getimage(x1, y1, x2, y2, barbitmap);
+          invert_bitmap(barbitmap);
+          putimage(x1, y1, barbitmap, COPY_PUT);
       }
   }
 
@@ -4001,12 +4020,14 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
 
   if (dlg->Sliders != NULL) draw_sliders(*(dlg->Sliders), dlg->SizeSliderT, dialog_screen); //, dlg_kolory->dlg_caption);
 
+  show_mouse(NULL); ////
+
   blit(dialog_screen, screen, 0, 0, dialog_rect->left, dialog_rect->top, dialog_rect->right-dialog_rect->left, dialog_rect->bottom-dialog_rect->top);
   destroy_bitmap(dialog_screen);
 
   Set_Screenplay(screen);
 
-  ////show_mouse(screen);
+  show_mouse(screen); ////
   //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 
 
@@ -4461,10 +4482,9 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 		  PozY = mouse_y;
 	  }
 	
-	
        Ini_Mouse_Cursor(PozX,PozY) ;
 		
-	    moveto(PozX, PozY);
+	    //moveto(PozX, PozY);
         cur_on(PozX,PozY);
 
 
@@ -4765,7 +4785,7 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 	was_dialog = TRUE;
 
 continue2:
-	m = m;
+	//m = m;
 	dlg_kolory = kolory;
 
 	POLE	pmTipsMenu[] = {
@@ -4844,8 +4864,9 @@ continue2:
         }
     }
 
+    ////if  (!(dlg->flags & 0x80))
+	////    Move_Mouse(0, 0);  //can be necessary in Windows
 
-	Move_Mouse(0, 0);
 	//position_mouse(0, 0);
 
 	show_mouse(NULL);
