@@ -268,6 +268,7 @@ void cursel_on_pcx(double x, double y)
 {
 	out_cur_on(x, y);
 	out_blok1_pcx(x, y, 0, 0, Tprzesuw, 0);
+    ////out_cur_on(x, y);
 }
 
 double Get_Point_Size (void)
@@ -602,6 +603,9 @@ int pcx_w_prostokacie(B_PCX *ad)
 #ifndef LINUX
     qsort(x_,4,sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
     qsort(y_,4,sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+
+    //qsort(x_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
+    //qsort(y_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
 #else
       qsort(x_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
       qsort(y_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
@@ -3008,7 +3012,7 @@ int Point_in_Rectangle (T_Point *ptrs_point, int dwc)
   double x1, y1, x2, y2 ;
   double df_psize ;
 
-    if (dwc==Window)
+    if (dwc==Windoww)
     {
         return Point_Rectangle(ptrs_point);
     }
@@ -3499,8 +3503,13 @@ int Pcx_in_Rectangle (B_PCX *pcx, int dwc)
 	   memmove(yy_, y_, sizeof(y_));
 
 #ifndef LINUX
+       //good for Clion
 	   qsort(x_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
 	   qsort(y_, 4, sizeof(double), (_CoreCrtNonSecureSearchSortCompareFunction)qsort_by_val);
+
+       //good for VS
+       //qsort(x_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
+       //qsort(y_, 4, sizeof(double),(int(*)(const double*, const double*)) qsort_by_val);
 #else
        qsort(x_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
        qsort(y_, 4, sizeof(double), (__compar_fn_t) qsort_by_val);
@@ -3512,7 +3521,7 @@ int Pcx_in_Rectangle (B_PCX *pcx, int dwc)
 	   y2 = y_[3];
    }
 
-  if (dwc==Window)
+  if (dwc==Windoww)
    {
 
      return (punkt_w_prostokacie(x1, y1) &&
@@ -3711,7 +3720,7 @@ int elipsa_wybrana_prec (ELLIPSE *ad)
 int elipsa_w_prostokacie (ELLIPSE *ad)
 /*----------------------------------*/
 {
-    return (test_ellipse_sel_prec (ad, Window) >= 1) ? 1 : 0 ;
+    return (test_ellipse_sel_prec (ad, Windoww) >= 1) ? 1 : 0 ;
 
 }
 
@@ -3726,7 +3735,7 @@ int lukeliptyczny_w_prostokacie (ELLIPTICALARC *ad)
 /*----------------------------------------------*/
 {
 
-    return (test_ellipticalarc_sel_prec (ad, Window) >= 1) ? 1 : 0 ;
+    return (test_ellipticalarc_sel_prec (ad, Windoww) >= 1) ? 1 : 0 ;
 }
 
 BOOL Check_Draw_Pieslice (OKRAG *ad)

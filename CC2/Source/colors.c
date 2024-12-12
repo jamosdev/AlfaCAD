@@ -119,6 +119,7 @@ static TDIALOG colors_config={ XpLabC,YpLabC-20, XpBox * 2 + DXBut * 16 + XpBut 
 			nof_but,(BUTTON(*)[]) &pdBut,
 			0, NULL,
 			0,NULL,
+            0,NULL, //Sliders
 			NULL,
 	        NULL,
 	        0,
@@ -136,6 +137,7 @@ static TDIALOG colors_config1 = { XpLabC,YpLabC - 20, XpBox * 2 + DXBut * 16 + X
 			nof_but,(BUTTON(*)[])&pdBut,
 			0, NULL,
 			0,NULL,
+            0,NULL, //Sliders
 	        NULL,
 	        NULL,
 	        0,

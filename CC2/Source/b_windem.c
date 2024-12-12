@@ -210,6 +210,8 @@ int demo_out(int alf_window_number)
 
   closewh (mWinDem) ;
 
+  lock_mouse();
+
 
   return 0 ;
 }

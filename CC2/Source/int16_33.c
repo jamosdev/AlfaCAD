@@ -98,8 +98,8 @@ void lock_mouse(void)
 {
 
 	locked_mouse=TRUE;
-	gmaxx2=getmaxx()/2;
-	gmaxy2=getmaxy()/2;
+	gmaxx2 = getmaxx() / 2;
+    gmaxy2 = getmaxy() / 2;
 
 #ifdef LINUX
     hide_x_cursor();
@@ -141,7 +141,7 @@ void _free_mouse(void)
 #ifdef LINUX
     show_x_cursor();
 #endif
-    unscare_mouse();
+    ////unscare_mouse();
 
     Show_Mouse(X, Y) ;
     ini_cursor = TRUE;
@@ -195,6 +195,7 @@ void  Odczyt_licznikow(void) {
     d_mouse_x = abs(mouse_x - gmaxx2);
     d_mouse_y = abs(mouse_y - gmaxy2);
 
+    ///// shaking
     if (!Get_Global_Dialog_Flag()) {
 
         currentmousetimestamp = time(NULL);
@@ -254,6 +255,7 @@ void  Odczyt_licznikow(void) {
         }
     }
 
+    /////
 	  if ((mouse_out == FALSE) && (sleep_state == TRUE) && ((abs(WspX) > 20) || (abs(WspY) > 20)))
 	  {
 		  sleep_state = FALSE;

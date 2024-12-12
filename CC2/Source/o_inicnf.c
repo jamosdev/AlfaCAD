@@ -56,6 +56,73 @@ extern _locale_t locale;
 
 extern void utf8Upper(char* text);
 
+BOOL Get_Private_Profile_Strings_Cloud(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring))
+/*----------------------------------------------------------------------------------------------*/
+{
+    int buf_len;
+    FILE *stru_ini;
+    T_Fstring key_name;
+    T_Fstring ret_val, applicatin_name;
+    BOOL b_app_found;
+    T_Init_Row_Type cont;
+    char ApplicName[128];
+
+    stru_ini = fopen ( CLOUD_INI, "rt" ) ;
+    if ( stru_ini == NULL )
+    {
+        return FALSE;
+    }
+    b_app_found = FALSE;
+    strcpy(ApplicName, lpApplicationName);
+    strupr(ApplicName);
+    while (!feof(stru_ini))
+    {
+        if ( fgets(buuf , MAXLINE , stru_ini ) == NULL )
+        {
+            fclose(stru_ini);
+            return TRUE;
+        }
+
+        buuf [MAXLINE-1] = '\0';
+        buf_len = strlen (buuf) - 1;
+        if (buuf [buf_len] == '\n')
+        {
+            buuf [buf_len] = '\0';
+        }
+
+        cont = get_buf_contents (buuf, &applicatin_name, &key_name,
+                                 &ret_val);
+
+        switch (cont)
+        {
+            case I_Comment:
+                continue;
+            case I_App:
+                if (b_app_found == FALSE &&
+                    strcmp (applicatin_name, ApplicName) == 0)
+                {
+                    b_app_found = TRUE;
+                    break;
+                }
+                if (b_app_found == TRUE)
+                {
+                    fclose(stru_ini);
+                    return TRUE;
+                }
+            case I_Key:
+                if (b_app_found == TRUE)
+                {
+                    f (key_name, ret_val) ;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    fclose(stru_ini);
+    return TRUE;
+}
+
 BOOL Get_Private_Profile_Strings(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring))
 				
 /*---------------------------------------------------------*/

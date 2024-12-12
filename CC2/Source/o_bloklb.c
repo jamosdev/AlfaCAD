@@ -59,7 +59,7 @@ BOOL alert_on_object=FALSE;
 void adrem_obiekt(void *ad, int (*DZI)(void *), int (*ODZI)(void *), BOOL);
 
 static int ciag=0;
-static int add = ADD_MODE, win = Window ;
+static int add = ADD_MODE, win = Windoww ;
 static BOOL b_auto = TRUE ;
 static BOOL del_quick = TRUE;
 static  OKNO O,Oc;
@@ -203,7 +203,7 @@ static int linia_dwc(LINIA *adl,int dwc)
 {
     int w;
     w = linia_wybrana(adl);
-    if (dwc == Window && w != 3) return 0;
+    if (dwc == Windoww && w != 3) return 0;
     if (dwc == Dragg && w == 4) return 0;
     return w;
 }
@@ -226,7 +226,7 @@ static int vector_dwc(AVECTOR *adv,int dwc)
             adluk.kat2=adv->angle2;
             switch(dwc)
             {
-                case Window: w=luk_w_prostokacie(&adluk);
+                case Windoww: w=luk_w_prostokacie(&adluk);
                     break;
                 case Dragg : //w=prostokat_luk(&adluk);
                              w= punkt_w_prostokacie(adluk.x, adluk.y);
@@ -243,7 +243,7 @@ static int vector_dwc(AVECTOR *adv,int dwc)
             adOkrag.r=adv->r;
             switch(dwc)
             {
-                case Window: w=okrag_w_prostokacie(&adOkrag);
+                case Windoww: w=okrag_w_prostokacie(&adOkrag);
                     break;
                 case Dragg : //w=prostokat_luk(&adluk);
                     w= punkt_w_prostokacie(adOkrag.x, adOkrag.y);
@@ -256,7 +256,7 @@ static int vector_dwc(AVECTOR *adv,int dwc)
 
             switch(dwc)
             {
-                case Window:
+                case Windoww:
                     w = vector_w_prostokacie(adv);
                     break;
                 case Dragg :
@@ -274,7 +274,7 @@ static int vector_dwc(AVECTOR *adv,int dwc)
         default:
             switch(dwc)
             {
-                case Window:
+                case Windoww:
                     w = vector_w_prostokacie(adv);
                     break;
                 case Dragg :
@@ -296,7 +296,7 @@ static int linia_dwc_pin(LINIA *adl,int dwc)
 { int w;
   w=linia_wybrana_pin(adl);
   
-  if(dwc==Window && w!=3) return 0;
+  if(dwc==Windoww && w!=3) return 0;
   if(dwc==Dragg && w==4) return 0;
   return w;
 }
@@ -312,7 +312,7 @@ double x1, y1;
         w=punkt_w_prostokacie(x1,y1);
 
 		  break;
-     case Window: w=tekst_w_prostokacie(adt);
+     case Windoww: w=tekst_w_prostokacie(adt);
 		  break;
      case Cross : w=tekst_wybrany(adt);
 		  break;
@@ -326,7 +326,7 @@ int luk_dwc(LUK *adluk,int dwc)
   int w=0;
 
   switch(dwc)
-   { case Window: w=luk_w_prostokacie(adluk);
+   { case Windoww: w=luk_w_prostokacie(adluk);
 		  break;
      case Dragg : w=prostokat_luk(adluk);
 		  if(w==4) w=0;
@@ -343,7 +343,7 @@ int solidarc_dwc(SOLIDARC *adsolidarc,int dwc)
     int w=0;
 
     switch(dwc)
-    { case Window: w=solidarc_w_prostokacie(adsolidarc);
+    { case Windoww: w=solidarc_w_prostokacie(adsolidarc);
             break;
         case Dragg : w=prostokat_solidarc(adsolidarc);
             if(w==4) w=0;
@@ -358,7 +358,7 @@ int solidarc_dwc(SOLIDARC *adsolidarc,int dwc)
 static int okrag_dwc(OKRAG *o,int dwc)
 { int w;
   switch(dwc)
-   { case Window:
+   { case Windoww:
      case Dragg : w=okrag_w_prostokacie(o);
 		  break;
      case Cross : w=okrag_wybrany(o);
@@ -372,7 +372,7 @@ static int ellipse_dwc(ELLIPSE *e, int dwc)
 {
     int w;
     switch(dwc)
-    { case Window:
+    { case Windoww:
         case Dragg : w=elipsa_w_prostokacie(e); //w=elipsa_wybrana(e);
             break;
         case Cross : w=elipsa_wybrana_prec(e);
@@ -386,7 +386,7 @@ static int ellipticalarc_dwc(ELLIPTICALARC *ea, int dwc)
 {
     int w;
     switch(dwc)
-    { case Window  : w=lukeliptyczny_w_prostokacie(ea);  //w=lukeliptyczny_wybrany(ea);
+    { case Windoww  : w=lukeliptyczny_w_prostokacie(ea);  //w=lukeliptyczny_wybrany(ea);
         break;
         case Dragg : //w=lukeliptyczny_w_prostokacie(ea);  //w=lukeliptyczny_wybrany(ea);
             w=prostokat_ellipticalarc(ea);
@@ -405,7 +405,7 @@ static int point_dwc (T_Point *ptrs_point, int dwc)
 
   switch (dwc)
   {
-     case Window: w = Point_in_Rectangle (ptrs_point, dwc) ;
+     case Windoww: w = Point_in_Rectangle (ptrs_point, dwc) ;
                   break;
      case Dragg : w=punkt_w_prostokacie(ptrs_point->x,ptrs_point->y);
 		  break;
@@ -423,7 +423,7 @@ static int pcx_dwc (B_PCX *pcx, int dwc)
 
   switch (dwc)
   {
-     case Window: w = Pcx_in_Rectangle (pcx, dwc) ;
+     case Windoww: w = Pcx_in_Rectangle (pcx, dwc) ;
                   break;
      case Dragg : w=punkt_w_prostokacie(pcx->x,pcx->y);
 		  break;
@@ -456,7 +456,7 @@ static int wielokat_dwc(WIELOKAT *W,int dwc)
 { int w;
   switch(dwc)
    {
-     case Window: w = wielokat_w_prostokacie (W) ;
+     case Windoww: w = wielokat_w_prostokacie (W) ;
 		  break;
      case Dragg : w = (1 == wielokat_wybrany (W) &&
 		       TRUE == check_solid_dragg (W)) ? 1 : 0 ;
@@ -490,7 +490,7 @@ static int spline_dwc(SPLINE *S, int dwc)
 	int w;
 	switch (dwc)
 	{
-	case Window: w = spline_w_prostokacie(S);
+	case Windoww: w = spline_w_prostokacie(S);
 		break;
 	case Dragg: w = (1 == w_spline_wybrany(S) &&
 		TRUE == check_spline_dragg(S)) ? 1 : 0;
@@ -536,7 +536,7 @@ void addrem_obiekty(int dwc, OKNO *O, int (*DZI)(void *), int (*ODZI)(void *) )
      if (((nag->atrybut == Anormalny || nag->atrybut == Ablok || nag->atrybut == Aoblok || nag->atrybut==Apoblok
           || nag->atrybut==Appoblok || nag->atrybut==Apppoblok ) &&
 	   add == ADD_MODE  &&
-	   (dwc == Window ? /*nag->przec == 0*/ TRUE : TRUE)) ||      //change to allow multiple choice
+	   (dwc == Windoww ? /*nag->przec == 0*/ TRUE : TRUE)) ||      //change to allow multiple choice
 	 (nag->atrybut == Ablok && add == DEL_MODE) )
      {
 	w=0;
@@ -612,7 +612,7 @@ void addrem_obiekty_FIRSTB(int dwc, OKNO *O, int (*DZI)(void *), int (*ODZI)(voi
      if (((nag->atrybut == Anormalny || nag->atrybut == Aoblok || nag->atrybut==Apoblok
           || nag->atrybut==Appoblok || nag->atrybut==Apppoblok ) &&
 	   add == ADD_MODE  &&
-	   (dwc == Window ? nag->przec == 0 : TRUE)) ||
+	   (dwc == Windoww ? nag->przec == 0 : TRUE)) ||
 	 (nag->atrybut == Ablok && add == DEL_MODE) )
      {
 	w=0;
@@ -667,7 +667,7 @@ void addrem_linie_pin(int dwc, OKNO *O, int (*DZI)(void *), int (*ODZI)(void *) 
      if (((nag->atrybut == Anormalny || nag->atrybut == Aoblok || nag->atrybut==Apoblok
          || nag->atrybut==Appoblok || nag->atrybut==Apppoblok ) &&
 	   add == ADD_MODE  &&
-	   (dwc == Window ? nag->przec == 0 : TRUE)) ||
+	   (dwc == Windoww ? nag->przec == 0 : TRUE)) ||
 	 (nag->atrybut == Ablok && add == DEL_MODE) )
      {
 	w=0;
@@ -922,7 +922,7 @@ add_l:	    dodatkowe_linie=0;
 	 {
  	  addrem_linie_pin (dwc, &O, DZI, ODZI) ;
 	 }
-	if (dwc == Window)
+	if (dwc == Windoww)
 	{
 	  Set_Object_Temp_Flag (0, 0L, dane_size - 1) ;
 	}
@@ -990,7 +990,7 @@ add_l:	    dodatkowe_linie=0;
 	 {
  	  addrem_linie_pin (dwc, &O, DZI, ODZI) ;
 	 }
-	if (dwc == Window)
+	if (dwc == Windoww)
 	{
 	  Set_Object_Temp_Flag (0, 0L, dane_size - 1) ;
 	}
@@ -1040,7 +1040,7 @@ add_l:	    dodatkowe_linie=0;
  	  addrem_linie_pin (dwc, &O, DZI, ODZI) ;
 	 }
 
-	if (dwc == Window)
+	if (dwc == Windoww)
 	{
 	  Set_Object_Temp_Flag (0, 0L, dane_size - 1) ;
 	}
@@ -1172,7 +1172,7 @@ static void adrem_blok (BLOK *adb, int (*DZI)(void *), int (*ODZI)(void *), BOOL
   }
   offp = ((char  *)adb) - dane ;
   offk = adh - dane ;
-  if (win == Window && TRUE == b_win_sel)
+  if (win == Windoww && TRUE == b_win_sel)
   {
     if (FALSE == check_if_block_in_win (offp, offk , win))
     {

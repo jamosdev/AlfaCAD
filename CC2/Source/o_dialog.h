@@ -82,6 +82,22 @@ typedef struct {
 } BUTTON;
 
 
+//typedef int(*MYDIALOG_PROC)(int msg, SLIDER_ *d, int c);
+
+typedef int(*MYDIALOG_PROC)(int msg, void *d, int c);
+
+typedef struct {
+    MYDIALOG_PROC proc;
+    int x, y, w, h;       // position and size of the object
+    int fg, bg;           // foreground and background colors
+    int key;              // keyboard shortcut (ASCII code)
+    int flags;            // flags about the object state
+    int d1;               // max possible value  (minimum value is always 0)
+    int d2;               // maximum of presented data
+    void *dp, *dp2, *dp3;
+	void* slider;
+} SLIDER;
+
 typedef struct TDIALOG {
 	int x, y;              	/*punkt poczatkowy w jednostkach logicznych*/
 	int dx, dy;           		/*rozmiar pola roboczego */
@@ -106,6 +122,8 @@ typedef struct TDIALOG {
 	LISTBOX(*ListBoxes)[]; /*tablica opisow listbox */
 	int SizeComboBoxT;
 	COMBOBOX(*ComboBoxes)[]; /*tablica opisow combobox */
+    int SizeSliderT;
+    SLIDER(*Sliders)[]; /*sliders */
 	void(*process)(void);
 	void* back;
 	int xb;

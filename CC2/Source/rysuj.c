@@ -119,12 +119,15 @@ extern GLYPH_FACE *face_ttf[128];
 extern BOOL TTF_redraw;
 extern int empty_dlg();
 
+extern void Check_ConfigureNotify(void);
 
 extern void _free_mouse(void);
 extern void dialog_cursor(int on);
 extern void relock_mouse(void);
 
 extern void  QInitialize(int argc, char *argv[]);
+
+extern int slider(void);
 
 char default_path_TTF[MAXPATH]="";
 char default_path_OTF[MAXPATH]="";
@@ -204,8 +207,6 @@ extern int GoRegRedraw(void(*ptr)(void));
 extern int TestRedraw(void);
 extern int testCall(int val);
 
-extern void go_ahead(void);
-
 extern int key_buffer;
 extern BOOL Semaphore;
 extern BOOL Cust_Semaphore;
@@ -219,6 +220,7 @@ extern void getcolor_RGB_char(unsigned char *red, unsigned char *green, unsigned
 extern int getcolor(void);
 extern void  gettextjustify(int *horiz, int *vert);
 extern int32_t utf8_to_ucs2 (const uint8_t * input, const uint8_t ** end_ptr);
+extern int utf8len(const char *s);
 
 extern int gk_face_character_outline(GLYPH_FACE* const gface, const unsigned code, char *alf, long *lw0, int yMax0);
 extern int gk_face_character_ymax(GLYPH_FACE* const gface, int *yMax0);
@@ -262,6 +264,8 @@ extern int Expand_flex();
 extern int get_window_origin_and_size_(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height);
 extern void set_editbox_geometry(int x, int y);
 extern void set_editbox_geometry_line(int x, int y);
+extern void set_editbox_geometry_set(void);
+extern void set_editbox_geometry_line_set(void);
 extern int Get_X11_SCREEN_SHIFT(void);
 extern int Get_WIN_WINDOW_T_B(void);
 
@@ -277,6 +281,7 @@ extern void init_file_dropped_fill_buf(void);
 extern int GetShmpPtr_1(struct shmseg **shmp_);
 extern void set_editbox_geometry_win(int x, int y);
 extern void set_editbox_geometry_line_win(int x, int y);
+extern int GoRegtestCall(int(*ptr)(int));
 #endif
 
 extern BITMAP *qmark;
@@ -1811,11 +1816,13 @@ extern char* icon_spline_points_end_p;
 
 extern BITMAP* icon_mouse1b;
 extern BITMAP* icon_mouse2b;
+extern BITMAP* icon_mouse1b2b;
 extern BITMAP* icon_mouse3b;
 extern BITMAP* icon_mouseRb;
 
 extern char* icon_mouse1b_p;
 extern char* icon_mouse2b_p;
+extern char* icon_mouse1b2b_p;
 extern char* icon_mouse3b_p;
 extern char* icon_mouseRb_p;
 
@@ -2142,6 +2149,13 @@ extern char *icon_inertia_d48_p;
 extern BITMAP *icon_dynamics_run;
 extern char *icon_dynamics_run_p;
 
+extern BITMAP *icon_menustyle;
+extern char *icon_menustyle_p;
+extern BITMAP *icon_cursorstyle;
+extern char *icon_cursorstyle_p;
+extern BITMAP *icon_barstyle;
+extern char *icon_barstyle_p;
+
 extern BITMAP *icon_yes_dmem;
 extern BITMAP *icon_no_dmem;
 extern char *icon_yes_d_pmem;
@@ -2421,7 +2435,7 @@ if (doit == 1) {
     ret = GetShmpPtr_1(&shmp);
 
     if (ret == 0)
-        return;
+        return 0;
 
     bufptr = &shmp->buf;
     //shmp->complete = 0;
@@ -2794,7 +2808,7 @@ void reset_font(void)
 	MP_SIZE = 19;
 	BAR_G = 19;
 	HEIGHT = 19;
-    ED_INF_HEIGHT = 20;
+    ED_INF_HEIGHT = 21; //20;
 	WIDTH = 10;
 	f_ini = fopen(font_file_name, "wt");
 
@@ -3152,6 +3166,7 @@ int TTF_char_len(unsigned int unicode)
 	return gk_char_width(rend_UI, unicode);
 }
 
+//returning length based on pos
 int TTF_text_len_pos(char *text, int pos)
 {
 	char buf[MaxTextLen*2+2];
@@ -3172,6 +3187,60 @@ int TTF_text_len_pos(char *text, int pos)
 	gk_rend_set_bold_strength(rend_UI, 50);
 	gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
 	return text_h;
+}
+
+//returning pos based on cursor position
+BOOL TTF_text_pos_x0(char *text, int x0, int y0, int width_w, int *pos)
+{   int x_length, x_position, y_position;
+    char buf[MaxTextLen*2+2];
+    int text_h, text_v;
+    int pos1;
+    //int x1, y1, x2, y2;
+    //get_clip_rect(screen, &x1, &y1, &x2, &y2);
+
+    x_length=mouse_x-x0;
+    if (x_length<-width_w) return FALSE;
+
+    if (x_length<0) x_length=0;
+
+    y_position=mouse_y-y0;
+    if (y_position<0) return FALSE;
+
+    //pos1 = utf8len(text);
+    pos1 = strlen(text);
+
+    if (!rend_UI) return FALSE;
+
+    if (text == NULL) return FALSE;
+
+    strncpy(buf, text, (MaxTextLen*2));
+
+    gk_rend_set_size_pixels(rend_UI, WIDTH*ttf_h, HEIGHT*ttf_v); //
+    gk_rend_set_bold_strength(rend_UI, 50);
+    gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
+
+    y_position=y0+text_v-mouse_y;
+    if (y_position<0) return FALSE;
+
+    if (mouse_x>(x0+text_h+width_w)) return FALSE;
+
+    while (text_h>x_length)
+    {
+        if (pos1 > 0)
+        {
+            if (buf[pos1 - 1] > 127)
+                pos1 -= 2;
+            else pos1--;
+            buf[pos1]='\0';
+            gk_text_size_utf8(rend_UI, buf, &text_h, &text_v);
+        }
+        else
+        {
+            text_h=0;
+        }
+    }
+    *pos=pos1;
+    return TRUE;
 }
 
 int my_text_length(FONT *font, const char *text)
@@ -3205,7 +3274,6 @@ void TTF_text_UI_(BITMAP *ui_screen, const char *text, int x, int y, int *text_h
 	else if (horiz == 2) x = x - *text_h;
 	
 	gk_render_line_utf8(ui_screen, rend_UI, text, x, y + HEIGHT - 3);
-	
 }
 
 void TTF_text_UI(const char *text, int x, int y, int *text_h, int *text_v)
@@ -3215,7 +3283,6 @@ void TTF_text_UI(const char *text, int x, int y, int *text_h, int *text_v)
 
 void TTF_text_UI_W_H_(BITMAP *ui_screen, const char* text, int x, int y, int* text_h, int* text_v, int WIDTH__, int HEIGHT__)
 {
-
 	int color;
 	COLOR_ kolor;
 	unsigned char red, green, blue;
@@ -3239,7 +3306,6 @@ void TTF_text_UI_W_H_(BITMAP *ui_screen, const char* text, int x, int y, int* te
 	else if (horiz == 2) x = x - *text_h;
 
 	gk_render_line_utf8(ui_screen, rend_UI, text, x, y + HEIGHT__ - 3);
-
 }
 
 void TTF_text_UI_W_H(const char* text, int x, int y, int* text_h, int* text_v, int WIDTH__, int HEIGHT__)
@@ -3253,7 +3319,6 @@ void TTF_text_test(BITMAP *bmp, char *text, int x, int y)
 	GLYPH_REND *rend;
 	int text_v, text_h;
 
-	
 	face = gk_load_face_from_file("DejaVuSans.ttf", 0);
 	if (!face) return;
 	rend = gk_create_renderer(face, 0);
@@ -3290,7 +3355,6 @@ void TTF_logo(int x, int y)
 	gk_text_size_utf8(rend1, logo, &text_h, &text_v);
 	gk_render_line_utf8(screen, rend1, logo, x- text_h/2, y- text_v/2 - HEIGHT);
 
-	
 	gk_unload_face(face1);
 	gk_done_renderer(rend1);
 }
@@ -3316,19 +3380,17 @@ void Free_Desktop_font()
 void Free_ini_font()
 {
 	int gk;
-
 	
 		if (rend_ini != NULL)
 		   gk_done_renderer(rend_ini);
 		
 		rend_ini = NULL;
-	
 }
 
 void Save_Desktop_font(char *font_name)
 {
 	FILE *f_ini;
-	//zapis pliku font.ini
+	//saving in file font.ini
 	FONTNUMBER = 0;
 
 	f_ini = fopen(font_file_name, "wt");
@@ -3346,7 +3408,6 @@ void set_ttf_digits27_len(void)
     PL266 = 50 * TTF_text_len("0");
     PL366 = 75 * TTF_text_len("0");
 }
-
 
 void Initialize_alft(void)
 {
@@ -3371,7 +3432,7 @@ void Initialize_Desktop_font(char *font_name)
 	getenv_s(&requiredSize, NULL, 0, "WINDIR");
 	if (requiredSize == 0)
 	{
-		*winfont = "";
+		winfont = NULL;
 	}
 #else
     requiredSize=255;
@@ -3434,7 +3495,6 @@ void Initialize_Desktop_font(char *font_name)
 	find_font_face(Desktop_Font_File);
 
 	set_ttf_digits27_len();
-
 }
 
 void Set_Desktop_font(char *font_name)
@@ -3466,8 +3526,7 @@ void Set_Desktop_font(char *font_name)
 
 	gk_rend_set_error_char(rend_UI, 0);
 	gk_rend_set_undefined_char(rend_UI, 0);
-	set_ttf_digits27_len(); 
-
+	set_ttf_digits27_len();
 }
 
 void extra_logo(int x, int y, int option, char *file_name)
@@ -3498,7 +3557,6 @@ void extra_logo(int x, int y, int option, char *file_name)
 
 	gk_unload_face(face);
 	gk_done_renderer(rend);
-	
 }
 
 typedef struct
@@ -3608,6 +3666,36 @@ int delete_all_client_bitmaps(void)
             destroy_bitmap(client_bitmap_load[i]);
             client_bitmap_load[i]=NULL;
         }
+    }
+}
+
+
+void set_geometry(int single)
+{   int x_edit;
+    int y_edit;
+    int curr_x01, curr_y01, curr_h1, curr_v1;
+    get_window_origin_and_size_(&curr_x01, &curr_y01, &curr_h1, &curr_v1);
+    if (!single) {
+        x_edit = curr_x01 + 200;
+        y_edit = curr_y01 + 200;
+#ifdef LINUX
+        set_editbox_geometry(x_edit, y_edit);
+#else
+        set_editbox_geometry_win(x_edit, y_edit);
+#endif
+        set_editbox_geometry_set();
+    }
+else {
+        x_edit = curr_x01 + 2;
+
+        y_edit = curr_y01 + Get_X11_SCREEN_SHIFT() + ED_INF_HEIGHT * 2;
+#ifdef LINUX
+        set_editbox_geometry_line(x_edit, y_edit);
+#else
+        y_edit -= Get_WIN_WINDOW_T_B();
+          set_editbox_geometry_line_win(x_edit, y_edit);
+#endif
+        set_editbox_geometry_line_set();
     }
 }
 
@@ -3833,7 +3921,7 @@ allegro_init();
 
  ret= set_window_icon();
 
- install_timer();
+ //install_timer();
  nbuttons = install_mouse();
 
  three_finger_flag=FALSE;
@@ -3843,6 +3931,7 @@ allegro_init();
  char konf[10][10][32];
  
  install_keyboard(); 
+ install_timer();
  
  poll_kbd=keyboard_needs_poll(); 
  poll_m = mouse_needs_poll();
@@ -3951,7 +4040,7 @@ else //master
       strcpy(font_name,"DejaVuSans.ttf");
 	  strcpy(Czcionka_Pulpitu, font_name);
       MP_SIZE=BAR_G=HEIGHT=19;
-      ED_INF_HEIGHT = HEIGHT + 1;
+      ED_INF_HEIGHT = HEIGHT + 2; //1;
       WIDTH=10;
       f_ini = fopen ( font_file_name , "wt" ) ;
       fprintf(f_ini,"%s\n",font_name);
@@ -3991,10 +4080,10 @@ else //master
 #endif
 			   {
 				   MP_SIZE = BAR_G = HEIGHT = 19;
-                   ED_INF_HEIGHT = HEIGHT + 1;
+                   ED_INF_HEIGHT = HEIGHT + 2; //1;
 				   WIDTH = 10;
 			   }
-			   if (HEIGHT==0) HEIGHT=ED_INF_HEIGHT-1;
+			   if (HEIGHT==0) HEIGHT=ED_INF_HEIGHT-2; //1;
 			}
 	   }
       }
@@ -4014,15 +4103,6 @@ else //master
 	strcat(file, ext);
 	strcpy(Czcionka_Pulpitu, file); // font_name);
 
-#ifndef LINUX
-#ifdef BIT64
- w95_setvmtitle(u8"AlfaCAD  (x64)");
- w95_setapptitle(u8"by Marek Ratajczak");
-#else
- w95_setvmtitle(u8"AlfaCAD");
- w95_setapptitle(u8"by Marek Ratajczak");
-#endif
-#endif
 
     int png_mem = 32 * 32 * 4 + 100;
     int png_mem64 = 64 * 64 * 4 + 100;
@@ -4800,6 +4880,7 @@ if (child==0)
       {&icon_spline_points_end,"spline_points_end",&icon_spline_points_end_p },
       {&icon_mouse1b,"mouse1b",&icon_mouse1b_p },
       {&icon_mouse2b,"mouse2b",&icon_mouse2b_p },
+      {&icon_mouse1b2b,"mouse1b2b",&icon_mouse1b2b_p },
       {&icon_mouse3b,"mouse3b",&icon_mouse3b_p },
       {&icon_mouseRb,"mouseRb",&icon_mouseRb_p },
       {&icon_education,"education",&icon_education_p },
@@ -4938,6 +5019,9 @@ if (child==0)
       {&icon_vibrations_d48,"vibrations_d48",&icon_vibrations_d48_p },
       {&icon_inertia_d48,"inertia_d48",&icon_inertia_d48_p },
       {&icon_dynamics_run,"dynamics_run",&icon_dynamics_run_p },
+      {&icon_menustyle,"menustyle",&icon_menustyle_p },
+      {&icon_cursorstyle,"cursorstyle",&icon_cursorstyle_p },
+      {&icon_barstyle,"barstyle",&icon_barstyle_p },
   };
 
     int bitmaps_size = sizeof(bitmap_load) / sizeof(bitmap_load[0]);
@@ -4968,15 +5052,6 @@ for (int i = 0; i < bitmaps_size; i++)
     strcpy (zbior_danych, "") ;
    }
 
-#ifndef LINUX
-  if (Get_WINE())
-  {
-	  //makro_wine();
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-	  //_sleep(0);
-  }
-#endif
 
   if (strlen(zbior_danych)>0) load_file_to_history(file_name);
  
@@ -5007,7 +5082,6 @@ for (int i = 0; i < bitmaps_size; i++)
 
   x_edit=curr_x01+2;
 
-
   y_edit=curr_y01+Get_X11_SCREEN_SHIFT()+ED_INF_HEIGHT*2;
 #ifdef LINUX
   set_editbox_geometry_line(x_edit, y_edit);
@@ -5015,8 +5089,6 @@ for (int i = 0; i < bitmaps_size; i++)
   y_edit -= Get_WIN_WINDOW_T_B();
   set_editbox_geometry_line_win(x_edit, y_edit);
 #endif
-
-  go_ahead();
 
   position_mouse(getmaxx()/2, getmaxy()/2);
   scare_mouse();
@@ -5031,6 +5103,21 @@ for (int i = 0; i < bitmaps_size; i++)
   set_close_button_callback (closebutton);
 
   if (desktop_instruction) ret=Show_Alfa_Instruction();
+
+
+  //it's just for test of slider
+  /*
+  _free_mouse();
+  dialog_cursor(1);
+  int ret2=slider();
+  dialog_cursor(0);
+  lock_mouse();
+   */
+
+  install_int(Check_ConfigureNotify, 1000);
+
+  _free_mouse();
+  lock_mouse();
 
   //MAIN LOOP
 

@@ -7,6 +7,7 @@
 //#include "stdafx.h"
 #include <string.h>
 #include <stdlib.h>     /* strtoul */
+#include <stdio.h>
 #include "blowfish.h"
 #include "blowfish2.h"	// holds the random digit tables
 
@@ -244,27 +245,21 @@ void CBlowFish::Decode (BYTE * pInput, BYTE * pOutput, DWORD lSize)
 	}
 }
 
-
 char* decodeString(char *pass, char *key)
 {
-	BYTE lrd[64];
-	BYTE lrd_e[64];
-	//int i;
-	//int l;
+	BYTE lrd[66];
+	BYTE lrd_e[66];
 	static char result[256] = "";
 	int n1, n2;
 	char xstr[3];
 
 	CBlowFish mbf;
 
-
 	for (n1 = 0, n2 = 0; n1 < 128; n1 += 2, n2++)
 	{
 		unsigned char x = 0;
 		if (n1 + 2 > strlen(pass))
 			break;
-		//x += QString(pass.at(n1)).toInt(NULL, 16) * 16;
-		//x += QString(pass.at(n1 + 1)).toInt(NULL, 16);
 #ifdef LINUX
         strncpy(xstr, pass + n1, 2);
 #else
@@ -276,16 +271,114 @@ char* decodeString(char *pass, char *key)
 		lrd[n2] = (char)x;
 	}
 
-
 	strcpy((char *)pwd, "ae90wTYrgaTerUSg");
 	mbf.Initialize(pwd, 16);
 
-
 	mbf.Decode(lrd, lrd_e, 64);
-
 
 	strcpy(result, (char*)lrd_e);
 
-
 	return result;
+}
+
+
+char* encodeString(char *pass, char *key)
+{
+    BYTE lrd[66];
+    BYTE lrd_e[66];
+    static char result[256] = "";
+    int n1, n2;
+    char xstr[3];
+
+    CBlowFish mbf;
+
+    for (n1 = 0, n2 = 0; n1 < 128; n1 += 2, n2++)
+    {
+        unsigned char x = 0;
+        if (n1 + 2 > strlen(pass))
+            break;
+#ifdef LINUX
+        strncpy(xstr, pass + n1, 2);
+#else
+        strncpy_s(xstr, pass + n1, 2);
+#endif
+        xstr[2] = '\0';
+        x = (unsigned char)strtoul(xstr, nullptr, 16);
+
+        lrd[n2] = (char)x;
+    }
+
+    strcpy((char *)pwd, "ae90wTYrgaTerUSg");
+    mbf.Initialize(pwd, 16);
+
+    mbf.Encode(lrd, lrd_e, 64);
+
+    strcpy(result, (char*)lrd_e);
+
+    return result;
+}
+
+char* decodePassword(char *pass, char *key)
+{
+    BYTE lrd[66];
+    BYTE lrd_e[66];
+    static char result[66] = "";
+    int n1;
+    char dstr[4];
+    char *pass_p;
+    char *result_p;
+    unsigned char x;
+    int ret;
+
+    CBlowFish mbf;
+
+    pass_p=pass;
+    result_p=(char *)lrd;
+
+    for(n1 = 0; n1 < (2*64); n1+=2)
+    {
+        if (n1 + 2 > strlen(pass))
+            break;
+        strncpy(dstr, pass_p, 2);
+        dstr[2]='\0';
+        ret=sscanf(dstr, "%02hhx", &x) ;
+        *result_p=x;
+        pass_p+=2;
+        result_p++;
+    }
+    *result_p='\0';
+
+    strcpy((char *)pwd, "ae90wTYrgaTerUSg");
+    mbf.Initialize(pwd, 16);
+
+    mbf.Decode(lrd, lrd_e, 64);
+
+    strcpy(result, (char*)lrd_e);
+
+    return result;
+}
+
+char* encodePassword(char *pass, char *key)
+{
+    BYTE lrd_e[66];
+    static char result[130] = "";
+    int n1, n2;
+    char xstr[3];
+
+    CBlowFish mbf;
+
+    strcpy((char *)pwd, "ae90wTYrgaTerUSg");
+    mbf.Initialize(pwd, 16);
+
+    mbf.Encode((unsigned char*)pass, lrd_e, 64);
+
+    char decstr[4];
+
+    for(n1 = 0; n1 < 64; ++n1)
+    {
+        unsigned char x = lrd_e[n1];
+        sprintf(decstr,"%02hhx", x);
+        strcat(result, decstr);
+    }
+    return result;
 }

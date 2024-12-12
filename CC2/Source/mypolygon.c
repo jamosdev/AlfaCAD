@@ -64,7 +64,7 @@ typedef struct
 	*/
 } KOLORY;
 
-extern KOLORY kolory;
+extern const KOLORY kolory;
 
 extern unsigned char _dac_normal[256][3];
 

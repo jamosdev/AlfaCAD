@@ -24,6 +24,9 @@
 #include<string.h>
 #ifndef LINUX
 #include<dos.h>
+#ifdef _CMAKE_
+#include <synchapi.h> //needed for CLion
+#endif
 #else
 #include <unistd.h>
 #endif
@@ -145,6 +148,7 @@ typedef unsigned int GrColor;
 #define DEFAULT_SPRITE_H   16
 
 BOOL BIGCURSOR = FALSE;
+extern BOOL BAR_POINTER;
 
 BOOL enforce_redraw = FALSE;
 
@@ -154,6 +158,9 @@ extern char* punits[];
 extern char *upunits[];
 extern int(*SW2[13])(void);
 extern char readmouse(void);
+
+//extern int get_cursor_info(void);
+
 void Scale_Point (double k1, double k2, double x1,double y1,double x2,double y2,double *x,double *y);
 
 const int funits_no=8;
@@ -211,6 +218,26 @@ char alfa_mouse_arrow_data[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
    0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+char alfa_mouse_edit_data[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
+{
+    0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0
+};
+
 #define DEFAULT_SPRITE_W32   32
 #define DEFAULT_SPRITE_H32   32
 
@@ -264,6 +291,42 @@ char alfa_mouse_arrow_data32[DEFAULT_SPRITE_H32 * DEFAULT_SPRITE_W32] =
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
+
+char alfa_mouse_edit_data32[DEFAULT_SPRITE_H32 * DEFAULT_SPRITE_W32] =
+        {
+                0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
 
 static GrContext *second_screen;
 GrContext *second_screen_back;
@@ -354,6 +417,7 @@ extern int my_poll_keyboard(void);
 extern void Save_View_Preview(void);
 extern BOOL get_config_sectors(void);
 extern void save_dialog_cursor(void);
+extern void save_menu_cursor(void);
 extern void convert_and_deposit_bitmap(BITMAP *PREVIEW, int x1, int y1, int x2, int y2, char *drawing_file, int client_number);
 extern void reset_special_background(char *file_pcx);
 extern BITMAP* load_memory_pcx(AL_CONST void* buffer, PALETTE* pal);
@@ -429,7 +493,7 @@ static double krok_old;
 static BOOL snap_changed=FALSE;
 static BOOL redraw_again=FALSE;
 
-static BITMAP *ctx_bitmap[32];
+static BITMAP *ctx_bitmap[32]={NULL};
 
 int key_buffer=-1;
 
@@ -442,7 +506,11 @@ static BITMAP *alfa_mouse_null = NULL;
 static BITMAP *alfa_mouse_pointer = NULL;
 static BITMAP *alfa_mouse_pointer32 = NULL;/* default mouse pointer */
 
+static BITMAP *alfa_mouse_edit = NULL;
+static BITMAP *alfa_mouse_edit32 = NULL;
+
 static BITMAP *alfa_mouse_sprite = NULL;
+static BITMAP *alfa_mouse_edit_sprite = NULL;
 
 extern unsigned long_long imagesizelong(int left, int top, int right, int bottom);
 
@@ -5696,6 +5764,8 @@ void Draw_Vector (AVECTOR *ptrs_vector, int mode, int kolor, int redraw_obj)
 
 #define arrowf 1.0
 
+    if ((ptrs_vector->style > 9) && (ptrs_vector->style < 16) && (kolor)) bitmap_vector_exist = TRUE;
+
     if (redraw_obj)
     {
         if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0)) {
@@ -9416,6 +9486,7 @@ static void rysuj_obiekty(void)
   int grubosc;
   BOOL bitmap_exist_o;
   BOOL bitmap_png_exist_o;
+  BOOL bitmap_vector_exist_o;
   BOOL bitmap_pattern_exist_o;
   char *end_block;
   int n_changes;
@@ -9484,9 +9555,11 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
 
  bitmap_exist_o=bitmap_exist || bitmap_pattern_exist || bitmap_pattern_exist;
  bitmap_png_exist_o = bitmap_png_exist || bitmap_exist || bitmap_pattern_exist;
+ bitmap_vector_exist_o = bitmap_vector_exist;
  bitmap_pattern_exist_o = bitmap_pattern_exist || bitmap_exist || bitmap_png_exist;
  bitmap_exist = FALSE;
  bitmap_png_exist = FALSE;
+ bitmap_vector_exist = FALSE;
  bitmap_pattern_exist = FALSE;
  solid_translucent_exist = FALSE;
  bitmap_on_front_exist = FALSE;
@@ -9526,6 +9599,7 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
 						b_break = TRUE;
 						bitmap_exist = bitmap_exist_o;
 						bitmap_png_exist = bitmap_png_exist_o;
+                        bitmap_vector_exist = bitmap_vector_exist_o;
 						bitmap_pattern_exist = bitmap_pattern_exist_o;
 					}
 
@@ -10273,30 +10347,31 @@ _WhNumberTextStyle_=get_WhNumberTextStyle();
                licznik_obiektow++;
                ptrs_vector = (AVECTOR*)nag ;
 
-               if (!(ptrs_vector->widoczny = Vector_Selected (ptrs_vector))) break ;
-               if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0))
+               if ((ptrs_vector->atrybut != Ausuniety) &&
+                   (ptrs_vector->atrybut != Abad))
                {
-                   if ((ptrs_vector->atrybut == Ablok) ||
-                       ((dragging_quad_move == TRUE) && (ptrs_vector->atrybut == Aoblok)))
-                   {
-                       setcolor(kolory.blok);
-                       setfillstyle_(SOLID_FILL,kolory.blok);
-                   }
-                   else
-                   {
-                       SetColorAC(ptrs_vector->kolor);
-                       setfillstyle_(SOLID_FILL, GetColorAC(ptrs_vector->kolor));
-                   }
-               }
-               else
-               {
-                   SetColorAC(8);
-                   setfillstyle_(SOLID_FILL, GetColorAC(8));
-               }
+                   if ((ptrs_vector->style > 9) && (ptrs_vector->style < 16)) bitmap_vector_exist = TRUE;
 
-               select_color_type(ptrs_vector);
+                   if (!(ptrs_vector->widoczny = Vector_Selected(ptrs_vector))) break;
 
-               Draw_Vector (ptrs_vector, mode, 1, 1) ;
+                   if ((ptrs_vector->warstwa == Current_Layer) || (options1.view_only_current_layer == 0)) {
+                       if ((ptrs_vector->atrybut == Ablok) ||
+                           ((dragging_quad_move == TRUE) && (ptrs_vector->atrybut == Aoblok))) {
+                           setcolor(kolory.blok);
+                           setfillstyle_(SOLID_FILL, kolory.blok);
+                       } else {
+                           SetColorAC(ptrs_vector->kolor);
+                           setfillstyle_(SOLID_FILL, GetColorAC(ptrs_vector->kolor));
+                       }
+                   } else {
+                       SetColorAC(8);
+                       setfillstyle_(SOLID_FILL, GetColorAC(8));
+                   }
+
+                   select_color_type(ptrs_vector);
+
+                   Draw_Vector(ptrs_vector, mode, 1, 1);
+               }
 
                break;
     case Opcx :
@@ -11117,6 +11192,11 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 	 PREVIEW2 = create_bitmap(ddx, ddy);  // []
 	 PREVIEW3 = create_bitmap(max(ddx,ddy), max(ddx,ddy));  //==
 
+     set_clip_state(PREVIEW, 1);
+     set_clip_state(PREVIEW1, 1);
+     set_clip_state(PREVIEW2, 1);
+     set_clip_state(PREVIEW3, 1);
+
 
 	 if (PREVIEW && PREVIEW1 && PREVIEW2 && PREVIEW3)
 	 {	 
@@ -11124,7 +11204,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW1, 0/*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, y2 - y1, x2 - x1);////
 			 if (gray) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /* ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /* ddy*/, gray_sat /*0*/);  //0 gives black, and it was changed to get always gray background if any
 			 rotate_sprite(PREVIEW3, PREVIEW1, 0, 0, itofix(64));  //0,0
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11144,7 +11224,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, x2 - x1, y2 - y1); ////
 			 if (gray) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat /*0*/);
 			 rotate_sprite(PREVIEW2, PREVIEW, 0, 0, itofix(128));
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11158,7 +11238,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW1, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, y2 - y1, x2 - x1); ////
 			 if (gray) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW1, PREVIEW1, PREVIEW1->w /*ddx*/, PREVIEW1->h /*ddy*/, gray_sat /*0*/);
 			 rotate_sprite(PREVIEW3, PREVIEW1, 0, 0, itofix(192));
 
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
@@ -11172,7 +11252,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 {
 			 stretch_blit((BITMAP*)second_screen, PREVIEW, 0 /*iXpk*/, iYpk, pXk - pXp - 2*iXpk + 1, pYp - pYk - 2*iYpk + 1, 0, 0, ddx, ddy);
 			 if (gray) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat);
-			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, 0);
+			 else if (bw) gray_bitmap(PREVIEW, PREVIEW, PREVIEW->w /*ddx*/, PREVIEW->h /*ddy*/, gray_sat /*0*/);
 			
 			 if (Get_Check_Button(&printer_dlg, BUT_REFLECTION))
 			 {
@@ -11194,7 +11274,7 @@ void dimm_dialog_bitmap(BITMAP *src, BITMAP *dst, int dx, int dy, int gray_sat)
 		 destroy_bitmap(PREVIEW3);
 	 }
 
-	 Restore_View_Preview();
+	 Restore_View_Preview(); 
 	 if (!snap_)krok_s = jednostkiY(1);
 
 	 return;
@@ -11405,9 +11485,10 @@ void get_posXY(double *pozx, double *pozy)
 
 void set_posXY(double pozx, double pozy)
 {
-    Odczyt_licznikow();
+    //Odczyt_licznikow();
     X=pozx;
     Y=pozy;
+    Odczyt_licznikow();
 }
 
 int get_cursor_posX(void)
@@ -12547,8 +12628,19 @@ void set_dialog_cursor(BOOL bigsmall)
 	BIGCURSOR = bigsmall;
 	if (BIGCURSOR) alfa_mouse_sprite = alfa_mouse_pointer32;
 	else  alfa_mouse_sprite = alfa_mouse_pointer;
+
+    if (BIGCURSOR) alfa_mouse_edit_sprite = alfa_mouse_edit32;
+    else  alfa_mouse_edit_sprite = alfa_mouse_edit;
+
+
 	set_mouse_sprite(alfa_mouse_sprite);
 	save_dialog_cursor();
+}
+
+void set_menu_cursor(BOOL bar_pointer)
+{
+    BAR_POINTER = bar_pointer;
+    save_menu_cursor();
 }
 
 void DoneBuffMacro(void)
@@ -12556,6 +12648,76 @@ void DoneBuffMacro(void)
     if (bufor_makra != NULL) free(bufor_makra);
 }
 
+void my_scare_mouse() 
+{
+    show_mouse(NULL);
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    //scare_mouse();
+}
+
+void my_unscare_mouse()
+{
+    show_mouse(screen);
+    //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    //unscare_mouse();
+}
+
+void set_cursor_pointer(void)
+{
+    scare_mouse();
+    set_mouse_sprite(alfa_mouse_sprite);
+    set_mouse_sprite_focus(0, 0);
+    unscare_mouse();
+    show_mouse(screen);
+}
+
+void set_cursor_pointer_linux(void)
+{
+    show_os_cursor(MOUSE_CURSOR_NONE);
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    disable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+}
+
+void set_cursor_pointer__(void)
+{
+    scare_mouse();
+    show_os_cursor(MOUSE_CURSOR_NONE);
+    //int ret = get_cursor_info();
+    disable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    set_mouse_sprite(alfa_mouse_sprite);
+    unscare_mouse();
+
+}
+
+void set_cursor_edit(void)
+{
+    scare_mouse();
+    set_mouse_sprite(alfa_mouse_edit_sprite);
+    if (BIGCURSOR) set_mouse_sprite_focus(8, 16);
+    else set_mouse_sprite_focus(8, 8);
+
+    unscare_mouse();
+    show_mouse(screen);
+}
+
+void set_cursor_edit_linux(void)
+{
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    enable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_EDIT);
+    show_os_cursor(MOUSE_CURSOR_EDIT);
+}
+
+void set_cursor_edit__(void)
+{
+    scare_mouse();
+    set_mouse_sprite(NULL);
+    enable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_EDIT);
+    unscare_mouse();
+}
 
 void ini_cursors(void)
 {
@@ -12571,7 +12733,16 @@ void ini_cursors(void)
       alfa_mouse_pointer = create_mouse_pointer(alfa_mouse_arrow_data);
       if (BIGCURSOR) alfa_mouse_sprite = alfa_mouse_pointer32;
       else  alfa_mouse_sprite = alfa_mouse_pointer;
-      set_mouse_sprite(alfa_mouse_sprite);
+
+    if (alfa_mouse_edit32!=NULL) destroy_bitmap(alfa_mouse_edit32);
+    if (alfa_mouse_edit != NULL) destroy_bitmap(alfa_mouse_edit);
+    alfa_mouse_edit32 = create_mouse_pointer32(alfa_mouse_edit_data32);
+    alfa_mouse_edit = create_mouse_pointer(alfa_mouse_edit_data);
+
+    if (BIGCURSOR) alfa_mouse_edit_sprite = alfa_mouse_edit32;
+    else  alfa_mouse_edit_sprite = alfa_mouse_edit;
+
+    set_mouse_sprite(alfa_mouse_sprite);
 }
 
  void ini_e (void)
@@ -12984,7 +13155,6 @@ int my_getch(void)
 
 }
 
-
 int __file_exists(char *name)
 {
 	int ret;
@@ -12993,6 +13163,14 @@ int __file_exists(char *name)
 	return ret;
 }
 
+int __file_size(char* name)
+{
+    int ret, size;
+    struct stat buffer;
+    ret = (stat(name, &buffer) == 0);
+    if (ret) return buffer.st_size;
+    else return 0;
+}
 
 
 int	getdisk(void)
@@ -13051,18 +13229,6 @@ int	findnext(struct ffblk *_ffblk)
 
 	return ret;
 }
-
-
-void w95_setvmtitle(const char *tekst)
-{
-	 return;
-}
-
-void w95_setapptitle(const char *tekst)
-{
-	return;
-}
-
 
 char *w95_getlogon (void)
 {  static char logon[60];

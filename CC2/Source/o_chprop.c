@@ -493,6 +493,7 @@ static TDIALOG change_dlg=
 	BUTTON_SIZE, (BUTTON(*)[])&buttons,
 	0, NULL,		/*listbox*/
 	COMBOBOX_SIZE, (COMBOBOX(*)[])&combobox,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

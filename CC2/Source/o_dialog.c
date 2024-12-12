@@ -36,6 +36,8 @@
 #include "bgiext.h"
 #include "alf_res.h"
 
+//#include "gui.h"
+
 #include "menu.h"
 #include "dialog.h"
 
@@ -51,6 +53,8 @@ typedef struct tagRECT {
 } RECT, * PRECT, * NPRECT, * LPRECT;
 #endif
 
+BITMAP *slbitmap=NULL;
+
 static int (*kls)(void);
 static void (*mv)(int x, int y);
 static int (*tab_fun)(void);
@@ -59,6 +63,7 @@ static void (*CUR)(int ,int);
 static TMENU *cur_tipsmenu=NULL;
 
 static int xmousex, ymousey;
+static p_point bar_center;
 
 static BOOL block_changed=FALSE;
 static TDIALOG *Dlg=NULL;
@@ -67,6 +72,18 @@ static int x001[4], y001[4], x002[4], y002[4];
 static int dx_mov, dy_mov;
 static int Dlg_xb, Dlg_yb;
 static int Typ=0;
+static int set_listbox_slider=0;
+static char *listbox_address=NULL;
+
+extern void invert_bitmap(BITMAP *bmp);
+extern BOOL XORBAR;
+
+extern int d_myslider_proc(int msg, void *d_, int c);
+
+static int listbox_grab_slider(void *dp3, int d2);
+static int listbox_init_slider(int *var1, int *var2, int *var3, int *var4);
+
+static SLIDER listbox_slider={d_myslider_proc,  0, 0,  10, 0,  0,  98,    0,   0,  100,   0,    NULL , listbox_grab_slider, listbox_init_slider, NULL};
 
 extern void mycirclefill(int x1, int y1, int radius);
 extern void myarc(int x1, int y1, fixed ang1, fixed ang2, int radius);
@@ -189,7 +206,15 @@ extern BITMAP *Get_Screenplay(void);
 extern void  outtext_r_(BITMAP *ui_screen, char  *textstring);
 extern int get_palette_color(int color);
 
+extern void _free_mouse(void);
+
+extern int d_myslider_proc(int msg, void *d, int c);
+extern int gui_border_dark, gui_border_light;
+
 extern char *BLOCKLIST;
+extern BOOL BAR_POINTER;
+
+BOOL NO_POINTER=FALSE;
 
 extern char *qmark_p;
 extern char *eymark_p;
@@ -395,6 +420,7 @@ extern char *icon_f11_p;
 extern char *icon_f12_p;
 extern char *icon_mouse1b_p;
 extern char* icon_mouse2b_p;
+extern char* icon_mouse1b2b_p;
 extern char* icon_mouse3b_p;
 extern char* icon_mouseRb_p;
 extern char* icon_space128_p;
@@ -562,6 +588,7 @@ extern int SkalaZ_Plus(int sclfct);
          /*189*/ icon_tab_p, icon_arrow_down_end_d48_p, icon_alpha_sorting_d32_p, icon_time_lapse_d32_p, icon_no_d_12_p,
          /*194*/ icon_eurocode_d48_p, icon_asce_d48_p, icon_icc_d48_p, icon_combination_d48_p, icon_erase_layer_db_64_p, icon_mark_layer_db_64_p,
          /*200*/ icon_mark_d_12_p, icon_Pdelta_d48_p, icon_upgrademark_pmem, icon_noupgrademark_pmem, icon_vibrations_d48_p, icon_inertia_d48_p,
+         /*206*/ icon_mouse1b2b_p,
      };
 
 	 return icons[iconno];
@@ -569,7 +596,7 @@ extern int SkalaZ_Plus(int sclfct);
 
  int get_icon_size(int iconno)
  {
-	 int icon_size[206] = {
+	 int icon_size[] = {
 	  32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
 	  /*10*/ 32, 32, 32, 32, 32, 32,
 	  /*16*/ 64, 64,
@@ -597,6 +624,7 @@ extern int SkalaZ_Plus(int sclfct);
       /*170*/64,64,64,64,64,64,64,64,
       /*178*/64,64,64,64,64,64,64,64,
       /*186*/64,64,64,64, 48, 32, 32, 14, 48, 48, 48, 48, 64, 64, 14, 48, 64, 64, 48, 48,
+      /*206*/64,
      };
 	 return icon_size[iconno];
  }
@@ -664,6 +692,12 @@ void Get_Dlg_Rect(TDIALOG *dlg, int *x1, int *y1, int *x2, int *y2)
   *x2 = *x1 + 3 + jed_to_piks_x(dlg->dx) + 2;
   *y2 = *y1 + 3 + 1 + HEIGHT_CAPTION + jed_to_piks_y(dlg->dy) + 2;
 
+  if (*x1<0)
+  {
+      *x2-=*x1;
+      *x1=0;
+  }
+
   if (*x2>getmaxx())
   {
       *x2=getmaxx();
@@ -675,10 +709,16 @@ void Get_Dlg_Rect(TDIALOG *dlg, int *x1, int *y1, int *x2, int *y2)
       }
   }
 
+    if (*y1<0)
+    {
+        *y2-=*y1;
+        *y1=0;
+    }
+
   if (*y2>getmaxy())
   {
      *y2=getmaxy();
-     *y1=*y2 - 3 - 1 - HEIGHT_CAPTION + jed_to_piks_y(dlg->dy) - 2;
+     *y1=*y2 - 3 - 1 - HEIGHT_CAPTION - jed_to_piks_y(dlg->dy) - 2;
      if (*y1<0)
      {
         *y1=0;
@@ -701,6 +741,8 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
   void(*CUR)(int ,int);
   float width;
 
+  //int x1, y1, x2, y2;
+
   paperk = kolory.paperk;
   inkk = kolory.inkk;
   paperk_ini = kolory.paperk_ini;
@@ -711,15 +753,19 @@ static int read_dlg(char  *tekst, int ink, int paper,int ink_ini, int paper_ini,
   kolory.inkk_ini = ink_ini;
   CUR = MVCUR ;
   MVCUR = noopmv ;
+
   if (lmax < 10)
   {
-	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE);
+	  zn = editstring(tekst, legal, lmax, (float)lmax, FALSE, 0, TRUE, 5, 3);
   }
   else
   {
 	  width = (dx - 4 * DXIL - ttf_width_w) / ttf_width_w + extra1;
-	  zn = editstring(tekst, legal, lmax, width, FALSE, 1, TRUE);
+	  zn = editstring(tekst, legal, lmax, width, FALSE, 1, TRUE, 5, 3);
   }
+
+  _free_mouse();
+
   MVCUR = CUR ;
   kolory.paperk = paperk;
   kolory.inkk = inkk;
@@ -880,7 +926,8 @@ static void draw_groups(GROUP_BOX  *Groups, int SizeGroupT, TDIALOG *dlg, BOOL a
   BOOL function_in;
 
 #ifndef LINUX
-  void(*ProcF)(void) = nooop;
+  //void(*ProcF)(void) = nooop;
+  void(*ProcF)(int, int, int, int, int, int, int) = (void (*)(int, int, int, int, int, int, int)) nooop;
 #else
   void(*ProcF)(int, int, int, int, int, int, int) = (void (*)(int, int, int, int, int, int, int)) nooop;
 #endif
@@ -1088,6 +1135,8 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
   int x1, x2, y1, y2;
   int dx;
   int input_width;
+  int x01, y01, x02, y02;
+  int clip_state;
 
   
   cur_off(PozX, PozY);  
@@ -1114,15 +1163,23 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
     paper_ini = InputLines[i].paper_ini == COLOR_NULL ? dlg_kolory->dlg_in_line_paper_ini : InputLines[i].paper_ini ;
 
 	if (InputLines[i].MaxLen<10)
-       moveto( x1+ 0.9 * DXIL, y1 +(y2-y1-(HEIGHT-3))/2 + 1);
+       //moveto( x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 1);
+       moveto( x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 2);
 	else
-		moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 1);
+		//moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 1);
+        moveto(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3))/2 + 2);
+
     strcpy( buf, InputLines[i].txt);
  
     if(paper < 9) ink = 15;
 
 	dx = (int)((float)InputLines[i].dx*wsp_x);
-	
+
+    get_clip_rect(screen, &x01, &y01, &x02, &y02);
+    set_clip_rect(screen,  x1+2, y1, x2-2, y2); //+2 and -2 to not overlap the frame
+    clip_state=get_clip_state(screen);
+    set_clip_state(screen, 1);
+
     if(read_dlg(buf, ink, paper, ink_ini, paper_ini,
 	InputLines[i].MaxLen, InputLines[i].width, dx, InputLines[i].legal) != ESC)
     {
@@ -1136,19 +1193,24 @@ static int find_input_line(INPUTLINE *InputLines,int SizeInLinT)
 
 	  if (InputLines[i].MaxLen < 10)
 	  {
-		  input_width = ((x2 - x1) - 3 * DXIL - ttf_width_w) / ttf_width_w + extra1;
-		  outetextxy(x1 + DXIL, y1 + (y2 - y1 - (HEIGHT - 2)) / 2 + 2, InputLines[i].MaxLen,
-			  input_width, InputLines[i].txt, ink, paper);
+	  	  //input_width = ((x2 - x1) - 3 * DXIL - ttf_width_w) / ttf_width_w + extra1;
+          input_width=InputLines[i].width;
+	  	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLines[i].MaxLen,
+            input_width, InputLines[i].txt, ink, paper);
 	  }
 	  else
 	  {
-		  input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w ) / ttf_width_w + extra1;
+		  //input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w ) / ttf_width_w + extra1;
+          input_width=InputLines[i].width;
 		  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLines[i].MaxLen,
 			  input_width, InputLines[i].txt, ink, paper);
 	  }
 	  
       ret = -1;
     }
+      _free_mouse();
+      set_clip_rect(screen,  x01, y01, x02, y02);
+      set_clip_state(screen, clip_state);
   }
   moveto(PozX+pocz_x, PozY+pocz_y);
   cur_on(PozX, PozY); 
@@ -1202,14 +1264,14 @@ void Draw_Input_Line(INPUTLINE *InputLine)
 		  int a = 0;
 	  }
 
-	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 2)/*WIDTH*/) / 2 + 2, InputLine->MaxLen,
+	  outetextxy(x1 + 0.9 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLine->MaxLen,
 		  InputLine->width, InputLine->txt, ink, paper); //254
   }
   else
   {
 	  input_width = ((x2 - x1) - 4 * DXIL - ttf_width_w) / ttf_width_w  + extra1;
 
-	  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)/*WIDTH*/) / 2 + 2, InputLine->MaxLen,
+	  outetextxy(x1 + 2 * DXIL, y1 + (y2 - y1 - (HEIGHT - 3)) / 2 + 2, InputLine->MaxLen,
 		  input_width, InputLine->txt, ink, paper); //254
   }
 
@@ -1274,6 +1336,8 @@ static void baronoff(LISTBOX  * listbox)
   int numer_koloru;
   int color_bar=FALSE;
 
+  if (BAR_POINTER) show_mouse(NULL);
+
   x1 = jed_to_piks_x(listbox->x) + 1 +pocz_x;
   x2 = jed_to_piks_x(listbox->x + listbox->dx) - 2+pocz_x;
   y1 = jed_to_piks_y((listbox->y + listbox->dy * listbox->poz) /*+ 1*/)+pocz_y;
@@ -1305,10 +1369,12 @@ static void baronoff(LISTBOX  * listbox)
        } 
         else setcolor(15);
         
-  setwritemode(XOR_PUT);
-  setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+  ////setwritemode(XOR_PUT);
+  ////setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
   if (color_bar)
   {
+      setwritemode(XOR_PUT);
+      setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
       for (int i = 0; i < 3; i++)
       {
           LINE(x1 + i, y1 + i, x2 - i, y1 + i);
@@ -1318,14 +1384,36 @@ static void baronoff(LISTBOX  * listbox)
       }
   }
   else {
-      for (bb = y1; bb <= y2; bb++) {
-          LINE(x1, bb, x2, bb);
+      if (XORBAR)
+      {
+          setwritemode(XOR_PUT);
+          setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+          for (bb = y1; bb <= y2; bb++) {
+              LINE(x1, bb, x2, bb);
+          }
+      }
+      else
+      {
+          setwritemode(COPY_PUT);
+          BITMAP *barbitmap;
+          barbitmap = create_bitmap(x2-x1, y2-y1);
+          getimage(x1, y1, x2, y2, barbitmap);
+          invert_bitmap(barbitmap);
+          putimage(x1, y1, barbitmap, COPY_PUT);
       }
   }
-    
-   PozY=(y1 + y2)/2; 
-   moveto(PozX+pocz_x,PozY+pocz_y);
-   MVCUR(0,0);
+
+  if (BAR_POINTER) show_mouse(screen);
+
+  if (!BAR_POINTER)
+  {
+      PozY = (y1 + y2) / 2;
+      moveto(PozX + pocz_x, PozY + pocz_y);
+      MVCUR(0, 0);
+  }
+
+    bar_center.x=(x1+x2)/2;
+    bar_center.y=(y1+y2)/2;
    
 }
 
@@ -1412,7 +1500,8 @@ static void draw_listbox(LISTBOX  * listbox)
 
   for(i=0;i<size;i++)
   {
-    yt = jed_to_piks_y( + listbox->dy * i) +(height - 8) / 2 ;
+    //yt = jed_to_piks_y(listbox->y + listbox->dy * i) +pocz_y +(height - 8) / 2 ;
+    yt = jed_to_piks_y(listbox->dy * i) +(height - 8) / 2 ;
     ptr_temp = listbox->txt[listbox->foff+i];
     if(strlen(ptr_temp) > listbox_max_text_len)
     {
@@ -1557,9 +1646,226 @@ static void draw_listbox(LISTBOX  * listbox)
 }
 
 
+static int listbox_init_slider(int *var1, int *var2, int *var3, int *var4)
+{
+    LISTBOX *listbox;
+    listbox=listbox_address;
+
+    *var1=listbox->foff;  //  n_first_layer_in_dlg;
+    *var2=listbox->foff+listbox->maxw; //  n_last_layer_in_dlg+1;
+    //*var3=No_Layers;
+    *var3=listbox->max;  // no_layers;
+    *var4=listbox->maxw;  //NoDialogLayers;
+    return 1;
+}
+
+static int listbox_grab_slider(void *dp3, int d2)
+{   char slider_var[32];
+    int var1, var2, var3, var4, ret;
+    int (*SlideFun)(int*, int*, int*, int*);
+
+    LISTBOX *listbox;
+    listbox=listbox_address;
+
+    SlideFun = (int(*)(int *, int *, int *, int *))dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+    //sprintf(slider_var, "%d-%d", max(0, d2-NoDialogLayers), d2);
+    ////sprintf(slider_var, "%d-%d", var3 - d2 - (var2-var1) + 1, var3-d2);
+    ////komunikat_str_short(slider_var, FALSE);
+
+
+    //get_dlg_controls_to_layers ();
+    listbox->foff=var3 - d2 - (var2-var1);   //n_first_layer_in_dlg
+    //tmenu->foff=var3-d2 - 1 - tmenu->maxw;    //n_last_layer_in_dlg
+    //init_layer_dlg_control (FALSE);
+
+    //select_mouse_cursor(MOUSE_CURSOR_NONE);
+    //show_mouse(NULL);
+    ////Redraw_Dlg(&layers_dlg);
+    draw_listbox(listbox);
+    //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+    //show_mouse(screen);
+    return 0;
+}
+
+
+static int find_listbox_slider(LISTBOX *listbox, SLIDER *slider)
+/*------------------------------------------------------------*/
+{ int i, ret=0, ret1;
+    int size, x1, y1, x11, x12, y11, y12, dx, dy; //x1, y1, x2, y2,
+    int poz1;
+    int mouse_yy;
+
+    SLIDER Slider_;
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+    Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+    gui_set_screen(screen);
+
+    if (slider->flags & 0xF0) return ret;
+
+    mouse_yy=mouse_y;
+
+    if(mouse_x > slider->x && mouse_x < (slider->x + slider->w) &&
+       mouse_y > slider->y && mouse_y < (slider->y + slider->h))
+    {
+        //set_scrsave_time();
+        //show_hide_tip(menu, FALSE);
+        baronoff(listbox);
+        ret1 = Slider_.proc(MSG_CLICK, &Slider_, '\0');
+        slider->d2 = Slider_.d2;
+        //baronoff(menu);
+        size=listbox->maxw?listbox->maxw:listbox->max;
+
+        x1=listbox->x;
+        y1=listbox->y;
+
+        x1 = jed_to_piks_x(listbox->x)+pocz_x;
+        y1 = jed_to_piks_y(listbox->y)+pocz_y;
+
+        dy=jed_to_piks_y(listbox->dy);
+
+        for (i = 0; i < size; i++) {
+            y11 = y1 + i * dy;
+            y12 = y11 + dy;
+            //mouse_yy = mouse_y;
+            if ((mouse_y >= y11) && (mouse_y <= y12)) break;
+        }
+        if (i < size) {
+            poz1 = i;
+            if (poz1 != listbox->poz) {
+                //set_scrsave_time();
+                //show_hide_tip(menu, FALSE);
+                //baronoff(menu);
+                listbox->poz = poz1;
+                //baron(listbox);
+            }
+        }
+        baron(listbox);
+        ret=1;
+    }
+
+    return ret;
+}
+
+
+void draw_listbox_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+    BITMAP *slbitmap;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    //gui_mg_color = makecol(128, 128, 128);
+    gui_mg_color = palette_color[180 /*kolory.inkk*/];
+    //gui_bg_color = makecol(200, 240, 200);
+    //gui_bg_color = makecol(200, 200, 200);
+    gui_bg_color = palette_color[98 /*kolory.paperk*/];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+
+    int Slider_h = slider->h;
+    double slratio = (double) Slider_h / (double) (var3);
+    int slbody;
+    if (var3 <= var4) slbody = Slider_h;
+    else slbody = (var2 - var1) * slratio;
+
+    if (slider->dp != NULL)
+    {
+        destroy_bitmap((BITMAP *) slider->dp);
+        slider->dp = NULL;
+    }
+
+    if (slbody<4) slider->flags |= 0xF0;  //hidden
+    else
+    {
+        slider->flags &= ~0xF0;
+        slbitmap = create_bitmap(slider->w, slbody);
+        slider->d2 = var3 - var1 - (var2 - var1);
+
+        clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
+        hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
+        vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
+        hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
+        vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
+
+        hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
+        vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
+        hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
+        vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
+
+        slider->dp = slbitmap;
+    }
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+    Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+    //adopt dimensions
+    //Slider_.x = jed_to_piks_x(Slider->x) + pocz_x;
+    //Slider_.y = jed_to_piks_y(Slider->y) + pocz_y;
+    //Slider_.w = jed_to_piks_x(Slider->w);
+    //Slider_.h = jed_to_piks_y(Slider->h);
+    Slider_.slider = slider;
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+}
+
+void redraw_listbox_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    gui_mg_color = palette_color[180];
+    gui_bg_color = palette_color[98];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+    slider->d2 = var3 - var1 - (var2 - var1);
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[slider->fg];
+    Slider_.bg = palette_color[slider->bg];
+
+    Slider_.slider = slider;
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+}
+
+
  /*wyswietlenie okna wraz z trescia*/
 static int open_listbox(LISTBOX  * listbox)
-/*-------------------------------------*/
+/*---------------------------------------*/
 {
 
   BITMAP *listbox_back;
@@ -1571,6 +1877,14 @@ static int open_listbox(LISTBOX  * listbox)
   x2 = jed_to_piks_x(listbox->x + listbox->dx) - 1+pocz_x;
   y1 = jed_to_piks_y(listbox->y)+pocz_y;
   y2 = jed_to_piks_y(listbox->y + listbox->dy * size) - 1+pocz_y;
+
+  set_listbox_slider=0;
+  if ((BAR_POINTER) && (listbox->maxw>0) && (listbox->maxw<listbox->max))
+  {
+      x2+=jed_to_piks_y(12);
+      set_listbox_slider=1;
+      listbox_address=listbox;
+  }
 
   if(!(listbox->flags & FLB_LIST))
   {
@@ -1595,6 +1909,19 @@ static int open_listbox(LISTBOX  * listbox)
      }
   }
   draw_listbox(listbox);
+
+  if (set_listbox_slider)
+    {
+
+        listbox_slider.x=x2-jed_to_piks_y(10);
+        listbox_slider.y=y1;
+        listbox_slider.h=y2-y1;
+        listbox_slider.w=jed_to_piks_y(8);
+        listbox_slider.slider=&listbox_slider;
+        gui_set_screen(screen);
+        draw_listbox_slider(&listbox_slider);
+    }
+
   baron(listbox);
   return 1;
 }
@@ -1605,6 +1932,8 @@ static void  close_listbox(LISTBOX  * listbox)
 {
   int x1,y1;
   int i_image_no ;
+
+  if (BAR_POINTER) show_mouse(NULL);
 
   if((!(listbox->flags & FLB_LIST)) && listbox->back)
   {
@@ -1621,6 +1950,51 @@ static void  close_listbox(LISTBOX  * listbox)
     }
     listbox->back = NULL;
   }
+  if ((BAR_POINTER) && (set_listbox_slider))
+  {
+      if (listbox_slider.dp!=NULL)
+      {
+          destroy_bitmap((BITMAP *) listbox_slider.dp);
+          listbox_slider.dp = NULL;
+          set_listbox_slider=0;
+      }
+  }
+
+  if (BAR_POINTER) show_mouse(screen);
+}
+
+static void shift_cursor(LISTBOX  * listbox)
+{  float yd, xr;
+    int x1,y1,x2,y2,w,h;
+    int size;
+    int mouse_x_, mouse_y_;
+    SLIDER *Slider;
+
+    size=listbox->maxw?listbox->maxw:listbox->max;
+
+    x1 = jed_to_piks_x(listbox->x)+pocz_x;
+    x2 = jed_to_piks_x(listbox->x + listbox->dx) /*- 1*/ +pocz_x;
+    y1 = jed_to_piks_y(listbox->y)+pocz_y-2;
+    y2 = jed_to_piks_y(listbox->y + listbox->dy * size) - 1+pocz_y + 2;
+
+    mouse_x_=mouse_x;
+    mouse_y_=mouse_y;
+    if ((mouse_x >= x1) && (mouse_x<= x2))
+    {
+        if ((mouse_y >= y1) && (mouse_y <= y2))
+        {
+            position_mouse(mouse_x_, bar_center.y);
+        }
+    }
+    //if (listbox->max > listbox->maxw)
+    if (set_listbox_slider)
+    {
+        Slider=&listbox_slider;
+        gui_set_screen(screen);
+        setwritemode(COPY_PUT);
+        redraw_listbox_slider(Slider);
+    }
+
 }
 
 
@@ -1643,6 +2017,7 @@ static int  cnext(LISTBOX *listbox)
 		   }
 	 }
    baron(listbox);
+    if (BAR_POINTER) shift_cursor(listbox);
    return 0;
 }
 
@@ -1664,6 +2039,7 @@ static int  cprev(LISTBOX *listbox)
 	   listbox->poz=0;
 	 }
    baron(listbox);
+    if (BAR_POINTER) shift_cursor(listbox);
    return 0;
  }
  
@@ -1690,6 +2066,7 @@ static int  cpgnext(LISTBOX *listbox)
      if(listbox->poz >= listbox->max) listbox->poz=listbox->max?listbox->max-1 : 0;
    }
  baron(listbox);
+ if (BAR_POINTER) shift_cursor(listbox);
  return 0;
 }
 
@@ -1733,6 +2110,7 @@ static int  cpgprev(LISTBOX *listbox)
 	 GrMouseEraseCursor();
    }
  baron(listbox);
+ if (BAR_POINTER) shift_cursor(listbox);
  return 0;
 }
 
@@ -1766,6 +2144,7 @@ static int  cbegin(LISTBOX * listbox)
 	  GrMouseEraseCursor();
     }
   baron(listbox);
+  if (BAR_POINTER) shift_cursor(listbox);
   return 0;
 }
 
@@ -1798,6 +2177,7 @@ static int  cend(LISTBOX * listbox)
 	  GrMouseEraseCursor();
     }
   baron(listbox);
+  if (BAR_POINTER) shift_cursor(listbox);
   return 0;
 }
 
@@ -1817,6 +2197,49 @@ int  cend1(LISTBOX * listbox)
 	  GrMouseEraseCursor();
     }
   return 0;
+}
+
+static void  pusk(int x,int y)
+{
+    int i,x1,y1,x2,y2,size,xr,yd, poz1, dx, dy, x11, x12, y11, y12, w, h;
+    int mouse_xx, mouse_yy;
+    LISTBOX *listbox;
+    listbox=listbox_usk;
+
+    size=listbox->maxw?listbox->maxw:listbox->max;
+    x1 = jed_to_piks_x(listbox->x)+pocz_x;
+    x2 = jed_to_piks_x(listbox->x + listbox->dx) /*- 1*/ +pocz_x;
+    y1 = jed_to_piks_y(listbox->y)+pocz_y-2;
+    y2 = jed_to_piks_y(listbox->y + listbox->dy * size) - 1+pocz_y + 2;
+
+    w=x2-x1;
+    h=y2-y1;
+
+    dy=jed_to_piks_y(listbox->dy);
+
+    if ((mouse_x >= x1) && (mouse_x<=x2))
+    {
+        if ((mouse_y >= y1) && (mouse_y<=y2))
+        {
+            for (i = 0; i < size; i++)
+            {
+                y11 = y1 + i * dy;
+                y12 = y11 + dy;
+                mouse_yy = mouse_y;
+                if ((mouse_y >= y11) && (mouse_y <= y12)) break;
+            }
+            if (i < size)
+            {
+                poz1 = i;
+                if (poz1 != listbox->poz)
+                {
+                    baronoff(listbox);
+                    listbox->poz = poz1;
+                    baron(listbox);
+                }
+            }
+        }
+    }
 }
 
 static void  usk(int x, int y)
@@ -1863,7 +2286,11 @@ static void init_lbox(char typ)
            SERV[135] = (void*)cnext;
            SERV[134] = (void*)cprev;
 
-	  mv=MVCUR;         MVCUR=usk;
+	  mv=MVCUR;
+
+           if (!BAR_POINTER) MVCUR=usk;
+           else MVCUR=pusk;
+
 	  break;
 	 case 1 :
 	  Set_Global_Menu_Flags(global_menu_flags);
@@ -1889,12 +2316,16 @@ static BOOL edit_combo_box(COMBOBOX *ComboBox)
   LISTBOX *listbox;
   EVENT *ev;
   int poz_xx, poz_yy;
+  int ret;
   static int( *SW2[2])();
 
   if (ComboBox->listbox->max==0) return FALSE;
-     
-  lock_mouse();
-  GrMouseEraseCursor();
+
+  if ((!BAR_POINTER) || (NO_POINTER))
+  {
+      lock_mouse();
+      GrMouseEraseCursor();
+  }
 
   SW2[0]=SERV[81];   SERV[81]=sel_d;
 
@@ -1911,8 +2342,13 @@ static BOOL edit_combo_box(COMBOBOX *ComboBox)
   if(FALSE == open_listbox(listbox))
   {
     SERV[81]=SW2[0];
-	free_mouse();
-	GrMouseUnEraseCursor();
+
+      if ((!BAR_POINTER) || (NO_POINTER))
+      {
+          free_mouse();
+          GrMouseUnEraseCursor();
+      }
+
     return FALSE ;
   }
 
@@ -1923,6 +2359,11 @@ static BOOL edit_combo_box(COMBOBOX *ComboBox)
     if(ev->What == evKeyDown &&
 	(ev->Number == 0 || ev->Number == ENTER))
     {
+      if ((set_listbox_slider) && (ev->Number == ENTER))
+      {
+          ret = find_listbox_slider(listbox_address, &listbox_slider);
+          if (ret==1) continue;
+      }
       init_lbox(1);
       close_listbox(listbox);
       PozX=poz_xx;
@@ -1930,19 +2371,25 @@ static BOOL edit_combo_box(COMBOBOX *ComboBox)
 
       position_mouse(PozX0,PozY0);
       MVCUR(0,0);
-      SERV[81]=SW2[0]; 
-	  free_mouse();
+      SERV[81]=SW2[0];
 
-	  GrMouseUnEraseCursor();
+        if ((!BAR_POINTER) || (NO_POINTER))
+        {
+            free_mouse();
+            GrMouseUnEraseCursor();
+        }
 	   
       return ev->Number == 0 ? FALSE : TRUE;
     }
 
   }
   SERV[81]=SW2[0];
-  free_mouse();
 
-  GrMouseUnEraseCursor();
+    if ((!BAR_POINTER) || (NO_POINTER))
+    {
+        free_mouse();
+        GrMouseUnEraseCursor();
+    }
    
 }
 
@@ -2067,7 +2514,7 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
 	draw_poz = TRUE;
     if(edit_combo_box(ComboBoxes + i) == TRUE)
     {
-
+	  show_mouse(NULL);
       poz = ComboBoxes [i].listbox->foff + ComboBoxes [i].listbox->poz ;
       ptr_temp = ComboBoxes [i].listbox->txt[poz] ;
 
@@ -2100,7 +2547,9 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
 		  ptr_temp+=2;
          }
         setfillstyle_(SOLID_FILL,kolor_m);
+	
         bar(x1+1, y1+1 - 2, x2-1, y2-1 + 2);
+		
         if(kolor_m > 16)
          {
           kolor_rgb = _dac_normal[kolor_m][0] + _dac_normal[kolor_m][1] + _dac_normal[kolor_m][2];
@@ -2111,7 +2560,9 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
        else
         {
 		   setfillstyle_(SOLID_FILL, paper);
+		   
 		   bar(x1+1, y1+1 - 2, x2-1, y2-1 + 2);
+		   
 		   setcolor(ink);
 		 
            ptr=strstr(ptr_temp,u8"֏");
@@ -2146,7 +2597,11 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
 				   {
 
 					   if ((PTRS__Text_Style[typ_f]->type < 2) || (PTRS__Text_Style[typ_f]->type == 3))
+					   {
+						   
 						   draw_font_name(ptr_temp, typ_f, x1 + 5, y1 + HEIGHT + 10);
+						   
+					   }
 					   else
 					   {
 
@@ -2171,7 +2626,9 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
 						   fontn.warstwa = Current_Layer;
 						   fontn.widoczny = 1;
 
+						   
 						   draw_font_name_ttf(&fontn, &fontn.text, screen, x1 + 5, y1 + HEIGHT + 10, x2, fontn.kat, 20.0, kolor, COPY_PUT, 0, 0);
+						  
 
 					   }
 				   }
@@ -2210,6 +2667,7 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
         ret = -2;
 
 		free_mouse();
+		show_mouse(screen);
         return ret;
         }
        else if (draw_poz)
@@ -2218,9 +2676,12 @@ static int find_combo_box(COMBOBOX *ComboBoxes,int SizeComboBoxT)
         else setcolor(DARKGRAY);
          moveto( x1+DXIL -2, y1 +(y2-y1-8)/2 +  8 - (HEIGHT/2));
 		 int pos = findfpostopxl(ptr_temp, x2 - x1 - 3);
+		 
          outtext_r(&ptr_temp[pos]);
+		 
         } 
       ret = ComboBoxes[i].listbox->id;
+	  show_mouse(screen);
     }
   }
 
@@ -3274,6 +3735,16 @@ void draw_button(BUTTON *Button)
     Draw_Button(Button);
 }
 
+void redraw_button(BUTTON* Button)
+/*----------------------------------------------------*/
+{
+	show_mouse(NULL);
+	setlinestyle1(SOLID_LINE, 0, NORM_WIDTH);
+	setwritemode(COPY_PUT);
+	Draw_Button(Button);
+	show_mouse(screen);
+}
+
 static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
 /*------------------------------------------------------------*/
 {
@@ -3324,16 +3795,22 @@ static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
       case B_PUSHBUTTON:
 	  case B_FLATPUSHBUTTON:
 	   Buttons[i].check = 1;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   delay(200);
 	   Buttons[i].check = 0;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   delay(50);
 	   break;
       case B_CHECKBOX:
 	   if(Buttons[i].check) Buttons[i].check = 0;
 	   else Buttons[i].check = 1;
+	   select_mouse_cursor(MOUSE_CURSOR_NONE);
 	   Draw_Button(&(Buttons[i]));
+	   select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
 	   break;
       case B_RADIOBUTTON:
 	  case B_ROUNDRADIOBUTTON:
@@ -3343,7 +3820,6 @@ static int find_button(BUTTON *Buttons,int SizeButtonT, int *ib)
     }
     moveto(PozX+pocz_x, PozY+pocz_y);
     cur_on(PozX, PozY);  
-
     ret = Buttons[i].id;
     *ib=i;
   }
@@ -3360,6 +3836,96 @@ void draw_pushed_button(BUTTON *Button)
   delay(25);
  }
 
+
+void Draw_Slider(SLIDER *Slider)
+{  int ret;
+    SLIDER Slider_;
+    int x1, y1, x2, y2;
+
+    if (!(Slider->flags & 0xF0)) {
+
+        memmove(&Slider_, Slider, sizeof(SLIDER));
+
+        Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+        Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+        //adopt dimensions
+        Slider_.x = jed_to_piks_x(Slider->x) + pocz_x;
+        Slider_.y = jed_to_piks_y(Slider->y) + pocz_y;
+        Slider_.w = jed_to_piks_x(Slider->w);
+        Slider_.h = jed_to_piks_y(Slider->h);
+		Slider_.slider = Slider;
+
+        ret = Slider->proc(MSG_DRAW, &Slider_, '\0');
+    }
+}
+
+
+static int find_slider(SLIDER *Slider,int SizeSliderT)
+/*------------------------------------------------------------*/
+{ int i, ret=0;
+    SLIDER Slider_;
+    SLIDER *slider;
+
+    gui_set_screen(screen);
+    for(i=0;i<SizeSliderT;i++)
+    {
+        slider=&Slider[i];
+        if (slider->flags & 0xF0) continue;
+        memmove(&Slider_, &Slider[i], sizeof(SLIDER));
+
+        Slider_.fg=palette_color[Slider_.fg /*kolory.inkm*/];
+        Slider_.bg=palette_color[Slider_.bg /*kolory.paperk*/];
+
+        //adopt dimensions
+        Slider_.x = jed_to_piks_x(Slider->x) + pocz_x;
+        Slider_.y = jed_to_piks_y(Slider->y) + pocz_y;
+        Slider_.w = jed_to_piks_x(Slider->w);
+        Slider_.h = jed_to_piks_y(Slider->h);
+		Slider_.slider = Slider;
+
+        if(PozX > Slider_.x && PozX < (Slider_.x + Slider_.w) &&
+              PozY > Slider_.y && PozY < (Slider_.y + Slider_.h))
+            {
+                break;
+            }
+    }
+
+    if (i<SizeSliderT)
+    {
+        ret = Slider[i].proc(MSG_CLICK, &Slider_, '\0');
+        Slider[i].d2 = Slider_.d2;
+    }
+
+    return ret;
+}
+
+
+static void draw_sliders(SLIDER *Slider,int SizeSliderT, BITMAP *dialog_screen) //, int caption)
+/*----------------------------------------------------------------------------------------*/
+{
+    int i ;
+
+
+    gui_set_screen(dialog_screen);
+    setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+    setwritemode(COPY_PUT);
+
+    gui_fg_color = palette_color[kolory.inkm];
+    //gui_mg_color = makecol(128, 128, 128);
+    gui_mg_color = palette_color[180 /*kolory.inkk*/];
+    //gui_bg_color = makecol(200, 240, 200);
+    //gui_bg_color = makecol(200, 200, 200);
+    gui_bg_color = palette_color[98 /*kolory.paperk*/];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    for(i=0;i<SizeSliderT;i++)
+    {
+        Draw_Slider(&(Slider[i]));
+    }
+}
 
 static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
 /*------------------------------------------------------------------*/
@@ -3438,6 +4004,9 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
  void draw_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, BITMAP *dialog_screen, RECT *dialog_rect)
 /*-----------------------------------------------------------------------------------*/
 {
+	////show_mouse(NULL);
+	//select_mouse_cursor(MOUSE_CURSOR_NONE);
+
     Set_Screenplay(dialog_screen);
 
   if(dlg->Groups != NULL) draw_groups(*(dlg->Groups),dlg->SizeGroupT, dlg, FALSE);
@@ -3449,10 +4018,18 @@ static void draw_images(IMAGE *Images,int SizeImageT, TMENU *tipsmenu)
   if(dlg->Images != NULL) draw_images(*(dlg->Images),dlg->SizeImageT, tipsmenu);
   if (dlg->Buttons != NULL) draw_buttons(*(dlg->Buttons), dlg->SizeButtonT);
 
+  if (dlg->Sliders != NULL) draw_sliders(*(dlg->Sliders), dlg->SizeSliderT, dialog_screen); //, dlg_kolory->dlg_caption);
+
+  show_mouse(NULL); ////
+
   blit(dialog_screen, screen, 0, 0, dialog_rect->left, dialog_rect->top, dialog_rect->right-dialog_rect->left, dialog_rect->bottom-dialog_rect->top);
   destroy_bitmap(dialog_screen);
 
   Set_Screenplay(screen);
+
+  show_mouse(screen); ////
+  //select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+
 
   pocz_x=pocz_x0;
   pocz_y=pocz_y0;
@@ -3489,8 +4066,8 @@ void draw_transparent_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, RECT *dialog_r
  void draw_dlg_prev(TDIALOG *dlg)
 	 /*------------------------*/
  {
-	 scare_mouse();
-	 
+
+	 my_scare_mouse();
 
 	 if (dlg->Labels != NULL) draw_labels(*(dlg->Labels), dlg->SizeLabT);
 	 if (dlg->InputLines != NULL) draw_input_lines(*(dlg->InputLines), dlg->SizeInLinT);
@@ -3498,7 +4075,7 @@ void draw_transparent_dlg(TDIALOG *dlg, int typ, TMENU *tipsmenu, RECT *dialog_r
 	 if (dlg->Buttons != NULL) draw_buttons(*(dlg->Buttons), dlg->SizeButtonT);
 
 	 if (dlg->Groups != NULL) draw_groups(*(dlg->Groups), dlg->SizeGroupT, dlg, TRUE);
-	 unscare_mouse();
+	 my_unscare_mouse();
 	 cur_on(PozX, PozY);
  }
 
@@ -3519,6 +4096,7 @@ static void open_dlg(TDIALOG *dlg, char typ, BITMAP **dialog_screen, RECT *dialo
 
 	int max_field_x, max_field_y;
 
+
 	border = dlg->border == COLOR_NULL ? dlg_kolory->dlg_border : dlg->border;
 	caption = dlg->caption == COLOR_NULL ? dlg_kolory->dlg_caption : dlg->caption;
 	ink_caption = dlg->ink_caption == COLOR_NULL ? dlg_kolory->dlg_ink_caption : dlg->ink_caption;
@@ -3537,23 +4115,72 @@ static void open_dlg(TDIALOG *dlg, char typ, BITMAP **dialog_screen, RECT *dialo
 	if (x02 > getmaxx()) x02 = getmaxx();
 	if (y02 > getmaxx()) y02 = getmaxy();
 
-
 	if (typ == 0)
-	{
+    {
+		//Move_Mouse((x02 - x01) / 2, (y02 - y01) / 2);
+		//position_mouse((x02 - x01) / 2, (y02 - y01) / 2);
+        dlg->xb = x01;
+        dlg->yb = y01;
+        bitmap = create_bitmap(x02 - x01, y02 - y01);
+        dlg->back = (char *) bitmap;
+        getimage(x01, y01, x02, y02, dlg->back);
+        if (strcmp(dlg->txt, "^") != 0) {
+            bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
+            dlg->background = (char *) bitmap_ptr;
+            getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
+        }
+    }
+       //if sliders exist
+       for (int i=0; i<dlg->SizeSliderT; i++)
+       {
+           int var1, var2, var3, var4, ret;
+           BITMAP *slbitmap;
+           SLIDER *slider=dlg->Sliders;
 
-	   dlg->xb = x01;
-	   dlg->yb = y01;
-	   bitmap = create_bitmap(x02 - x01, y02 - y01);
-	   dlg->back = (char *)bitmap;
-	   getimage(x01, y01, x02, y02, dlg->back);
-       if (strcmp(dlg->txt,"^")!=0) 
-	   {
-		   bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
-		   dlg->background = (char*)bitmap_ptr;
-           getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
+           if ((typ==0) || (slider[i].flags & 0x800))
+           {
+               slider[i].flags &= ~0x800;
+
+               int (*SlideFun)(int *, int *, int *, int *);
+               SlideFun = (int (*)(int *, int *, int *, int *)) slider[i].dp3;
+               //int var1=d2;
+               ret = SlideFun(&var1, &var2, &var3, &var4);
+
+               //adjusting slider
+               slider[i].d1 = var3 - (var2 - var1);
+
+               int Slider_h = jed_to_piks_y(slider[i].h);
+               double slratio = (double) Slider_h / (double) (var3); //-(var2-var1));
+               int slbody;
+               if (var3 <= var4) slbody = Slider_h;
+               else slbody = (var2 - var1) * slratio;
+
+               if (slider[i].dp != NULL) destroy_bitmap((BITMAP *) slider[i].dp);
+
+               if (slbody<4) slider[i].flags |= 0xF0;  //hidden
+               else
+               {
+                   slider[i].flags &= ~0xF0;
+                   slbitmap = create_bitmap(jed_to_piks_x(slider[i].w), slbody);
+                   //slider[i].d2=var3-(var2-var1)/2;
+                   slider[i].d2 = var3 - var1 - (var2 - var1);
+
+                   clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
+                   hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
+                   vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
+                   hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
+                   vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
+
+                   hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
+                   vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
+                   hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
+                   vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
+
+                   slider[i].dp = slbitmap;
+               }
+           }
        }
 
-    }
 
   dialog_rect->left=x01;
   dialog_rect->top=y01;
@@ -3568,6 +4195,7 @@ static void open_dlg(TDIALOG *dlg, char typ, BITMAP **dialog_screen, RECT *dialo
   y2=h;
   dialog_screen_ptr=create_bitmap_ex(32,w, h);
   if (dialog_screen_ptr==NULL) return;
+
 
   clear_to_color(dialog_screen_ptr, get_palette_color(kolory.paper));
 
@@ -3820,6 +4448,8 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
   {
   case 0:
   case 3:
+	  //show_mouse(NULL);
+	  //disable_hardware_cursor();
 	  now_is_dialog = 1;
 	  ptrs__dlg = Dlg;
 	  if ((Dlg->flags == FLDLG_NOIMAGE) || (Dlg->flags & 0x40))
@@ -3837,8 +4467,8 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 
 	  if ((Dlg->flags & 0x40))
 	  {
-		  PozX = jed_to_piks_x(Dlg->dx / 2);
-		  PozY = jed_to_piks_y(Dlg->dy / 2);
+		  PozX = jed_to_piks_x(Dlg->dx / 2)  + pocz_x;
+		  PozY = jed_to_piks_y(Dlg->dy / 2)  + pocz_y;
 		  if (Dlg->pozx == 0 && Dlg->pozy == 0)
 		  {
 			  PozX = jed_to_piks_x(Dlg->dx / 2) + pocz_x;
@@ -3852,10 +4482,11 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 		  PozY = mouse_y;
 	  }
 	
-          Ini_Mouse_Cursor(PozX,PozY) ;
+       Ini_Mouse_Cursor(PozX,PozY) ;
 		
-		  moveto(PozX, PozY);
-          cur_on(PozX,PozY);
+	    //moveto(PozX, PozY);
+        cur_on(PozX,PozY);
+
 
          SW01 = SERV[84];
          for(n1 = 0; n1 < SVMAX-71 ; n1++)
@@ -3903,8 +4534,22 @@ static void init(char typ, TDIALOG *Dlg, TMENU *tipsmenu)
 	  tab_fun=TABFUN;    TABFUN=next_sel;
 	  break;
 	 case 1 :
-	 case 2 :
-	  
+	 //case 2 :
+
+
+         //if sliders exist
+         for (int i=0; i<Dlg->SizeSliderT; i++)
+         {
+             BITMAP *slbitmap;
+             SLIDER *slider = Dlg->Sliders;
+
+             if (slider[i].flags & 0xF0) continue;
+
+             if (slider[i].dp!=NULL) destroy_bitmap((BITMAP*)slider[i].dp);
+             if (slider[i].dp=NULL);
+         }
+      case 2 :
+
 	  cur_off(PozX, PozY) ; 
 	  ClearErr() ;
 	  Close_Dlg(Dlg, typ) ;
@@ -3987,8 +4632,10 @@ int Dialog_in_dialog(TDIALOG *dlg)
     int id, ib, id_h;
     int x1, y1, x2, y2;
     BITMAP *bitmap_ptr;
+    BITMAP* bitmap;
     int pocz_x1, pocz_y1;
     int ret=0;
+	int mx, my;
 
     pocz_x1=pocz_x;
     pocz_y1=pocz_y;
@@ -4004,15 +4651,29 @@ int Dialog_in_dialog(TDIALOG *dlg)
     tipsmenu.poz = 0;
     tipsmenu.max = dlg->SizeImageT;
 
+
+	mx = mouse_x;
+	my = mouse_y;
+	
+    select_mouse_cursor(MOUSE_CURSOR_NONE);
+	show_mouse(NULL);
+
     Get_Dlg_Rect(dlg, &x1, &y1, &x2, &y2);
 
-    dlg->xb = 0;
-    dlg->yb = 0;
+    dlg->xb = x1; //0
+    dlg->yb = y1; //0;
+    bitmap = create_bitmap(x2 - x1, y2 - y1);
+    dlg->back = (char *)bitmap;
+    getimage(x1, y1, x2, y2, dlg->back);
+
     bitmap_ptr = create_bitmap(getmaxx(), getmaxy());
-    dlg->back = (char *)bitmap_ptr;
-    getimage(0, 0, getmaxx(), getmaxy(), dlg->back);
+    dlg->background = (char *)bitmap_ptr;
+    getimage(0, 0, getmaxx(), getmaxy(), dlg->background);
 
     Redraw_Dlg(dlg);
+
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+	show_mouse(screen);
 
     int ended=0;
     while (!ended)
@@ -4057,10 +4718,20 @@ int Dialog_in_dialog(TDIALOG *dlg)
         }
     }
 
-    putimage(0, 0, dlg->background, COPY_PUT);
+
+    select_mouse_cursor(MOUSE_CURSOR_NONE);
+	show_mouse(NULL);
+
+    if (dlg->background!=NULL)
+        putimage(0, 0, dlg->background, COPY_PUT);
+    //if (dlg->back!=NULL)
+    //    putimage(0, 0, dlg->back, COPY_PUT);
     destroy_bitmap(dlg->back);
     dlg->back=NULL;
     dlg->background=NULL;
+
+    select_mouse_cursor(MOUSE_CURSOR_ALLEGRO);
+	show_mouse(screen);
 
     pocz_x=pocz_x1;
     pocz_y=pocz_y1;
@@ -4070,7 +4741,7 @@ int Dialog_in_dialog(TDIALOG *dlg)
 int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 /*-------------------------------------------------------------------*/
 {
-	int n, id, id_b, id_lb, id_cb, id_il, id_gb, id_h;
+	int n, id, id_b, id_lb, id_cb, id_sl, id_lsl, id_il, id_gb, id_h;
 	EVENT *ev;
 	BOOL ret_LMB = TRUE;
 	int kk, i;
@@ -4084,6 +4755,7 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
     BUTTON block_flag_button={ 0, 0, DXHBut, DYHBut, COLOR_NULL, COLOR_NULL, COLOR_NULL, "", 0,B_CHECKBOX, 0, 1,0, 0};
 
     block_changed=FALSE;
+
 
     if (strcmp(dlg->txt,"Dim")==0) dim=0;
 
@@ -4101,7 +4773,8 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 	else ProcFG = NULL;
 
 	dialog_window_was_resized = FALSE;
-	free_mouse();
+	_free_mouse();
+
 
 	if (GFX_WIN == 1)
 	{
@@ -4112,7 +4785,7 @@ int Dialog(TDIALOG *dlg, DLG_COLOR *kolory, int(*fun)(int), BOOL m)
 	was_dialog = TRUE;
 
 continue2:
-	m = m;
+	//m = m;
 	dlg_kolory = kolory;
 
 	POLE	pmTipsMenu[] = {
@@ -4190,6 +4863,13 @@ continue2:
             }
         }
     }
+
+    ////if  (!(dlg->flags & 0x80))
+	////    Move_Mouse(0, 0);  //can be necessary in Windows
+
+	//position_mouse(0, 0);
+
+	show_mouse(NULL);
 
 	init(init_option, dlg, &tipsmenu);
 
@@ -4342,6 +5022,7 @@ continue_lb:
 	  id_b = 0;
 	  if ((ev->Number == ENTER) &&
 		  (
+           (0 != (id = id_sl = find_slider(*(dlg->Sliders), dlg->SizeSliderT))) ||
 		   (0 != (id = id_il = find_input_line(*(dlg->InputLines), dlg->SizeInLinT))) ||
 		   (0 != (id = id_cb = find_combo_box(*(dlg->ComboBoxes), dlg->SizeComboBoxT))) ||
 		   (0 != (id = id_lb = find_list_box(*(dlg->ListBoxes), dlg->SizeListBoxT))) ||

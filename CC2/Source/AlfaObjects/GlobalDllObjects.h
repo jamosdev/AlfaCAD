@@ -12,9 +12,10 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
+#include "res\resource.h"		// main symbols
 
 #define MAXPATH   260
+#define FILENO 16
 
 typedef struct Client_Bitmap
 {
@@ -23,6 +24,20 @@ typedef struct Client_Bitmap
 	char drawing_file[MAXPATH];
 	char dump_file[MAXPATH];
 } Client_Bitmap;
+
+struct shmbuf {
+	int client_number;
+	int mflag;
+	int flag[FILENO];
+	char file_name[FILENO][MAXPATH];
+};
+
+struct shmseg {
+	int cnt;
+	int complete;
+	//char buf[BUF_SIZE];
+	struct shmbuf buf;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CGlobalDllObjectsApp
@@ -74,17 +89,10 @@ public:
  // podłącza się pierwszy klient i niszcony tylko
  // wtedy, gdy odłącza się ostatni klient.
  CTest() {
-	 /*
-  ::MessageBox(NULL,"Konstruktor", "CTest.DLL", MB_OK); 
-  */
 	 ;
  }
 
  ~CTest() { 
-/*
-  ::MessageBox(NULL,"Destruktor", 
-  "CTest.DLL", MB_OK); 
-  */
 	 ;
  }
  
@@ -95,6 +103,7 @@ public:
  __declspec(dllexport) __stdcall
 extern "C"
 {
+int EXPORTED_DLL_FUNCTION GetShmpPtr(shmseg **ptr);
 void EXPORTED_DLL_FUNCTION GetTestPtr(CTest*& rpTest);
 int EXPORTED_DLL_FUNCTION GetNbrOfClients();
 int EXPORTED_DLL_FUNCTION GetNoOfClient();

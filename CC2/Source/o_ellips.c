@@ -584,7 +584,6 @@ static void cur_el_on (double df_x, double df_y)
           else s_ellipse.df_yaxis = fabs((df_y - s_ellipse.df_cy) / kos);
       }
 
-
       df_yaxis = milimetryob(s_ellipse.df_yaxis);
       if (EOF != sprintf(eL.st, "%#12.9lg", df_yaxis)) {
           Out_Edited_Draw_Param((ESTR *) &eL, TRUE);

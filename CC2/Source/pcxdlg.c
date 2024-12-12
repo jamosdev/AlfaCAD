@@ -328,6 +328,7 @@ static TDIALOG import_PCX_dlg =
 	7, &buttons,
 	0, NULL,
 	0,&combobox,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

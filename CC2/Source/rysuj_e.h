@@ -107,6 +107,7 @@ extern BOOL deleted_TTF;
 extern BOOL deleted_pattern;
 extern BOOL bitmap_exist;
 extern BOOL bitmap_png_exist;
+extern BOOL bitmap_vector_exist;
 extern BOOL bitmap_pattern_exist;
 extern BOOL solid_translucent_exist;
 extern BOOL bitmap_on_front_exist;
@@ -804,8 +805,8 @@ extern long_long GetFreeMemSize(void);
 extern int SetBufferSize(char *P, long Size);
 
 /*b_text*/
-//extern int editstring(char *, char *, int, float, BOOL, int, BOOL) ;
-extern int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit);
+//extern int editstring(unsigned char *, char *, int, float, BOOL, int, BOOL, int y_3_) ;
+extern int editstring(unsigned char *s, char *legal, int maxlength, float width0, BOOL b_graph_value, int expand, BOOL last_edit, int y_4_, int y_3_);
 extern int get_string (char *, char *, int , int , int );
 extern int get_string_str (char *, char *, int , int , char *);
 extern int getkey(void);
@@ -873,6 +874,9 @@ extern int CUSTOM_KOM;
 
 extern double thermal_axis_size;
 extern double node_size;
+
+    extern void my_scare_mouse(void);
+    extern void my_unscare_mouse(void);
 
 #ifdef __cplusplus
 }

@@ -38,6 +38,7 @@
 #include "bgiext.h"
 
 #include "menu.h"
+#include "o_dialog.h"
 
 #include "leak_detector_c.h"
 
@@ -57,6 +58,12 @@ static float mouse_speed = 2.5;
 #else
 static float mouse_speed = 1.0;
 #endif
+
+static int curr_h, curr_v;
+
+static p_point bar_center;
+
+BOOL XORBAR=FALSE;
 
 BOOL altkey = FALSE;
 BOOL altgrkey = FALSE;
@@ -122,6 +129,8 @@ extern TMENU mBlok_Imp;
 
 extern int PozX, PozY;
 extern int i__font_nomax;
+
+extern void Move_Mouse (int, int) ;
 
 extern int my_kbhit(void);
 extern int my_getch(void);
@@ -274,6 +283,31 @@ extern void komunikat_str_short(char *st, BOOL stay);
 extern char *load_symbol[];
 
 extern char* typ_punktu_inf[];
+extern int d_myslider_proc(int msg, void *d_, int c);
+extern void Draw_Slider(SLIDER *Slider);
+extern int get_palette_color(int color);
+
+extern int gui_border_dark, gui_border_light;
+
+extern void set_cursor_pointer(void);
+extern void set_cursor_edit(void);
+
+
+static int menu_grab_slider(void *dp3, int d2);
+static int menu_init_slider(int *var1, int *var2, int *var3, int *var4);
+
+
+#define MAXMENULEVEL 8
+static  int set_slider[MAXMENULEVEL]={0,0,0,0,0,0,0,0};
+SLIDER slider[MAXMENULEVEL]={{d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             {d_myslider_proc,  0, 0,  18, 0,  0,  98,    0,   0,  100,   0,    NULL , menu_grab_slider, menu_init_slider, NULL},
+                             };
 
 extern double thermal_precision;
 extern double force_precision;
@@ -1061,6 +1095,7 @@ extern char* icon_spline_points_end_p;
 
 extern char *icon_mouse1b_p; 
 extern char* icon_mouse2b_p;
+extern char* icon_mouse1b2b_p;
 extern char* icon_mouse3b_p;
 extern char* icon_mouseRb_p;
 
@@ -1236,6 +1271,10 @@ extern char *icon_inertia_d48_p;
 
 extern char *icon_dynamics_run_p;
 
+extern char *icon_menustyle_p;
+extern char *icon_cursorstyle_p;
+extern char *icon_barstyle_p;
+
 extern TMENU mInfo;
 extern TMENU mInfoAbout;
 extern TMENU mInfoAboutA;
@@ -1247,6 +1286,9 @@ extern int Free_Mouse(void);
 
 static int  cpgprev(TMENU *menu);
 static int  cpgnext(TMENU *menu);
+
+void baronoff(TMENU  * menu);
+void show_hide_tip(TMENU * menu, BOOL show);
 
 extern void add_to_buffer(char c);
 extern int small_large_step(void);
@@ -1368,6 +1410,8 @@ FRAMES frames;
 int frame_count = 0;
 int mouse_dz = 2;
 
+BOOL BAR_POINTER=1;
+
 
 static TMENU mItalicsI = { 2,0,0,7,79,9,ICONS,CMNU,CMBR,CMTX,0,13,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };
 static TMENU mUkrytyI = { 2,0,0,7,79,11,ICONS,CMNU,CMBR,CMTX,0,4,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };
@@ -1431,6 +1475,29 @@ char* StrStrIA(const char* haystack, const char* needle) {
     return NULL;
 }
 #endif
+
+char *strcasestr(const char *str, const char *pattern) {
+	size_t i;
+	unsigned char c0 = *pattern, c1, c2;
+
+	if (c0 == '\0')
+		return (char *)str;
+
+	c0 = toupper(c0);
+	for (; (c1 = *str) != '\0'; str++) {
+		if (toupper(c1) == c0) {
+			for (i = 1;; i++) {
+				c2 = pattern[i];
+				if (c2 != '\0')
+					return (char *)str;
+				c1 = str[i];
+				if (toupper(c1) != toupper(c2))
+					break;
+			}
+		}
+	}
+	return NULL;
+}
 #endif
 
 
@@ -1443,8 +1510,9 @@ int get_menu_level(void) {
   return menu_level;
 }
 
-void inc_menu_level(void) {
+void inc_menu_level(TMENU * menu) {
     menu_level++;
+    menu_address[menu_level-1]=(char*)menu;
 }
 
 void dec_menu_level(void) {
@@ -1506,6 +1574,7 @@ void Test_PMenu (PTMENU *menu)
     int xr,yd,size,x1,y1,x2,y2;
     int maxw;
     int i, i_drawings;
+    int xs=0, ys=0;
 
     menu->maxw=menu->maxw0; //inicjacja
 
@@ -1522,6 +1591,12 @@ void Test_PMenu (PTMENU *menu)
         if ((menu->poz + menu->off) == (GMENU_MAX - 1)) menu->poz -= 1;
     }
 
+    if ((BAR_POINTER) && (menu->maxw>0) && (menu->maxw<menu->max))
+    {
+        if (menu->flags&NVERT) ys=20;
+        else xs=20;
+    }
+
     if (menu->flags&ICONS)
     {
         if (menu->flags&NVERT)
@@ -1529,8 +1604,8 @@ void Test_PMenu (PTMENU *menu)
             if ((WIDTH /*8*/ * SKALA * menu->xpcz + menu->xdl * menu->max) > maxX)
                 menu->xpcz = (maxX - menu->xdl * menu->max) / (WIDTH /*8*/ * SKALA);
         }
-        else if ((WIDTH /*8*/ * SKALA * menu->xpcz + menu->xdl) > maxX)
-            menu->xpcz = (maxX - menu->xdl) / (WIDTH /*8*/ * SKALA);
+        else if ((WIDTH /*8*/ * SKALA * menu->xpcz + menu->xdl + xs) > maxX)
+            menu->xpcz = (maxX - menu->xdl - xs) / (WIDTH /*8*/ * SKALA);
 
         size = menu->maxw ? menu->maxw : menu->max;
         xr = ((menu->flags&NVERT) ? size * menu->xdl : menu->xdl);
@@ -1540,6 +1615,10 @@ void Test_PMenu (PTMENU *menu)
 
         x2 = x1 + xr * SKALA + 2 * (GR + 1);
         y2 = y1 + yd * 32 + 2 * GR;
+
+        x2 += xs;
+        y2 += ys;
+
         if (y2 > maxY)
         {
             menu->maxw = (maxY - y1) / (32);
@@ -1622,6 +1701,10 @@ void Test_PMenu (PTMENU *menu)
         y1=(menu->ypcz-1)*HEIGHT * SKALA+YP;
         x2=x1+xr*WIDTH /*8*/ * SKALA +2*(GR+1);
         y2=y1+yd*HEIGHT * SKALA +2*GR;
+
+        x2 += xs;
+        y2 += ys;
+
         if (y2 > maxY)
         {
             menu->maxw = (maxY - y1) / (HEIGHT * SKALA) -1 ;
@@ -1670,14 +1753,18 @@ void Test_Menu (TMENU *menu)
   int xr,yd,size,x1,y1,x2,y2;
   int maxw;
   int i, i_drawings;
+  int xs=0, ys=0;
 
+    if (menu->flags&ICONS) {
+
+        menu->xdl = (int) (64 * SKALA);
+    }
 
     if (menu->flags & FIXED)
     {
         Test_PMenu((PTMENU*)menu);
         return;
     }
-
 
     menu->maxw=menu->maxw0; //inicjacja
 
@@ -1694,6 +1781,12 @@ void Test_Menu (TMENU *menu)
 	  if ((menu->poz + menu->off) == (GMENU_MAX - 1)) menu->poz -= 1;
   }
 
+    if ((BAR_POINTER) && (menu->maxw>0) && (menu->maxw<menu->max))
+    {
+        if (menu->flags&NVERT) ys=20;
+        else xs=20;
+    }
+
   if (menu->flags&ICONS)
   {
 	  if (menu->flags&NVERT)
@@ -1701,8 +1794,8 @@ void Test_Menu (TMENU *menu)
 		  if ((WIDTH  * SKALA * menu->xpcz + menu->xdl * menu->max) > maxX)
 			  menu->xpcz = (maxX - menu->xdl * menu->max) / (WIDTH  * SKALA);
 	  }
-	  else if ((WIDTH  * SKALA * menu->xpcz + menu->xdl) > maxX)
-		  menu->xpcz = (maxX - menu->xdl) / (WIDTH /*8*/ * SKALA);
+	  else if ((WIDTH  * SKALA * menu->xpcz + menu->xdl + xs) > maxX)
+		  menu->xpcz = (maxX - menu->xdl - xs) / (WIDTH /*8*/ * SKALA);
 
 	  size = menu->maxw ? menu->maxw : menu->max;
 	  xr = ((menu->flags&NVERT) ? size * menu->xdl : menu->xdl);
@@ -1712,6 +1805,10 @@ void Test_Menu (TMENU *menu)
 
 	  x2 = x1 + xr * SKALA + 2 * (GR + 1);
 	  y2 = y1 + yd * 32 + 2 * GR;
+
+      x2 += xs;
+      y2 += ys;
+
 	  if (y2 > maxY)
 	  {
 		  menu->maxw = (maxY - y1) / (32);
@@ -1794,6 +1891,10 @@ void Test_Menu (TMENU *menu)
 	  y1=(menu->ypcz-1)*HEIGHT * SKALA+YP;
 	  x2=x1+xr*WIDTH  * SKALA +2*(GR+1);
 	  y2=y1+yd*HEIGHT * SKALA +2*GR;
+
+      x2 += xs;
+      y2 += ys;
+
 	  if (y2 > maxY)
 	  {
 		menu->maxw = (maxY - y1) / (HEIGHT * SKALA) -1 ;
@@ -1891,47 +1992,129 @@ static void  msk (int x, int y)
 
  void (*MSERV)(int x,int y)=msk;
 
+static void  pusk(int x,int y)
+{
+    int i,x1,y1,x2,y2,size,xr,yd, poz1, dx, dy, x11, x12, y11, y12;
+    int mouse_xx, mouse_yy;
+    TMENU *tmenu;
+
+    if (menu_level==0)  return;  //just for a case
+
+    tmenu=menu_address[menu_level-1];
+
+    size=tmenu->maxw?tmenu->maxw:tmenu->max;
+    xr=((tmenu->flags&NVERT)?size*tmenu->xdl:tmenu->xdl);
+    yd=((tmenu->flags&NVERT)?1:size);
+    if (tmenu->flags&ICONS)
+    {
+        xr = ((tmenu->flags&NVERT) ? size * 2 : 2);
+        x1=(tmenu->xpcz-1)*WIDTH * SKALA;
+        y1=(tmenu->ypcz-1)*32+YP;
+
+        x2 = x1 + xr *32 * SKALA + 2 * (GR + 1);
+        y2=y1+yd*32 +2*GR;
+
+        dx = 64;
+        dy = 32;
+    }
+    else
+    {
+        x1=(tmenu->xpcz-1)*WIDTH * SKALA;
+        y1=(tmenu->ypcz-1)*HEIGHT * SKALA+YP;
+        x2=x1+xr*WIDTH * SKALA +2*(GR+1);
+        y2=y1+yd*HEIGHT * SKALA +2*GR;
+
+        dx = 64;
+        dy=HEIGHT;
+    }
+
+    msud_min = 0;
+    msud = 0;
+
+    if ((mouse_x >= x1) && (mouse_x<=x2))
+    {
+        if ((mouse_y >= y1) && (mouse_y<=y2))
+        {
+            if (tmenu->flags&NVERT)
+            {
+                for (i = 0; i < size; i++) {
+                    x11 = x1 + i * dx;
+                    x12 = x11 + dx;
+                    mouse_xx = mouse_x;
+                    if ((mouse_x >= x11) && (mouse_x <= x12)) break;
+                }
+                if (i < size) {
+                    poz1 = tmenu->foff + i;
+                    if (poz1 != tmenu->poz) {
+                        set_scrsave_time();
+                        show_hide_tip(tmenu, FALSE);
+                        baronoff(tmenu);
+                        tmenu->poz = poz1;
+                        baron(tmenu);
+                    }
+                }
+            }
+            else
+            {
+                for (i = 0; i < size; i++) {
+                    y11 = y1 + i * dy;
+                    y12 = y11 + dy;
+                    mouse_yy = mouse_y;
+                    if ((mouse_y >= y11) && (mouse_y <= y12)) break;
+                }
+                if (i < size) {
+                    poz1 = i;
+                    if (poz1 != tmenu->poz) {
+                        set_scrsave_time();
+                        show_hide_tip(tmenu, FALSE);
+                        baronoff(tmenu);
+                        tmenu->poz = poz1;
+                        baron(tmenu);
+                    }
+                }
+            }
+        }
+    }
+}
+
 static void  usk(int x,int y)
 {
+    int skokmm = skokm / nsteps;  /*8*/
 
-int	skokmm = skokm / nsteps;  /*8*/
+    dyy += (typokn ? y : x);
+    dyy_min += (typokn ? y : x);
 
- dyy+=(typokn?y:x);
- dyy_min+=(typokn ? y : x);
- 
- if (dyy>skokm)
-  { 
+    if (dyy > skokm)
+    {
 
-	 dyy = 0;
-   
-	 msud = 1;
-   
-  }
- else if (dyy_min > skokmm)
-  {
+        dyy = 0;
 
-	 dyy_min = 0;
-	 
-	 msud_min = 1;
-	 
-  }
- 
- if (dyy<-skokm)
-   { 
+        msud = 1;
 
-	 dyy = 0;
-	
-	 msud = -1;
-	
-   }
- else if (dyy_min < -skokmm)
-  {
+    } else if (dyy_min > skokmm)
+    {
 
-	 dyy_min = 0;
-	 
-	 msud_min = -1;
-	 
-  }
+        dyy_min = 0;
+
+        msud_min = 1;
+
+    }
+
+    if (dyy < -skokm)
+    {
+
+        dyy = 0;
+
+        msud = -1;
+
+    } else if (dyy_min < -skokmm)
+    {
+
+        dyy_min = 0;
+
+        msud_min = -1;
+
+    }
 }
 
 void
@@ -2139,6 +2322,26 @@ static void ramka_m(int x1,int y1,int x2,int y2)
    LINE(x2, y2, x2-GR+1, y2-GR+1);
 }
 
+
+void invert_bitmap(BITMAP *bmp)
+{
+    int x, y;
+    int k, r, g, b;
+    for (y = 0; y < bmp->h; y++) {
+        for (x = 0; x < bmp->w; x++) {
+            k=getpixel(bmp, x, y);
+            r = k & 0xFF;
+            g = (k >> 8) & 0xFF;
+            b = (k >> 16) & 0xFF;
+            // Invert color values
+            r = 255 - r;
+            g = 255 - g;
+            b = 255 - b;
+            putpixel(bmp, x, y, makecol(r, g, b));
+        }
+    }
+}
+
 void show_hide_tip(TMENU * menu, BOOL show)
 {
   int x0, x1, y1, x2, y2, a, b;
@@ -2257,8 +2460,6 @@ void show_hide_tip(TMENU * menu, BOOL show)
 	else if ((txt[0] == '@') && (menu->poz>=0))
 	{
 		//"@Rotation"
-
-		
 		if (*ptrsz_temp == '@')
 		{
 			ptrsz_temp++;
@@ -2303,6 +2504,7 @@ void show_hide_tip(TMENU * menu, BOOL show)
 		x2 = x0 - 8;
 	}
 
+    if (BAR_POINTER) show_mouse(NULL);
 
 	if (show == TRUE)
 	{
@@ -2319,7 +2521,7 @@ void show_hide_tip(TMENU * menu, BOOL show)
 		setlinestyle1(SOLID_LINE, 0, NORM_WIDTH);
 		
 		RECTFILL(x1, y1, x2, y2);
-		setcolor(113);  //inkk
+		setcolor(113);
 		LINE(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
 		LINE(x2 - 1, y1 + 1, x2 - 1, y2 -1);
 		LINE(x2 - 1, y2 -1, x1 + 1, y2 -1);
@@ -2343,6 +2545,8 @@ void show_hide_tip(TMENU * menu, BOOL show)
 		menu->tip_back = NULL;
 	    }
 	}
+
+    if (BAR_POINTER) show_mouse(screen);
 
 }
 
@@ -2420,7 +2624,6 @@ int frame_up(TMENU * menu)
 				xy.x2 = x1 + a; 
 				xy.y2 = xy.y1 + b;
 			}
-			
 
 			LINE(xy.x1, xy.y1, xy.x2, xy.y1);
 			LINE(xy.x2, xy.y1, xy.x2, xy.y2);
@@ -2438,7 +2641,6 @@ int frame_up(TMENU * menu)
 				cprev_(menu);
 				return 1;
 			}
-
 	}
 	else if (menu->poz + menu->off >= 0)
 	{
@@ -2463,6 +2665,9 @@ void frame_off(TMENU * menu)
 	
 	if (menu->back == NULL)
         return;
+
+
+    if (BAR_POINTER) return;
 
     if ((menu->flags&ICONS) && (menu->poz < (menu->max)))
 	{
@@ -2495,12 +2700,45 @@ void frame_off(TMENU * menu)
 		LINE(xy.x1, xy.y2, xy.x1, xy.y1);
 
 	}
+
 }
+
+void pointer_on(TMENU * menu)
+{
+    int x1, y1, a, b;
+
+    if (menu->back == NULL) return;
+    if ((menu->flags&ICONS) && (menu->poz < menu->max))
+    {
+        x1 = (menu->xpcz - 1)*WIDTH /*8*/ * SKALA + GR + 1;
+        y1 = (menu->ypcz - 1) * 32 + GR + 1 + YP - 1;
+
+        if (menu->flags&NVERT)
+        {
+            x1 += menu->poz * 64 * SKALA;
+
+            a = 64;
+        }
+        else
+        {
+            y1 += menu->poz * 32;
+
+            a = 63;
+        }
+
+        b = 32;
+
+        position_mouse(x1 + a/2, y1 + b/2);
+    }
+}
+
 void frame_on(TMENU * menu)
 {
 	int x1, y1, a, b;
 	
  	if (menu->back == NULL) return;
+
+    if (BAR_POINTER) return;
 	
 	if ((menu->flags&ICONS) && (menu->poz < menu->max))
 	{
@@ -2525,13 +2763,10 @@ void frame_on(TMENU * menu)
 		setwritemode(XOR_PUT);
 		setlinestyle1(SOLID_LINE, 0, NORM_WIDTH);
 
-
-
 		xy.x1 = x1; 
 		xy.y1 = y1; 
 		xy.x2 = x1 + a; 
 		xy.y2 = y1 + b ;
-		
 
 		LINE(xy.x1, xy.y1, xy.x2, xy.y1);
 		LINE(xy.x2, xy.y1, xy.x2, xy.y2);
@@ -2542,22 +2777,34 @@ void frame_on(TMENU * menu)
 		
 		frame_count = 0;
 	}
+
 }
 
 int frame_down(TMENU * menu)
 {
-	int x0, y0, xm, ym, x1, y1, a, b;
-  int nn;
-  int cn;
+	int x0, y0, xm, ym, x1, y1, x2, y2, a, b;
+    int nn;
+    int cn;
+    int mouse_x_, mouse_y_;
+    float yd, xr;
+    int size;
 
     nn = nsteps;
 
+    size=menu->maxw?menu->maxw:menu->max;
+
 	if ((menu->flags&ICONS) && (menu->poz < (menu->max)))
 	{
+        xr = ((menu->flags&NVERT) ? size * 2 : 2);
+        yd=((menu->flags&NVERT)?1:size);
+
 		x1 = (menu->xpcz - 1)*WIDTH /*8*/ * SKALA + GR + 1;
 		x0 = x1;
 		y1 = (menu->ypcz - 1) * 32 + GR + 1 + YP - 1;
 		y0 = y1;
+
+        x2 = x1 + xr * 32 * SKALA + 2 * (GR + 1);
+        y2=  y1+yd*32  +2*GR;
 		
 		if (menu->flags&NVERT)
 		{
@@ -2573,7 +2820,6 @@ int frame_down(TMENU * menu)
 		}
 
 		b = 32;
-
 
 		if (menu->flags&NVERT) {
 			if ((x1 + a + (step * 2 * frame_counter)) > xm)
@@ -2633,13 +2879,28 @@ int frame_down(TMENU * menu)
 				frame_count = 0;
 				frame_counter = 0;
 				cn=cnext_(menu);
+
+                /*
+                if (BAR_POINTER)
+                {
+                    mouse_x_=mouse_x;
+                    mouse_y_=mouse_y;
+                    if ((mouse_x >= x1) && (mouse_x<= x2))
+                    {
+                        if ((mouse_y >= y1) && (mouse_y <= y2))
+                        {
+                             position_mouse(mouse_x_, (xy.y2-xy.y1)/2);
+                        }
+                    }
+                }
+                 */
+
 				return 1;
 			}
 			
 	}
 	else if (menu->poz < (menu->max))
 	{
-
 			frame_counter += 1;
 			frame_count += 1;
 			if (frame_counter >= (nsteps)) //4)
@@ -2698,6 +2959,8 @@ void baronoff_(TMENU  * menu)
 
     frame_counter = 0;
 
+    ptrsz_temp = (*(menu->pola))[menu->foff + menu->poz].txt;  //???
+
     if (menu->flags&ICONS)
     {
         x1=(menu->xpcz-1)*WIDTH /*8*/ * SKALA+GR+1;
@@ -2747,12 +3010,13 @@ void baronoff_(TMENU  * menu)
         else setcolor(15);
     }
 
-
-    setwritemode(XOR_PUT);
-    setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+    ////setwritemode(XOR_PUT);
+    ////setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
 
     if (color_bar)
     {
+        setwritemode(XOR_PUT);
+        setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
         for (int i = 0; i < l_no; i++)
         {
             LINE(x1 + i, y1 + i, x1 + a - i, y1 + i);
@@ -2761,7 +3025,26 @@ void baronoff_(TMENU  * menu)
             LINE(x1 +i, y1 + b - i, x1 + i, y1 + i);
         }
     }
-    else RECTFILL(x1,y1,x1+a,y1+b);
+    else
+    {
+        if (XORBAR)
+        {
+            setwritemode(XOR_PUT);
+            setlinestyle1(SOLID_LINE,0,NORM_WIDTH);
+            RECTFILL(x1, y1, x1 + a, y1 + b);
+        }
+        else {
+            setwritemode(COPY_PUT);
+            BITMAP *barbitmap;
+            barbitmap = create_bitmap(a, b);
+            getimage(x1, y1, x1 + a, y1 + b, barbitmap);
+            invert_bitmap(barbitmap);
+            putimage(x1, y1, barbitmap, COPY_PUT);
+        }
+    }
+
+    bar_center.x=x1+a/2;
+    bar_center.y=y1+b/2;
 
     frame_on(menu);
 }
@@ -2771,7 +3054,11 @@ void baronoff(TMENU  * menu)
   frame_counter = 0;
   frame_off(menu);
 
+  if (BAR_POINTER) show_mouse(NULL);
+
   baronoff_(menu);
+
+  if (BAR_POINTER) show_mouse(screen);
 
 }
 
@@ -2894,7 +3181,7 @@ static char *get_icons_p(int number)
         /*800*/   icon_stress_mag_p, icon_stress_plus_mag_p, icon_stress_minus_mag_p, icon_shear_stress_mag_p, icon_no_d_12_p,
         /*805*/   icon_eurocode_d48_p, icon_asce_d48_p, icon_icc_d48_p, icon_combination_d48_p, icon_erase_layer_db_64_p, icon_mark_layer_db_64_p, icon_mark_d_12_p,
         /*812*/   icon_AlfaCAD48_p, icon_Pdelta_d48_p, icon_dynamics_p, icon_vibrations_d48_p, icon_inertia_d48_p, icon_dynamics_run_p, icon_fixed_rotation_p,
-
+        /*819*/   icon_mouse1b2b_p, icon_menustyle_p, icon_barstyle_p, icon_cursorstyle_p,
     };
    
 	if (number>999)
@@ -2908,7 +3195,6 @@ static BITMAP *get_icons_aux_p(int number)
 
 	return  (BITMAP *)get_icons_p(number_aux[number]);
 }
-
 
 void draw_font_name(char *name, unsigned char fontno, int x, int y)
 {
@@ -3203,7 +3489,6 @@ void pdraww(PTMENU  *menu)
             }
         }
 
-
         //instead of texts we can put images
         //images can occupy space 32x32 pxl, if total width would be some 1
         //total with should be 64pxl, to show extra options or so
@@ -3233,7 +3518,6 @@ void pdraww(PTMENU  *menu)
 
             if (ptrsz_tcod < 32)
             {
-
                 bmp_aux = (BITMAP *)get_icons_aux_p(ptrsz_tcod);
                 if (bmp_aux != NULL)
                 {
@@ -3278,7 +3562,6 @@ void pdraww(PTMENU  *menu)
             }
             else
             {
-
                 int bytes_n;
                 uint8_t utf8c[4];
 
@@ -3437,7 +3720,6 @@ void draww(TMENU  *menu)
  float xtt, ytt;
  int i,size,x1,y1,x2,y2,x3,ink,border,paper;
  int x01,y01,x02,y02,w,h;
-//#define TEMPN 200
  char sz_temp [TEMPN] ;
  char *ptrsz_temp;
  char *ptrsz_tmn;
@@ -3506,6 +3788,9 @@ void draww(TMENU  *menu)
     y1=0;
     menu_screen= create_bitmap_ex(32, w, h);
     if (menu_screen==NULL) return;
+
+
+
     Set_Screenplay(menu_screen);
 
    setfillstyle_(SOLID_FILL,paper);
@@ -3697,7 +3982,6 @@ void draww(TMENU  *menu)
 
 		 if (ptrsz_tcod < 32)
 		 {
-			 
 			 bmp_aux = (BITMAP *)get_icons_aux_p(ptrsz_tcod);
 			 if (bmp_aux != NULL)
 			 {		 
@@ -3884,14 +4168,15 @@ void draww(TMENU  *menu)
      settextjustify (LEFT_TEXT, TOP_TEXT) ;
    }
 
+    if (BAR_POINTER) show_mouse(NULL);
     blit(menu_screen, screen, 0,0,x01,y01,w,h);
 
+
     Set_Screenplay(screen);
+    if (BAR_POINTER) show_mouse(screen);
 
    destroy_bitmap(menu_screen);
-
 }
-
 
 void drawp(TMENU *menu)
 {  int x1,y1,x2,y2,a,b,c,ys,b2, ink,paper;
@@ -3916,7 +4201,6 @@ void drawp(TMENU *menu)
 
 	   baronoff(menu);
 	   frame_on(menu);
-	   
 
 	   x1=(menu->xpcz-1)*WIDTH /*8*/ * SKALA +GR+1;
 	   y1=(menu->ypcz-1)*32 +GR+1+YP; y1+=menu->poz*32;
@@ -3933,7 +4217,6 @@ void drawp(TMENU *menu)
        menu_screen= create_bitmap_ex(32, w, h);
        if (menu_screen==NULL) return;
        Set_Screenplay(menu_screen);
-
 
        setfillstyle_(SOLID_FILL, paper);
 	   bar(x1+c+d, y1+d, x1 + a-d, y1 + b-d);
@@ -3992,13 +4275,11 @@ void drawp(TMENU *menu)
 	   moveto(x1 + 37, y1 + 8);
 	   outtext_r_(menu_screen, sz_temp);
 
-
    }
    else
    {
 	   baronoff(menu);
 	   frame_on(menu);
-
 
 	   x1 = (menu->xpcz - 1)*WIDTH /*8*/ * SKALA + GR + 1;
 	   y1 = (menu->ypcz - 1)*HEIGHT * SKALA + GR + 1 + YP; y1 += menu->poz*HEIGHT * SKALA;
@@ -4024,7 +4305,6 @@ void drawp(TMENU *menu)
 	   
 	   outtext_r_(menu_screen, (*(menu->pola))[menu->foff + menu->poz].txt);
    }
-
 
    if ((ptrsz_tmn!=NULL) && (menu->flags & TADD))   //istnieje podmenu
        {
@@ -4064,7 +4344,6 @@ void drawp(TMENU *menu)
 
     destroy_bitmap(menu_screen);
 
-
    baronoff(menu);
    frame_on(menu);
 }
@@ -4094,17 +4373,238 @@ void activate_menu(TMENU *menu) {
     activate(menu);
 }
 
+static int menu_init_slider(int *var1, int *var2, int *var3, int *var4)
+{
+    TMENU *tmenu;
+    tmenu=menu_address[menu_level-1];
+
+    *var1=tmenu->foff;  //  n_first_layer_in_dlg;
+    *var2=tmenu->foff+tmenu->maxw; //  n_last_layer_in_dlg+1;
+    //*var3=No_Layers;
+    *var3=tmenu->max;  // no_layers;
+    *var4=tmenu->maxw;  //NoDialogLayers;
+    return 1;
+}
+
+static int menu_grab_slider(void *dp3, int d2)
+{   char slider_var[32];
+    int var1, var2, var3, var4, ret;
+    int (*SlideFun)(int*, int*, int*, int*);
+
+    TMENU *tmenu;
+    tmenu=menu_address[menu_level-1];
+
+    SlideFun = (int(*)(int *, int *, int *, int *))dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    tmenu->foff=var3 - d2 - (var2-var1);   //n_first_layer_in_dlg
+    draww(tmenu);
+
+    return 0;
+}
+
+static int find_menu_slider(TMENU *menu, SLIDER *slider)
+/*----------------------------------------------------*/
+{ int i, ret=0, ret1;
+    int size, x1, y1, x11, x12, y11, y12, dx, dy; //x1, y1, x2, y2,
+    int poz1;
+    int mouse_yy;
+
+    SLIDER Slider_;
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+    Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+    gui_set_screen(screen);
+
+    if (slider->flags & 0xF0) return ret;
+
+    mouse_yy=mouse_y;
+
+    if(mouse_x > slider->x && mouse_x < (slider->x + slider->w) &&
+       mouse_y > slider->y && mouse_y < (slider->y + slider->h))
+    {
+        set_scrsave_time();
+        show_hide_tip(menu, FALSE);
+        baronoff(menu);
+        ret1 = Slider_.proc(MSG_CLICK, &Slider_, '\0');
+        slider->d2 = Slider_.d2;
+        //baronoff(menu);
+        size=menu->maxw?menu->maxw:menu->max;
+
+        if (menu->flags&NVERT)
+        {
+            x1=(menu->xpcz-1)*WIDTH * SKALA;
+            y1=(menu->ypcz-1)*32+YP;
+
+            dx = 64;
+            dy = 32;
+            for (i = 0; i < size; i++) {
+                x11 = x1 + i * dx;
+                x12 = x11 + dx;
+                if ((mouse_x >= x11) && (mouse_x <= x12)) break;
+            }
+            if (i < size)
+            {
+                poz1 = menu->foff + i;
+                if (poz1 != menu->poz) {
+                    set_scrsave_time();
+                    menu->poz = poz1;
+                }
+            }
+        }
+        else
+        {
+            if (menu->flags&ICONS)
+            {
+                x1=(menu->xpcz-1)*WIDTH  * SKALA;
+                y1=(menu->ypcz-1)*32 + YP;
+                dy=32;
+            }
+            else {
+                x1 = (menu->xpcz - 1) * WIDTH * SKALA;
+                y1 = (menu->ypcz - 1) * HEIGHT * SKALA + YP;
+                dy=HEIGHT;
+            }
+            dx = 64;
+
+            for (i = 0; i < size; i++) {
+                y11 = y1 + i * dy;
+                y12 = y11 + dy;
+                if ((mouse_y >= y11) && (mouse_y <= y12)) break;
+            }
+            if (i < size) {
+                poz1 = i;
+                if (poz1 != menu->poz) {
+                    set_scrsave_time();
+                    menu->poz = poz1;
+                }
+            }
+        }
+        baron(menu);
+        ret=1;
+    }
+
+    return ret;
+}
+
+void draw_menu_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+    BITMAP *slbitmap;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    gui_mg_color = palette_color[180];
+    gui_bg_color = palette_color[98];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+
+    int Slider_h = slider->h;
+    double slratio = (double) Slider_h / (double) (var3);
+    int slbody;
+    if (var3 <= var4) slbody = Slider_h;
+    else slbody = (var2 - var1) * slratio;
+
+    if (slider->dp != NULL) destroy_bitmap((BITMAP *) slider->dp);
+
+    if (slbody < 4) slider->flags |= 0xF0;  //hidden
+    else
+    {
+        slider->flags &= ~0xF0;
+        slbitmap = create_bitmap(slider->w, slbody);
+        slider->d2 = var3 - var1 - (var2 - var1);
+
+        clear_to_color(slbitmap, get_palette_color(246/*kolory.paperm*/));
+        hline(slbitmap, 1, 1, slbitmap->w - 2, BLACK);
+        vline(slbitmap, slbitmap->w - 2, 1, slbitmap->h - 1, BLACK);
+        hline(slbitmap, slbitmap->w - 2, slbitmap->h - 1, 1, BLACK);
+        vline(slbitmap, 1, 1, slbitmap->h - 1, BLACK);
+
+        hline(slbitmap, 2, 2, slbitmap->w - 3, palette_color[15]);
+        vline(slbitmap, slbitmap->w - 3, 2, slbitmap->h - 2, palette_color[8]);
+        hline(slbitmap, slbitmap->w - 3, slbitmap->h - 2, 2, palette_color[8]);
+        vline(slbitmap, 2, 2, slbitmap->h - 2, palette_color[15]);
+
+        slider->dp = slbitmap;
+    }
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[Slider_.fg /*kolory.inkm*/];
+    Slider_.bg = palette_color[Slider_.bg /*kolory.paperk*/];
+
+    Slider_.slider = slider;
+
+    disable_hardware_cursor();
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+
+    enable_hardware_cursor();
+}
+
+void redraw_menu_slider(SLIDER *slider)
+{
+    SLIDER Slider_;
+    int var1, var2, var3, var4, ret;
+
+    gui_fg_color = palette_color[kolory.inkm];
+    gui_mg_color = palette_color[180];
+    gui_bg_color = palette_color[98];
+
+    gui_border_dark = palette_color[8];
+    gui_border_light = palette_color[15];
+
+    slider->flags &= ~0x800;
+
+    int (*SlideFun)(int *, int *, int *, int *);
+    SlideFun = (int (*)(int *, int *, int *, int *)) slider->dp3;
+
+    ret = SlideFun(&var1, &var2, &var3, &var4);
+
+    //adjusting slider
+    slider->d1 = var3 - (var2 - var1);
+    slider->d2 = var3 - var1 - (var2 - var1);
+
+    memmove(&Slider_, slider, sizeof(SLIDER));
+
+    Slider_.flags=0;
+    Slider_.fg = palette_color[slider->fg];
+    Slider_.bg = palette_color[slider->bg];
+
+    Slider_.slider = slider;
+
+    ret = slider->proc(MSG_DRAW, &Slider_, '\0');
+}
+
  /*wyswietlenie okna wraz z trescia*/
 int openwh(TMENU *menu)
 /*---------------------*/
 {
 
  BITMAP *menu_back;
+  SLIDER *Slider;
 
  float xr,yd;
  int size,x1,y1,x2,y2;
 
  Test_Menu (menu) ;
+
  if(menu->back) return 1;
  if(menu->poz+menu->foff>menu->max) { menu->poz=menu->foff=0;}
  size=menu->maxw?menu->maxw:menu->max;
@@ -4127,16 +4627,52 @@ int openwh(TMENU *menu)
 	 y2=y1+yd*HEIGHT * SKALA +2*GR;
  }
 
+ set_slider[menu_level-1]=0;
+ if ((BAR_POINTER) && (menu->maxw>0) && (menu->maxw<menu->max))
+ {
+     if (menu->flags&NVERT) y2+=20;
+     else x2+=20;
+     set_slider[menu_level-1]=1;
+ }
+
  if ((menu_back = create_bitmap(x2 - x1 + 1, y2 - y1 + 36)) == NULL) return 0;
  menu->back=menu_back;
 
+ if (BAR_POINTER) show_mouse(NULL);
 getimage(x1,y1-18,x2,y2+18,menu->back);
+if (BAR_POINTER) show_mouse(screen);
+
 draww(menu);
+if (set_slider[menu_level-1])
+{
+    Slider=&slider[menu_level-1];
+    if (menu->flags&NVERT)
+    {
+        Slider->x = x1;
+        Slider->y = y2-20;
+        Slider->h = x2 - x1;
+    }
+    else
+    {
+        Slider->x = x2 - 20;
+        Slider->y = y1;
+        Slider->h = y2 - y1;
+    }
+    Slider->slider=Slider;
+    gui_set_screen(screen);
+    draw_menu_slider(Slider);
+}
 frame_on(menu);
+
+    if ((BAR_POINTER) && (menu_level==1))
+    {
+        Save_Update_flex(0, &curr_h, &curr_v);
+        _free_mouse();
+        pointer_on(menu);
+    }
+
  return 1;
 }
-
-
 
 unsigned Get_Menu_Image_Size (TMENU *menu)
 /*-------------------------------------------*/
@@ -4172,6 +4708,8 @@ if (menu->flags & TIP)
 {
 	show_hide_tip(menu, FALSE);
 }
+
+if (BAR_POINTER) show_mouse(NULL);
  if(menu->back)
    {
 	 if (menu->flags&ICONS)
@@ -4187,6 +4725,7 @@ if (menu->flags & TIP)
 	 putimage(x1, y1-18, menu->back, COPY_PUT);
 	 menu->back=NULL;
    }
+ if (BAR_POINTER) show_mouse(screen);
 
 }
 
@@ -4250,7 +4789,6 @@ void  openw(TMENU *menu)
         return;
     }
 
-
  if ((menu == &mCzcionka) || (menu == &mCzcionkaZ) || (menu == &mCzcionkaW))
  {
 	Set_HEIGHT_high();
@@ -4290,6 +4828,7 @@ void  openw(TMENU *menu)
    }
 
   menu->flags = menu->flags | NAWOPEN;
+
   if(openwh (menu))
   {
     baron (menu) ;
@@ -4301,6 +4840,17 @@ void  openw(TMENU *menu)
 void  closew(TMENU *menu)
 {
   int ret;
+
+  if (set_slider[menu_level-1])
+  {
+      if (slider[menu_level-1].dp!=NULL)
+      {
+          destroy_bitmap(slider[menu_level - 1].dp);
+          slider[menu_level-1].dp=NULL;
+      }
+      set_slider[menu_level-1]=0;
+  }
+
   menu_level--;
 
   if(menu->back)
@@ -4312,9 +4862,13 @@ void  closew(TMENU *menu)
   {
 	  Set_HEIGHT_back();
   }
+
+  if ((BAR_POINTER) && (menu_level == 0))
+    {
+          lock_mouse();
+          Save_Update_flex(1, &curr_h, &curr_v);
+    }
 }
-
-
 
 #include "b_hlp.c"
 
@@ -4348,7 +4902,6 @@ static void pdraww_scroll (PTMENU *menu, BOOL b_next)
     TEXT fontn= Tdef;
     COLOR_ kolor;
     int color_bak;
-
 
     if (menu->flags & NVERT)
     {
@@ -4433,7 +4986,6 @@ static void pdraww_scroll (PTMENU *menu, BOOL b_next)
         setcolor(ink);
         xt = x_reg + 2;
         yt = y_reg - 2 * SKALA + MDY;
-
 
         if (menu->flags & ICONS) moveto(xt, yt - YP1);
         else moveto(xt, yt - YP0);
@@ -4781,7 +5333,6 @@ static void draww_scroll (TMENU *menu, BOOL b_next)
         return;
     }
 
-   
    if (menu->flags & NVERT)
    {
       draww (menu) ;
@@ -4839,7 +5390,6 @@ static void draww_scroll (TMENU *menu, BOOL b_next)
 	   {
 		   putimage(x1, y1 + ((b_next == TRUE) ? -HEIGHT * SKALA : +HEIGHT * SKALA), sz_ptr, COPY_PUT);
 	   }
-
 
 	   setfillstyle_(SOLID_FILL, paper);
 	   x_reg = x1;
@@ -5189,7 +5739,12 @@ static int  cnext_min(TMENU *menu)
 
 static int  cnext_min_count(TMENU *menu, int count)
 {
-int i;
+int i, cn;
+
+    if (BAR_POINTER) {
+        cn = cnext_(menu);
+        return 0;
+    }
     for (i = 0; i < abs(count); i++)
 	    if (frame_down(menu)) break;
 	return 0;
@@ -5204,6 +5759,62 @@ static int  cnext(TMENU *menu)
 }
 
 
+static void shift_cursor(TMENU *menu)
+{  float yd, xr;
+    int x01,y01,x02,y02,w,h;
+    int size;
+    int mouse_x_, mouse_y_;
+    SLIDER *Slider;
+
+    size=menu->maxw?menu->maxw:menu->max;
+    if (menu->flags&ICONS)
+    {
+
+        menu->xdl = (int)(64 * SKALA);
+
+        xr = ((menu->flags&NVERT) ? size * 2 : 2);
+        yd=((menu->flags&NVERT)?1:size);
+        x01=(menu->xpcz-1)*WIDTH /*8*/ * SKALA;
+        y01=(menu->ypcz-1)*32 + YP;
+
+        x02 = x01 + xr * 32 * SKALA + 2 * (GR + 1);
+        y02=y01+yd*32  +2*GR;
+        //b2 = 32 * SKALA/ 3;
+    }
+    else
+    {
+        xr=((menu->flags&NVERT)?size*menu->xdl:menu->xdl);
+        yd=((menu->flags&NVERT)?1:size);
+        x01=(menu->xpcz-1)*WIDTH /*8*/ * SKALA;
+        y01=(menu->ypcz-1)*HEIGHT * SKALA + YP;
+        x02=x01+xr*WIDTH /*8*/ * SKALA  +2*(GR+1);
+        y02=y01+yd*HEIGHT * SKALA  +2*GR;
+        //b2 = HEIGHT * SKALA / 3;
+    }
+
+    mouse_x_=mouse_x;
+    mouse_y_=mouse_y;
+    if ((mouse_x_ >= x01) && (mouse_x_ <= x02))
+    {
+        if ((mouse_y_ >= y01) && (mouse_y_ <= y02))
+        {
+            if (menu->flags&NVERT)
+                position_mouse(bar_center.x, mouse_y_);
+            else position_mouse(mouse_x_, bar_center.y);
+        }
+    }
+    //if (menu->max > menu->maxw)
+    if (set_slider[menu_level-1])
+    {
+        Slider=&slider[menu_level-1];
+        gui_set_screen(screen);
+        setwritemode(COPY_PUT);
+        redraw_menu_slider(Slider);
+    }
+
+}
+
+
 static int  cnext_(TMENU *menu)
 {
 	int mickeyx, mickeyy;
@@ -5215,7 +5826,6 @@ static int  cnext_(TMENU *menu)
 	{
 		show_hide_tip(menu, FALSE);
 	}
-
 
    if (menu->poz + menu->foff == menu->max - 1)
    {
@@ -5236,16 +5846,18 @@ static int  cnext_(TMENU *menu)
        menu->foff++ ;
        menu->poz-- ;
 	  frame_off(menu);
+      show_mouse(NULL);
 	  draww_scroll (menu, TRUE) ;
 	  frame_on(menu);
+      show_mouse(screen);
 
      }
    }
    baron (menu) ;
+   if (BAR_POINTER) shift_cursor(menu);
    get_mouse_mickeys(&mickeyx, &mickeyy);
    return 0 ;
 }
-
 
 static int  cprev_min(TMENU *menu)
 {
@@ -5256,7 +5868,11 @@ static int  cprev_min(TMENU *menu)
 
 static int  cprev_min_count(TMENU *menu, int count)
 {
-	int i;
+	int i, cn;
+    if (BAR_POINTER) {
+        cn = cprev_(menu);
+        return 0;
+    }
 	for (i = 0; i < abs(count); i++)
 		if (frame_up(menu)) break;
 	return 0;
@@ -5294,15 +5910,17 @@ static int  cprev_(TMENU *menu)
 	 menu->foff-- ;
 
 	 menu->poz = 0 ;  /*wykorzystane w draww_scroll*/
+     show_mouse(NULL);
 	 frame_off(menu);
 	 draww_scroll (menu, FALSE) ;
 	 frame_on(menu);
+     show_mouse(screen);
        }
        menu->poz=0;
      }
   }
   baron(menu);
-
+   if (BAR_POINTER) shift_cursor(menu);
   get_mouse_mickeys(&mickeyx, &mickeyy);
 
   return 0;
@@ -5333,6 +5951,7 @@ static int  cpgnext(TMENU *menu)
      if (menu->poz >= menu->max) menu->poz=menu->max?menu->max-1 : 0;
    }
  baron(menu);
+ if (BAR_POINTER) shift_cursor(menu);
  return 0;
 }
 
@@ -5356,9 +5975,9 @@ static int  cpgprev(TMENU *menu)
 	 draww(menu);
    }
  baron(menu);
+ if (BAR_POINTER) shift_cursor(menu);
  return 0;
 }
-
 
 static int  cbegin(TMENU * menu)
 {
@@ -5376,6 +5995,7 @@ static int  cbegin(TMENU * menu)
       draww(menu);
     }
   baron(menu);
+  if (BAR_POINTER) shift_cursor(menu);
   return 0;
 }
 
@@ -5401,12 +6021,11 @@ static int  cend(TMENU * menu)
       draww(menu);
     }
   baron(menu);
+  if (BAR_POINTER) shift_cursor(menu);
   return 0;
 }
 
-
 static int opwin_s = 0 ;        //simple menu
-
 
 /*opwin - zmienna wskazujaca czy przeprogr. tablica klawiszy f-cji*/
 int opwin=0;
@@ -5428,8 +6047,6 @@ static void nooop_(void)
 {}
 
 #define noop (int ( *)(void))nooop
-#define noop_ (void ( *)(void))nooop_
-#define noop1 (int ( *)(void))nooop
 
 static void redcr(char typ)
 { int n1;
@@ -5516,7 +6133,9 @@ static void redcr(char typ)
 
      SERV[84]=SW01;
 
-     MSW=MSERV;      MSERV=usk;
+     MSW=MSERV;
+     if (!BAR_POINTER) MSERV=usk;
+     else MSERV=pusk;
      KLs=KLS;        KLS = kls ;
      opwin=1;
    }
@@ -5601,14 +6220,13 @@ static void unredcr(void)
 	 }
 }
 
-
 void unredcr_menu(void) {
     unredcr();
 }
 
 /*otworzenie okna menu*/
 
-void  temp(TMENU *menu)
+void  openmenu(TMENU *menu)
 {
  register TMENU *rmenu;
  //przesuniecie okna do pozycji kursora
@@ -5623,8 +6241,6 @@ void  temp(TMENU *menu)
    openw(menu);
    redcr(menu->flags &NVERT);
 }
-
-
 
 static char catch(unsigned char zn)
 {
@@ -5691,7 +6307,6 @@ static void ctwsp(int xy)
     catch((unsigned char)(xy >> (8 * 3)));
 }
 
-
 static void mkrcur(void)
 {
    int x=*((int *)aktmakro);
@@ -5719,8 +6334,6 @@ static void mkrcur__(void)
 #define DWN_MIN 180
 #define LT_MIN 175
 #define RT_MIN 177
-
-
 
 static int sprawdzenie_ruchu(int msx, int msy)
 /*------------------------------------------*/
@@ -5915,7 +6528,6 @@ void draw_keyimage_(int keyimage, BOOL set_timer, BOOL silent, BOOL enforce)
 {
 	draw_keyimage(keyimage, set_timer, silent, enforce);
 }
-
 
 void del_demo_keys(void)
 {
@@ -6141,7 +6753,6 @@ void remove_keyimages(BOOL silent)
 	if (shiftkeyimage_back > 0) draw_keyimage(-1, FALSE, silent, TRUE);
 }
 
-
 void restore_keyimages(void)
 {
     draw_keyimage(-1, FALSE, FALSE, TRUE);
@@ -6163,9 +6774,6 @@ void restore_keyimages(void)
 		shiftkeyimage_back_back = 0;
 	}
 }
-
-
-
 
 char get_shifts(int key2)  //alt=1, ctrl=2, shift=4
 {
@@ -6278,6 +6886,13 @@ void clean_kbd() {
     msud_min=0;
 }
 
+void show__if_DEMO_RECORDING(int newicon)
+{
+    if (DEMO_RECORDING)
+    {
+        draw_demokeyimage(newicon, -1, TRUE, FALSE, FALSE);
+    }
+}
 //unsigned char 
 int inkeys(TMENU *menu, BOOL search_ok)
 {
@@ -6299,6 +6914,7 @@ int inkeys(TMENU *menu, BOOL search_ok)
   char *txt;
   char txt_[2]=" ";
   char *ptr;
+  static int a=0;
 
     if (menu!=NULL) {
         if (menu->flags & 0x100)
@@ -6498,7 +7114,8 @@ int inkeys(TMENU *menu, BOOL search_ok)
 #ifdef LINUX
                        ptr = strcasestr(txt, search_str);
 #else
-                       ptr = StrStrIA(txt, search_str);
+                       //ptr = StrStrIA(txt, search_str);
+                   	   ptr = strcasestr(txt, search_str);
 #endif
                        if (ptr != NULL) break;
                    }
@@ -6570,6 +7187,15 @@ int inkeys(TMENU *menu, BOOL search_ok)
 		   sleep_state=FALSE;
 
 		   mkeys = keys; keys = 0;
+           if (((mkeys) & '\01') &&  ((mkeys) & '\02'))
+           {
+               if (DEMO_RECORDING)
+               {
+                   draw_demokeyimage(819, -1, TRUE, FALSE, FALSE);
+               }
+               if (search_ok) komunikat_str_short("", FALSE);
+               return ucatch(ESC);
+           }
 		   if ((mkeys) & '\01')
 		   {
 			   if (DEMO_RECORDING)
@@ -6763,8 +7389,6 @@ int inukeys(TMENU *menu)
 			}
 		}
 	}
-
-
 	if (aktmakro != NULL)
 	{
 		if (my_kbhit() && my_ugetch() == ESC) brkmakro();
@@ -6786,6 +7410,8 @@ int inukeys(TMENU *menu)
 		}
 	}
 
+#define MOUSEENTER 2132
+#define MOUSEESC ESC  //27
 #define LEFTKEY 2123 //331
 #define INSKEY 2049 //257 
 #define INSKEY1 2130 //338
@@ -7015,9 +7641,9 @@ int inukeys(TMENU *menu)
 			sleep_state = FALSE;
 
 			mkeys = keys; keys = 0;
-			if ((mkeys)&'\01') return ucatch (ESC);
+			if ((mkeys)&'\01') return ucatch (MOUSEESC);
 			if ((mkeys)&'\02') return ucatch ('\02');
-			if ((mkeys)&'\04')  return ucatch (ENTER);
+			if ((mkeys)&'\04')  return ucatch (MOUSEENTER);  //ENTER
 		}
 
 		Odczyt_licznikow();
@@ -7306,6 +7932,15 @@ int  getcom(TMENU *menu)
 		test_aktmakro();
 		if (opwin || aktmakro != NULL)
 		{
+            if (set_slider[menu_level-1])
+            {
+                if (find_menu_slider(menu, &slider[menu_level-1]))
+                {
+                    zn='\0';
+                    n=-1;
+                    continue;
+                }
+            }
 			n = (menu->max ? menu->poz + menu->foff + 1 : 0);
 			if (mkbuf != NULL && (zn = (*(menu->pola))[n - 1].wcod) != '\0')
 				*(mkbuf - 1) = zn;
@@ -7317,7 +7952,7 @@ int  getcom(TMENU *menu)
 			x_cur = get_cursor_posX();
 			y_cur = get_cursor_posY();
 
-            if (ENTHME || ACTW != NULL) { wyj = 0; temp(menu); } /* openw, redcr */
+            if (ENTHME || ACTW != NULL) { wyj = 0; openmenu(menu); } /* openw, redcr */
 		}
 		if (mkbuf != NULL) mkbuf--;
 		continue;
@@ -7664,7 +8299,7 @@ int  getcom(TMENU *menu)
            if (menu->flags & TIP) {
                show_hide_tip(menu, FALSE);
            }
-           if (!kbrdy() && opwin == 0) temp(menu);
+           if (!kbrdy() && opwin == 0) openmenu(menu);
            opp = opwin;
            m = commenu(menu2);
            if (opp)redcr(menu->flags & NVERT);
@@ -7751,7 +8386,7 @@ static int getwsp1_(TMENU *menu)
    ENTHME='\1';
    opwinr=opwin;
    opwin=0;
-   if (ACTW==NULL)  temp(menu);
+   if (ACTW==NULL)  openmenu(menu);
    n=getcom(menu);
    ENTHME=flag;
    opwin=opwinr;
@@ -7778,7 +8413,7 @@ static int getwsp2_(TMENU *menu)
     ENTHME='\1';
     opwinr=opwin;
     opwin=0;
-    if(ACTW==NULL) temp(menu);
+    if(ACTW==NULL) openmenu(menu);
     n=getcom(menu);
     ENTHME=flag;
     opwin=opwinr;
@@ -7898,7 +8533,6 @@ void ch_layer (void)
     return;
 }
 
-
 #define YP  4
 #define XP  6
 #define MDY 4
@@ -8016,7 +8650,6 @@ void ch_color (void)
             return;
             break;
     }
-
 
     if (i_color0>16) i_color0=16;
 
@@ -8475,7 +9108,6 @@ void ch_lwidth (void)
     return;
 }
 
-
 int point_type[]={0, 1, 8, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void ch_ptype (void) {
@@ -8654,6 +9286,7 @@ int choose_object(int type_address_no, TYPE_ADDRESS *type_address)
     void *adr;
 
     menu_level++;
+    menu_address[menu_level-1]=&mObjectSelected;
 
     mObjectSelected.max=0;
 
@@ -8691,11 +9324,13 @@ int choose_object(int type_address_no, TYPE_ADDRESS *type_address)
         mObjectSelected.max++;
     }
 
+    mObjectSelected.maxw=0;
+    mObjectSelected.maxw0=mObjectSelected.max;
+
     n = Simple_Menu_Proc(&mObjectSelected);
 
     return n-1;
 }
-
 
 void ch_ltype (void)
 {
@@ -8984,7 +9619,6 @@ void ch_x_ (int nr)
         baronoff(&mInfoAboutA);
         return;
     }
-
 
     x1 = buf_ret [0] ;
     //conversion to global coordinates
@@ -10608,7 +11242,6 @@ void ch_load_ch(void)
 
 }
 
-
 void ch_dx (void)
 {
   return;
@@ -11218,7 +11851,10 @@ static void ini_simple_menu (char typ)
 	  SERV[134] = (void*)cnext_min_count; //nooop1;
 	  mouse_dz = 1;
                
-      mv = MSERV ;           MSERV = usk ;
+      mv = MSERV ;     
+      if (!BAR_POINTER) MSERV = usk;
+      else MSERV = pusk;
+ 
 
       break ;
      case 1 :
@@ -11264,44 +11900,70 @@ int Simple_Menu_Proc (TMENU *menu)
   EVENT *ev ;
   int x0, y0, x00, y00;
 
-  if (dynamic_menu == TRUE)
-  {
-	  x00 = pikseleX0(X) + 20;
-	  y00 = pikseleY0(Y) - 24;  //+get_pYk() - 24;
+    if (dynamic_menu==TRUE)
+    {
+        x00 = pikseleX0(X) +20;
+        y00 = pikseleY0(Y) +get_pYk() - 24;
 
-	  if (menu->flags >= 0)
-	  {
-		  x0 = x00 / (WIDTH *SKALA);
+        if (menu->flags>=0)
+        {
+            x0=x00/(WIDTH *SKALA);
 
-		  if (x0 < 1) x0 = 1;
-		  if (menu_level > 1)
-			  menu->xpcz = x0 + (menu_level * 4); //5
-		  else menu->xpcz = x0;
-	  }
-	  if (menu->flags&ICONS)
-	  {
-		  if (menu->maxw == 0) y0 = (y00 / (32)) - menu->max - 1;
-		  else y0 = (y00 / (32)) - menu->maxw - 1;
-	  }
-	  else
-	  {
-		  if (menu->maxw == 0) y0 = (y00 / (HEIGHT*SKALA)) - menu->max - 1;
-		  else y0 = (y00 / (HEIGHT*SKALA)) - menu->maxw - 1;
-	  }
-	  if (y0 < 3) y0 = 3;
-	  if (menu_level > 1) menu->ypcz = y0 + 1; else menu->ypcz = y0;
-  }
+            if (x0<1) x0=1;
+            if (menu_level>1)
+                menu->xpcz=x0+(menu_level*4);
+            else menu->xpcz=x0;
+        }
+        if (menu->flags&ICONS)
+        {
+            if (menu->maxw==0)
+                y0 = (y00 - menu->max*(32))/32;
+            else
+                y0 = (y00 - menu->maxw*(32))/32;
+        }
+        else
+        {
+            if (menu->maxw==0) y0=(y00/(HEIGHT*SKALA)) - menu->max - 1;
+            else y0=(y00/(HEIGHT*SKALA)) - menu->maxw - 1;
+        }
+        if (y0<3) y0=3;
+        if (menu_level>1) menu->ypcz=y0+1; else menu->ypcz=y0;
+    }
 
+    menu->flags = menu->flags | NAWOPEN;
 
+  menu_address[menu_level - 1] = menu;
+
+  show_mouse(NULL);
   openwh (menu) ;
+  show_mouse(screen);
+
+  show_mouse(NULL);
   ini_simple_menu (0) ;
+  show_mouse(screen);
+
+  show_mouse(NULL);
   baron (menu) ;
+  show_mouse(screen);
+
   while (1)
   {
-    ev = GetEvent (menu) ;
+      if (BAR_POINTER) set_cursor_pointer();
+      if (!BAR_POINTER) lock_mouse();
+      ev = GetEvent (menu) ;
+      if (!BAR_POINTER) _free_mouse();
 
+      show_mouse(NULL);
       closewh (menu) ;
+      show_mouse(screen);
+      show_mouse(NULL);
       ini_simple_menu (1) ;
+      if (editing_text)
+      {
+          show_mouse(screen);
+          set_cursor_edit();
+      }
+
       return  ev->Number == 0 ? 0 : menu->foff + menu->poz + 1 ;
   }
 }
@@ -11317,15 +11979,15 @@ int Simple_Menu_Proc_(TMENU *menu)
 	if (dynamic_menu == TRUE)
 	{
 		x00 = pikseleX0(X) + 20;
-		y00 = pikseleY0(Y) - 24;  //+get_pYk() - 24;
+		y00 = pikseleY0(Y) - 24;
 
 		if (menu->flags >= 0)
 		{
-			x0 = x00 / (WIDTH /*8*/*SKALA);
+			x0 = x00 / (WIDTH*SKALA);
 
 			if (x0 < 1) x0 = 1;
 			if (menu_level > 1)
-				menu->xpcz = x0 + (menu_level * 4); //5
+				menu->xpcz = x0 + (menu_level * 4);
 			else menu->xpcz = x0;
 		}
 		if (menu->flags&ICONS)

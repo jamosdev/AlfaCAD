@@ -73,6 +73,8 @@ extern void hide_x_cursor(void);
 extern int Print2Page(int WINPRINT_DEF);
 
 extern BOOL SetDefaultPrinter_(char* printer_name);
+extern int GetPrintPageWidth(void);
+extern int GetPrintPageHeight(void);
 
 typedef unsigned long DWORD;
 
@@ -244,7 +246,7 @@ static T_Prn_Ini_Date   prn_ini_date=
    0
 };
 
-static char *prn_file ;
+extern char *prn_file;
 
 static BOOL     add_value (FILE *) ;
 static BOOL     get_config_prn (void) ;
@@ -794,6 +796,7 @@ TDIALOG printer_dlg=
 	28 , &buttons_p,
 	0, NULL,
 	3,&combobox,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,
@@ -831,6 +834,10 @@ void Preview(int box, int x01, int y01, int x02, int y02, int x00, int y00)
 	float dscalex, dscaley, dscalexy = 1.0;
 	int x1_, x2_, y1_, y2_;
     double X_max_, Y_max_;
+
+
+	show_mouse(NULL);
+
 
     X_max_ = (prn_ini_date.xk-prn_ini_date.xp);
     Y_max_ = (prn_ini_date.yk-prn_ini_date.yp);
@@ -1224,6 +1231,8 @@ void Preview(int box, int x01, int y01, int x02, int y02, int x00, int y00)
 		setcolor(DARKGRAY);
 		LINE(x1, y2, x2, y1);
 	}
+
+	show_mouse(screen);
 
 	return;
 }
@@ -2469,7 +2478,8 @@ static int proc_dlg_prn_ini_date( int n)
 	case BUT_GRAY_3:
 		Check_Radio_Button(&printer_dlg, BUT_GRAY_1, BUT_GRAY_3, n, TRUE);
 		check1 = Get_Check_Button(&printer_dlg, BUT_GRAY_PRINT);
-		if (check1) draw_dlg_prev(&printer_dlg);
+        check2 = Get_Check_Button(&printer_dlg, BUT_BW_PRINT);
+		if ((check1) || (check2)) draw_dlg_prev(&printer_dlg);
 		ret = Dlg_Ret_Val_Continue;
 		break;
 	case LS_PAPER_FORMAT:
@@ -2773,7 +2783,7 @@ okno_dial:
   Save_Update_flex(1, &curr_h, &curr_v);
 
 
-  scare_mouse();
+  my_scare_mouse();
 
   ////lock_mouse();
 

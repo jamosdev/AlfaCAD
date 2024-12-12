@@ -17,3 +17,4 @@
 #define FILENAME_NEW "ALFACADPL.$NI"
 #define PATTERNS_INI "WZORCE.INI"
 #endif
+#define CLOUD_INI "CLOUD.INI"

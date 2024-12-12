@@ -24,15 +24,17 @@ LPWSTR filename_ini = (LPWSTR)L"Редагувати ALFACADUA.INI";
 // Create a locale object representing the German (Switzerland) locale
 #define _LOCALE_ "ua-UA"
 
-#define __BOLD__ u8"Жирний"
-#define __UNDERLINED__ u8"Підкреслено"
-#define __ITALIC__ u8"Курсив"
-#define __A_TO_LEFT__ u8"Змінити вліво"
-#define __A_TO_RIGHT__ u8"Змінити праворуч"
-#define __A_TO_MIDDLE__ u8"Відрегулювати до середини"
-#define __A_TO_CENTRE__ u8"Відрегулювати до центру"
-#define __HIDDEN__ u8"Прихований"
-#define __COPY_TEXT__ u8"Копіювати текст із буфера обміну"
+char __BOLD__[]=u8"Жирний";
+char __UNDERLINED__[]=u8"Підкреслено";
+char __ITALIC__[]=u8"Курсив";
+char __A_TO_LEFT__[]=u8"Змінити вліво";
+char __A_TO_RIGHT__[]=u8"Змінити праворуч";
+char __A_TO_MIDDLE__[]=u8"Відрегулювати до середини";
+char __A_TO_CENTRE__[]=u8"Відрегулювати до центру";
+char __HIDDEN__[]=u8"Прихований";
+char __COPY_TEXT__[]=u8"Копіювати текст із буфера обміну";
+
+char _EDIT_TEXT_[]=u8"Редагування тексту";
 
 #endif
 
@@ -392,7 +394,7 @@ char _NO_[4] = "Н";
 
 const char *_EDIT_[] = { u8"Рухатити", u8"Рухатити Z", u8"Обертати", u8"Обертати XZ", u8"Обертати YZ", u8"Масштаб", u8"Дзеркало", u8"->пропустити", u8"-----"};
 
-char* loading_program[] = { u8"Програма завантаження", u8"Завантаження ресурсів..." , u8"Будь ласка, зачекайте. Завантаження файлу: "};
+char* loading_program[] = { u8"Програма завантаження", u8"Завантаження ресурсів..." , u8"Будь ласка, зачекайте. Завантаження файлу: ", u8"Підключення до хмари..."};
 
 #define _NO_MOUSE_ u8"Миша не встановлена !!!!!\n"
 
@@ -500,7 +502,7 @@ static POLE pmTTF_OTF[] = {
    {u8"шрифту OpenType",L'О',704,NULL},
 };
 
-static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,5,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
+static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,7,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
 
 static POLE pmCzcionkaEkranTTF[] = {
    {u8"Тип шрифту  \0", L'Т',111,&mTTF_OTF},
@@ -508,7 +510,7 @@ static POLE pmCzcionkaEkranTTF[] = {
    {u8"Коефіцієнт ширини\0\0", L'К',230,NULL},
 };
 
-TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,27,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
+TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,28,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
 
 static POLE pmWindow[] = {
    {u8"розгорнути по Горизонталі",L'Г',467,NULL},
@@ -518,7 +520,7 @@ static POLE pmWindow[] = {
    {u8"відновити Останній",L'О',471,NULL},
 };
 
-static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,10,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
+static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,11,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
 
 static POLE pmDialogCursor[] = {
    {u8"Маленький",L'М',591,NULL},
@@ -529,6 +531,16 @@ static TMENU mDialogCursor = { 2,0,0,8,23,9,ICONS,CMNU,CMBR,CMTX,0,22,0,0,0,(POL
 
 #define smallcursor u8"Маленький"
 #define bigcursor u8"Великий"
+
+static POLE pmMenuCursor[] = {
+   {u8"Брус",L'Б',821,NULL},
+   {u8"Курсор",L'К',822,NULL},
+};
+
+static TMENU mMenuCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,33,0,0,0,(POLE(*)[]) &pmMenuCursor,NULL,NULL };  //22
+
+#define barstyle u8"Брус"
+#define cursorstyle u8"Курсор"
 
 static POLE pmTranslucency[] = {
    {u8"100%",'0',546,NULL},
@@ -541,11 +553,11 @@ static POLE pmTranslucency[] = {
    {u8"30%",'3',539,NULL},
 };
 
-static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,15,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
+static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,16,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
 
-static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,25,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
+static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
 
-static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,30,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
+static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,31,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
 
 POLE pmOpcje[] = {
    {u8"Конфігурація кольорів\0",L'Д',109,NULL},
@@ -555,6 +567,7 @@ POLE pmOpcje[] = {
    {u8"Шрифт меню\0",L'Ш',111,&mCzcionkaEkranTTF},
    {u8"Фон\0",L'Ф',527,NULL},
    {u8"діалоговий Курсор\0",L'К',590,&mDialogCursor},
+   {u8"стиль Меню\0",L'М',820,&mMenuCursor},
    {u8"демо Режим\0Н\0",L'Р',661,&mDemoSelect},
    {u8"Зберегти налаштування вікна\0",L'З',530,NULL},
    {u8"налаштування Вікна\0",L'В',478,&mWindow},
@@ -1566,6 +1579,7 @@ static char* desktop_data_param[] =
   (char*)u8"Панорама",
   (char*)u8"Динамічне меню",
   (char*)u8"Курсор",
+  (char*)u8"Стиль меню",
   (char*)u8"Інструкція",
 };
 
@@ -1578,6 +1592,7 @@ static char* desktop_data_param_comment[] =
 	(char*)u8";коефіцієнт авторозгортання робочого столу",
 	(char*)u8";",
 	(char*)u8"; маленький 0, великий 1",
+    (char*)u8"; рамка 0, курсор 1",
     (char*)u8"; показ коротких інструкцій при запуску",
 };
 
@@ -1602,8 +1617,8 @@ static char* desktop_data_param_comment[] =
 #define _YES__ u8"Т"
 #define _NO__ u8"Н"
 
-#define _Yes_ u8"Так"
-#define _No_ u8"Ні"
+char _Yes_[]=u8"Так";
+char _No_[]=u8"Ні";
 
 #endif
 
@@ -2877,8 +2892,9 @@ POLE pmHelp[] = {
 {u8"Редагувати числові значення",' ',363,NULL},
 {u8"Збільшити розмір указателя",' ',361,NULL},
 {u8"Зменшити розмір указателя",' ',360,NULL},
-{u8"Вільна миша / ловити мишу",' ',386,NULL},
-{u8"Вільна миша / ловити мишу",24,353,NULL},
+{u8"Звільнити мишку",' ',386,NULL},
+{u8"Звільнити мишку",24,353,NULL},
+{u8"Звільнити мишку (утримуйте П 0,5c)",819 + _1920_, 658,NULL},
 {u8"Розмір і положення вікна",25,353,NULL},
 {u8"Зупинити запис макросу",28,353,NULL},
 {u8"Ортогональність",638 + _1920_,353,NULL},

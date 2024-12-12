@@ -59,7 +59,7 @@ extern BOOL get_short_notice(void);
 #define BUFMAKLEN 20000
 #define y1 0
 #define y11 1
-#define y2 2
+#define y2 4  //2
 #define y3 3
 
 void layer_info (void);
@@ -145,7 +145,8 @@ void InfoListStr0(char *st)
 	setfillstyle_(SOLID_FILL, BKCOLOR);
 	//bar(0, 0, maxX - 1, ED_INF_HEIGHT - 1);
     bar1();
-	moveto(1, 1);
+	//moveto(1,1);
+    moveto(1,2);
 	setcolor(kolory.ink);
 	sprintf(buf, st);
 	outtext_r(buf);
@@ -182,7 +183,8 @@ void InfoListStr1(int n, char *st)
   setviewport(0, 0, getmaxx(),getmaxy(), 1);
    setfillstyle_(SOLID_FILL, BKCOLOR) ;
    bar1();
-   moveto(1,1);
+   //moveto(1,1);
+   moveto(1,2);
    setcolor(kolory.ink);
    sprintf (buf, messages [n], st) ;
    outtext_r(buf);
@@ -475,7 +477,9 @@ void komunikat0(int n)
    }
      else bar1_margin();
   if(n && n != -1)
-   { moveto(1,1);
+   {
+      //moveto(1,1);
+      moveto(1,2);
 	 setcolor(kolory.ink);
 	 outtext_r(komunikaty0[n]);
    }
@@ -500,7 +504,8 @@ void komunikat0_str (int n, char *st)
    setfillstyle_(SOLID_FILL, BKCOLOR) ;
   if ((n == 9) || (n == 23)) bar1();
     else bar1_half();
-  moveto (1,1) ;
+  //moveto(1,1) ;
+  moveto(1,2) ;
   setcolor (kolory.ink) ;
   sprintf (buf, messages_str [n], st) ;
   outtext_r (buf) ;

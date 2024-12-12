@@ -315,7 +315,7 @@ static void	winf_draw (void)
   bar	(maxX	/ 2,	0,	maxX / 2 	+ 2*s30,	s11) ;
   moveto	(maxX	/ 2 + 2,	1)	;
   setcolor (kolory.ink)	;
-  if (*win == Window)
+  if (*win == Windoww)
   {
 	 outtext_r (window) ;
   }
@@ -332,13 +332,13 @@ static int winf (void)
   int	*win ;
 
   win	= Block_Proc_Win_Mode_Ptr () ;
-  if (*win == Window)
+  if (*win == Windoww)
   {
 	 *win	= Cross ;
   }
   else
   {
-	 *win	= Window	;
+	 *win	= Windoww	;
   }
   winf_draw	()	;
   return	0 ;
@@ -1085,22 +1085,21 @@ BOOL get_dragging_quad(void)
 static void	cur_onq(double	x,double	y)
 {
     PLINIA	PL;
+    cursel_on(x, y);
     L.x2=x; L.y2=y;
     outlineor(&L,COPY_PUT,1);
     parametry_linior (&L,	&PL);
     DX = PL.dl *	PL.cos;	DY= PL.dl *	PL.sin;
     out_blok1(DX,DY,0,0,Tprzesuw,0);
-
     //block transformation
-
     blokquad(ADPQ, ADKQ, Aoblok, COPY_PUT, 1);
-
     cursel_on(x, y);
 }
 
 static void	cur_onk(double	x,double	y)
 {
   PLINIA	PL;
+  cursel_on(x, y);
   L.x2=x; L.y2=y;
   outlineor(&L,COPY_PUT,1);
   parametry_linior (&L,	&PL);
@@ -1160,6 +1159,7 @@ static void  cur_onv5(double x,double y)
 static void	cur_onkZ(double	x,double	y)
 {
   PLINIA	PL;
+  cursel_on(x, y);
   L.x2=x; L.y2=y;
   outlineor(&L,XOR_PUT,1);
   parametry_linior (&L,	&PL);
@@ -5799,9 +5799,9 @@ static void	redcrC(char	typ)
 		komunikat0(34);
 		sel_akt=sel.akt;	sel.akt=1;
 		win0 = Block_Proc_Win_Mode_Ptr () ;
-		if	(*win0 == Window)
+		if	(*win0 == Windoww)
 		 {
-		  win00 = Window ;
+		  win00 = Windoww ;
 		 }
 		  else
 		  {

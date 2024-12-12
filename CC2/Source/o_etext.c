@@ -21,6 +21,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
+#include <ctype.h> //needed by CLion
 #include "bib_e.h"
 #include "rysuj_e.h"
 #include "alffont.h"

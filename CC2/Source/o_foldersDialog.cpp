@@ -445,7 +445,7 @@ void DoneBuffers8(void)
 	    free(strarray);
 }
 
-int VeryMy_GetOpenFolder(char *f_name, char *sz__current_path_file, char *sz__default_path_file, char *sz__current_mask, char *dlg_name) // , int font_height, int font_width, char *desktop_font_name)
+int VeryMy_GetOpenFolder(HWND hwnd, char *f_name, char *sz__current_path_file, char *sz__default_path_file, char *sz__current_mask, char *dlg_name) // , int font_height, int font_width, char *desktop_font_name)
 {
 	BROWSEINFO bi;
 	TCHAR szDir[MAX_PATH];
@@ -472,7 +472,7 @@ int VeryMy_GetOpenFolder(char *f_name, char *sz__current_path_file, char *sz__de
 	if (SUCCEEDED(SHGetMalloc(&pMalloc)))
 	{
 		ZeroMemory(&bi, sizeof(bi));
-		bi.hwndOwner = NULL;
+		bi.hwndOwner = hwnd;
 		bi.pszDisplayName = 0;
 		bi.lpszTitle = dlg_name;
 		char *pszRootPath = new char[RootPath.GetLength() + 1];

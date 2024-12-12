@@ -97,6 +97,7 @@ static TDIALOG screen_dlg =
                 1, &buttons_screen,
                 0, NULL,
                 0,NULL,
+                0,NULL, //Sliders
                 NULL,
                 NULL,
                 0,

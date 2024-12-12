@@ -16,7 +16,7 @@
 
 #pragma warning(disable : 4996)
 #ifndef ALLEGRO_AND_MFC
-#define ALLEGRO_AND_MFC
+#define ALLEGRO_AND_MFC  //??????????????
 #endif
 
 #define FORWIN32

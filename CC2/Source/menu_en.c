@@ -24,15 +24,17 @@ LPWSTR filename_ini = (LPWSTR)L"Edit ALFACAD.INI";
 // Create a locale object representing the German (Switzerland) locale
 #define _LOCALE_ "en-US"
 
-#define __BOLD__ u8"Bold"
-#define __UNDERLINED__ u8"Underlined"
-#define __ITALIC__ u8"Italics"
-#define __A_TO_LEFT__ u8"Adjust to the left"
-#define __A_TO_RIGHT__ u8"Adjust to the right"
-#define __A_TO_MIDDLE__ u8"Adjust to the middle"
-#define __A_TO_CENTRE__ u8"Adjust to the centre"
-#define __HIDDEN__ u8"Hidden"
-#define __COPY_TEXT__ u8"Copy text from clipboard"
+char __BOLD__[]=u8"Bold";
+char __UNDERLINED__[]=u8"Underlined";
+char __ITALIC__[]=u8"Italics";
+char __A_TO_LEFT__[]=u8"Adjust to the left";
+char __A_TO_RIGHT__[]=u8"Adjust to the right";
+char __A_TO_MIDDLE__[]=u8"Adjust to the middle";
+char __A_TO_CENTRE__[]=u8"Adjust to the centre";
+char __HIDDEN__[]=u8"Hidden";
+char __COPY_TEXT__[]=u8"Copy text from clipboard";
+
+char _EDIT_TEXT_[]=u8"Edit text";
 
 #endif
 
@@ -390,7 +392,7 @@ char _NO_[4] = "N";
 
 const char *_EDIT_[] = {u8"Move", u8"move Z", u8"Rotate", u8"rotate XZ", u8"rotate YZ", u8"Scale", u8"Mirror", u8"->skip", u8"-----"};
 
-char* loading_program[] = { u8"Loading program", u8"Loading resources...", u8"Please wait. Downloading file: " };
+char* loading_program[] = { u8"Loading program", u8"Loading resources...", u8"Please wait. Downloading file: ", u8"Connecting to the cloud..."};
 
 #define _NO_MOUSE_ "Mouse not installed !!!!!\n"
 
@@ -497,7 +499,7 @@ static POLE pmTTF_OTF[] = {
    {u8"OpenType Fonts",'O',704,NULL},
 };
 
-static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,5,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
+static TMENU mTTF_OTF = { 2,0,0,8,22,9,ICONS | TADD,CMNU,CMBR,CMTX,0,7,0,0,0,(POLE(*)[]) &pmTTF_OTF,NULL,NULL };
 
 static POLE pmCzcionkaEkranTTF[] = {
    {u8"Font type  \0", 'F',111,&mTTF_OTF},
@@ -505,7 +507,7 @@ static POLE pmCzcionkaEkranTTF[] = {
    {u8"Width factor\0 \0", 'W',230,NULL},
 };
 
-TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,27,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
+TMENU mCzcionkaEkranTTF = { 3,0,0,30,20,7,ICONS | TADD,CMNU,CMBR,CMTX,0,28,0,0,0,(POLE(*)[]) &pmCzcionkaEkranTTF,NULL,NULL };  //26
 
 static POLE pmWindow[] = {
    {u8"expand Horizontally",'H',467,NULL},
@@ -515,7 +517,7 @@ static POLE pmWindow[] = {
    {u8"restore Last",'L',471,NULL},
 };
 
-static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,10,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
+static TMENU mWindow = { 5,0,0,16,22,9,ICONS,CMNU,CMBR,CMTX,0,11,0,0,0,(POLE(*)[]) &pmWindow,NULL,NULL };  //9
 
 
 static POLE pmDialogCursor[] = {
@@ -523,10 +525,20 @@ static POLE pmDialogCursor[] = {
    {u8"Big",'B',592,NULL},
 };
 
-static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,23,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
+static TMENU mDialogCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,24,0,0,0,(POLE(*)[]) &pmDialogCursor,NULL,NULL };  //22
 
 #define smallcursor u8"Small"
 #define bigcursor u8"Big"
+
+static POLE pmMenuCursor[] = {
+   {u8"Bar",'B',821,NULL},
+   {u8"Cursor",'C',822,NULL},
+};
+
+static TMENU mMenuCursor = { 2,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,33,0,0,0,(POLE(*)[]) &pmMenuCursor,NULL,NULL };  //22
+
+#define barstyle u8"Bar"
+#define cursorstyle u8"Cursor"
 
 static POLE pmTranslucency[] = {
    {u8"100%",'0',546,NULL},
@@ -540,12 +552,12 @@ static POLE pmTranslucency[] = {
 };
 
 
-static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,15,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
+static TMENU mTranslucency = { 8,0,0,8,22,9,ICONS,CMNU,CMBR,CMTX,0,16,0,0,0,(POLE(*)[]) &pmTranslucency,NULL,NULL };  //14
 
 
-static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,25,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
+static TMENU mDemoSelect = { 2,0,0,7,62,9,ICONS,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmTak_Nie,NULL,NULL };  //24
 
-static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,30,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
+static TMENU mAutoPan = { 2,0,0,7,33,11,ICONS,CMNU,CMBR,CMTX,0,31,0,0,0,(POLE(*)[]) & pmTak_Nie,NULL,NULL };  //new
 
 POLE pmOpcje[] = {
 {u8"Drawing board configuration\0",'D',109,NULL},
@@ -556,6 +568,7 @@ POLE pmOpcje[] = {
 //{u8"desktop Font\0 ",'F',111,NULL},
 {u8"desktop Background\0",'B',527,NULL},
 {u8"dialog Cursor\0",'C',590,&mDialogCursor},
+{u8"Menu style\0",'M',820,&mMenuCursor},
 {u8"Educational demo mode\0 N\0",'E',661,&mDemoSelect},
 {u8"Save window setup\0",'S',530,NULL},
 {u8"Window setup\0",'W',478,&mWindow},
@@ -1571,6 +1584,7 @@ static char* desktop_data_param[] =
   "Panorama",
   "Dynamic menu",
   "Desktop cursor",
+  "Menu style",
   "Instruction",
 };
 
@@ -1583,6 +1597,7 @@ static char* desktop_data_param_comment[] =
 	";desktop autopanning factor",
 	";",
 	"; small 0, big 1",
+    "; bar 0, pointer 1",
     "; showing short instruction on start",
 };
 
@@ -1599,8 +1614,8 @@ static char* desktop_data_param_comment[] =
 #define _TOOLS_TO_INSTALL_ u8"not installed"
 #define _INSTALL_TOOLS_ u8"Install necessary packages"
 
-#define _Yes_ "Yes"
-#define _No_ "No"
+char _Yes_[]="Yes";
+char _No_[]="No";
 #define _YES_ 'Y'
 #define _yes_ 'y'
 #define _NO_ 'N'
@@ -2880,8 +2895,9 @@ POLE pmHelp[] = {
 	 {u8"Edit numeric values",' ',363,NULL},
 	 {u8"Increase pointfinder size",' ',361,NULL},
 	 {u8"Decrease pointfinder size",' ',360,NULL},
-	 {u8"Free mouse / catch mouse",' ',386,NULL},
-	 {u8"Free mouse / catch mouse",24,353,NULL},
+	 {u8"Free mouse",' ',386,NULL},
+	 {u8"Free mouse",24,353,NULL},
+     {u8"Free mouse (hold the right button for 0,5 s)",819 + _1920_, 658,NULL},
 	 {u8"Resize and position the window",25,353,NULL},
 	 {u8"Stop macro recording",28,353,NULL},
 	 {u8"Orthogonality",565 + _1920_,353,NULL},

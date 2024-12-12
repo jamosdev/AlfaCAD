@@ -20,11 +20,21 @@
 #define ALLEGWIN
 #ifndef LINUX
 #ifndef ALLEGRO_AND_MFC
-#define ALLEGRO_AND_MFC
+#define ALLEGRO_AND_MFC //????
 #endif
 #else
 
 #endif
+
+#define IC_CLOUD "CLOUD"
+#define IC_CLOUD_CONNECT "CONNECT"
+#define IC_CLOUD_USER "USER"
+#define IC_CLOUD_PASSWORD "PASSWORD"
+#define IC_CLOUD_SHARE_URL "SHARE_URL"
+#define IC_CLOUD_ADS "ADS"
+#define IC_CLOUD_ADS_URL "ADS_URL"
+#define IC_CLOUD_UPGRADE "UPGRADE"
+#define IC_CLOUD_UPGRADE_URL "UPGRADE_URL"
 
 #include "allegext.h"
 #include <allegro.h>
@@ -51,14 +61,17 @@
 #include <curl/curl.h>
 #endif
 
+#ifdef LINUX
+#include <sys/time.h>
+#else
 #include <time.h>
+#endif
 #include <math.h>
 #include"forwin.h"
 
 #ifdef LINUX
 #include "../../allegro5-4.4.3/include/allegro/font.h"
 #include "../../allegro5-4.4.3/include/allegro/internal/aintern.h"
-
 
 #define LPCTSTR const char *
 #define LPCSTR const char *
@@ -81,6 +94,10 @@ typedef unsigned long  DWORD;
 #include "allegro/font.h"
 #include "allegro/internal/aintern.h"
 #endif
+
+timeval tvtimestamp = { 0,0 };
+timeval tvtimestamp1;
+
 
 #include "alfpro.h"
 #include "o_inigfx.h"
@@ -107,37 +124,60 @@ typedef unsigned long  DWORD;
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
-
+BOOL cloud_connect;
+char *cloud_user;
+char *cloud_user0;
+char *cloud_password;
+char *cloud_password0;
+char *cloud_share_url;
+char *cloud_share0_url;
+char *cloud_ads;
+char *cloud_ads0;
+char *cloud_ads_url;
+char *cloud_ads0_url;
+char *cloud_upgrade;
+char *cloud_upgrade0;
+char *cloud_upgrade_url;
+char *cloud_upgrade0_url;
 //#define BEEP
+
+extern char* encodePassword(char *pass, char *key);
+extern char* decodePassword(char *pass, char *key);
 
 extern void set_client_flag(int client_no, unsigned char flag);
 extern int deposit_hbitmap(char *dump_file, int real_x1, int real_y1, int real_x2, int real_y2, char *drawing_file);
 extern int return_active_clients_no(void);
 extern int return_hbitmap(int client, char *dump_file, int *real_x1, int *real_y1, int *real_x2, int *real_y2, char *drawing_file);
-unsigned char get_client_flag(void);
+extern unsigned char get_client_flag(void);
 extern void startup(LPCSTR lpApplicationName, LPSTR lpParams);
 extern int get_rotation_inversion(void);
+
+extern BOOL get_editor_on(void);
 
 static int last_mouse_b = 0;
 static int cur_mouse_b = 0;
 static BOOL global_resized=FALSE;
+static int attr_x=0,attr_y=0;
+static BOOL is_hidden=FALSE;
+int hidden_dy=3000;
 
 #ifdef LINUX
 static Display *main_display;
 static Window main_root_window;
-#endif
-
-#ifdef LINUX
 static int X11_SCREEN_SHIFT=36;
 Display *display00=NULL;
-
 #else
+extern RECT get_editbox_geometry_win(int opt);
+extern HWND get_editor_hWnd(void);
 static int X11_SCREEN_SHIFT = 32;  //standard for Windows
 static int WIN_WINDOW_T_B = 9; //standard window top margin for Windows
 _xdnd_struct *xdnd_buf=NULL;
 #endif
 
 static int curr_w=0, curr_w_=0, curr_h=0, curr_h_=0;
+
+static int x_win_orig_, y_win_orig_, win_width_, win_height_;
+static BOOL is_in=TRUE;
 
 #define DEFAULT_SPRITE_W   16
 #define DEFAULT_SPRITE_H   16
@@ -190,14 +230,21 @@ char alfa_mouse_arrow_data_x[DEFAULT_SPRITE_H * DEFAULT_SPRITE_W] =
    0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+#ifndef LINUX
+HWND win_get_window_(void)
+{
+    return win_get_window();
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 #ifdef LINUX
 #include "xdndfile.h"
 
-
 //extern BITMAP *parent_screen;
+Window get_allegro_window(void);
 
 static AWIdnd dnd;
 
@@ -206,10 +253,24 @@ static AWIdnd dnd;
     int getprop (Display *disp, char *name, Window win, Window root_window);
     char *atomtype (Atom x);
 #endif
-	int GoRegRedraw(void(*ptr)(void));
+
+    void Check_ConfigureNotify(void);
+
+    int GoRegRedraw(void(*ptr)(void));
 	int TestRedraw(void);
 	int testCall(int val);
 
+    extern int wmctrl (int argc, char **argv);
+    extern int edit_text_flag;
+
+extern void show__if_DEMO_RECORDING(int newicon);
+    extern char _EDIT_TEXT_[];
+    extern void get_editbox_origin(int *x, int *y);
+    extern void get_editbox_origin_line(int *x, int *y);
+
+    extern void utf8Upper(char* text);
+    extern void change_bs2s(T_Fstring thestring);
+    extern BOOL Get_Private_Profile_Strings_Cloud(T_Fstring lpApplicationName, BOOL (*f)(T_Fstring, T_Fstring));
 
     extern char *icon_upgrademark_pmem;
     extern char *icon_noupgrademark_pmem;
@@ -288,6 +349,7 @@ static AWIdnd dnd;
 	extern int now_is_dialog;
 	extern int Get_Global_Menu_Flags(void);
 	extern BOOL BIGCURSOR;
+    extern BOOL BAR_POINTER;
 
 	extern int lineC(long x1, long y1, long x2, long y2);
 	extern int DRAWING_NUMBER;
@@ -362,6 +424,7 @@ extern char **strarray;
 extern void flip_any_screen(BITMAP* third_screen);
 extern size_t uri_decode(const char* src, const size_t len, char* dst);
 extern int __file_exists(char* name);
+extern int __file_size(char* name);
 
 extern void extra_logo(int x, int y, int option, char* file_name);
 extern int getlanguage(void);
@@ -369,6 +432,8 @@ extern int ask_question(int n_buttons, char* esc_string, char* ok_string, char* 
 extern void Restart(void);
 extern DWORD SystemSilent(char* strFunct, char* strstrParams);
 extern DWORD RunSilent(char* strFunct, char* strstrParams);
+
+extern int Expand_flex(void);
 
 extern char** argv_;
 
@@ -389,10 +454,11 @@ extern char** argv_;
 
     void Set_Screenplay(BITMAP *ctx_bitmap);
 
+#ifndef LINUX
+    int get_monitor_dims(int* ret_left_x, int* ret_right_x, int* ret_top_y, int* ret_bottom_y, int monitor);
+#endif
 
 int	global_mode;
-
-static int WINE = 0;
 
 void beep(long sound);
 
@@ -517,6 +583,7 @@ typedef struct
 } SOLID_PATTERN_COPY;
 
 #ifndef LINUX
+
 void init_file_dropped_fill_buf(void)
 {
 	char* ptr;
@@ -640,16 +707,6 @@ int32_t sprintf_timestampAsYYYYMMDDHHMMSS ( char* buf, long *date, timestamp_t t
 
     *date=year*10000+month*100+day;
     return sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
-}
-
-void Set_WINE(int w_)
-{
-	WINE = w_;
-}
-
-int Get_WINE(void)
-{
-	return WINE;
 }
 
 void     getviewsettings(struct viewporttype  *viewport)
@@ -1152,6 +1209,8 @@ void     my_fillpoly(int numpoints, AL_CONST int* polypoints, int translucency, 
 
 	colorB = makeacol32(r, g, b, 255);
 
+    if ((screenplay->w < 0) || (screenplay->w > 9999)) return;  //????????
+
 	//polygon(screenplay, numpoints, polypoints, cur_fillstyle_color);
 	my_soft_polygon(screenplay, numpoints, polypoints, cur_fillstyle_color, translucency, colorB);
 
@@ -1470,9 +1529,21 @@ void     GrMouseDisplayCursor(void)
 }
 
 
+static void sscare_mouse(void)
+{
+    show_mouse(NULL);
+}
+
+static void uunscare_mouse(void)
+{
+    acquire_bitmap(screen);
+    show_mouse(screen);
+    release_bitmap(screen);
+}
+
 void     GrMouseEraseCursor(void)
 {
-  scare_mouse();
+  scare_mouse();  
   return;
 }
 
@@ -1588,7 +1659,8 @@ void GrMouseClear(void)
 }
 
 void GrMouseGetKeys(GrMouseEvent *event, int PozX, int PozY)
-{
+{   int tvret;
+
 	event->flags=0;
 
 	int p_mouse = my_poll_mouse();  // WINE
@@ -1597,7 +1669,29 @@ void GrMouseGetKeys(GrMouseEvent *event, int PozX, int PozY)
 	cur_mouse_b = mouse_b;
 
 	if ((cur_mouse_b & 1) && !(last_mouse_b & 1)) event->flags += 4;
-	if ((cur_mouse_b & 2) && !(last_mouse_b & 2)) event->flags += 1;
+	if ((cur_mouse_b & 2) && !(last_mouse_b & 2))
+    {
+        event->flags += 1;
+        tvret=gettimeofday(&tvtimestamp, NULL);
+    }
+
+    if (tvtimestamp.tv_sec>0)
+    {
+        if (!(cur_mouse_b & 2))
+              tvtimestamp.tv_sec=0;
+        else if (cur_mouse_b & 1) {
+            //check time again
+            tvret=gettimeofday(&tvtimestamp1, NULL);
+            if (((tvtimestamp1.tv_sec-tvtimestamp.tv_sec)*1e6 + (tvtimestamp1.tv_usec-tvtimestamp.tv_usec))>500000)
+            {
+                tvtimestamp.tv_sec=0;
+                show__if_DEMO_RECORDING(819);
+                int ret = Expand_flex();
+                event->flags = 0;
+                return;
+            }
+        }
+    }
 	if ((cur_mouse_b & 4) && !(last_mouse_b & 4)) event->flags += 2;
 
 }
@@ -1740,6 +1834,7 @@ typedef enum
 	Dtp_autopanorama,
 	Dtp_dynamic_menu,
 	Dtp_desktop_cursor,
+    Dtp_menu_cursor,
     Dtp_desktop_instruction,
 } Dtp_types;
 
@@ -1784,6 +1879,11 @@ static BOOL add_desktop(FILE *stru)
 				key_name, BIGCURSOR, comment))
 				return FALSE;
 			break;
+        case Dtp_menu_cursor:
+                if (EOF == fprintf(stru, "%s=%d\t\t%s\n",
+                                   key_name, BAR_POINTER, comment))
+                    return FALSE;
+                break;
         case Dtp_desktop_instruction:
                 if (EOF == fprintf(stru, "%s=%d\t\t%s\n",
                        key_name, desktop_instruction, comment))
@@ -1801,6 +1901,11 @@ static BOOL add_desktop(FILE *stru)
 void save_dialog_cursor(void)
 {
 	Add_Private_Profile_Group((T_Fstring)IC_DESKTOP, add_desktop);
+}
+
+void save_menu_cursor(void)
+{
+    Add_Private_Profile_Group((T_Fstring)IC_DESKTOP, add_desktop);
 }
 
 void save_desktop_instruction(void)
@@ -2388,8 +2493,177 @@ void reset_if_resized(void)
 
 }
 
+#ifndef LINUX
+struct MonitorRects
+{
+    std::vector<RECT>   rcMonitors;
+
+    static BOOL CALLBACK MonitorEnum(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData)
+    {
+        MonitorRects* pThis = reinterpret_cast<MonitorRects*>(pData);
+        pThis->rcMonitors.push_back(*lprcMonitor);
+        return TRUE;
+    }
+
+    MonitorRects()
+    {
+        EnumDisplayMonitors(0, 0, MonitorEnum, (LPARAM)this);
+    }
+};
+#endif
+
+int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height)
+{
+#ifndef LINUX
+    HWND wnd;
+	GFX_MARGINS* gfx_margins;
+	int ret;
+	int margin_v, e_h=0, e_h1=0;  //e_h=0;
+	HDC hdc;
+	LPCRECT lprcClip;
+	//MONITORENUMPROC lpfnEnum;
+	LPARAM dwData;
+	RECT actualscreen;
+	int w1, h1;
+#else
+    typedef struct tagRECT
+    {
+        LONG    left;
+        LONG    top;
+        LONG    right;
+        LONG    bottom;
+    } RECT;
+#endif
+
+    RECT wndRect;
+    RECT clnRect;
+    int  w,h;
+
+    int ret_ref = 0;
+
+
+    if (GFX_WIN==1)
+    {
+#ifndef LINUX
+        wnd = win_get_window(); //WINDOWS
+
+    GetWindowRect(wnd, &wndRect);  //WINDOWS
+    GetClientRect(wnd, &clnRect);  //WINDOWS
+
+	ret = get_gfx_margins(&gfx_margins);
+	ret_ref = gfx_margins->maximize_flag;
+
+	BOOL found_mon = FALSE;
+	int i;
+	MonitorRects monitors;
+
+	if (gfx_margins->maximize_flag == 2) {
+
+		//check if multiple monitor
+		//int sm_monitors = GetSystemMetrics(SM_CMONITORS);
+
+		//MonitorRects monitors;
+		//printf("%X\n", monitors.rcMonitors.size());
+		for (i = 0; i < monitors.rcMonitors.size(); i++)
+		{
+			if (((wndRect.left + gfx_margins->l_b) >= monitors.rcMonitors[i].left) && ((wndRect.left + gfx_margins->l_b) <= monitors.rcMonitors[i].right) &&
+				((wndRect.top + gfx_margins->t_b) >= monitors.rcMonitors[i].top) && ((wndRect.top + gfx_margins->t_b) <= monitors.rcMonitors[i].bottom))
+			{
+				found_mon = TRUE;
+				if (i > 0) e_h1 = 0; // 1;  //????? check it out !!!
+				break;
+			}
+		}
+
+		margin_v = gfx_margins->t_b; e_h = 1;
+	}
+	else margin_v = 0;
+
+	w = (int)(clnRect.right - clnRect.left);
+	h = (int)(clnRect.bottom - clnRect.top) - margin_v - e_h;
+
+	if (found_mon)
+	{
+		w1 = (int)(monitors.rcMonitors[i].right - monitors.rcMonitors[i].left);
+		h1 = (int)(monitors.rcMonitors[i].bottom - monitors.rcMonitors[i].top) - gfx_margins->t_btb - e_h - e_h1;
+		if (w1 < w)
+			w = w1;
+		if (h1 < h)
+			h = h1;
+	}
+
+
+	*x_win_orig = (int)wndRect.left;
+	*y_win_orig = (int)wndRect.top + margin_v;
+	*win_width = w;  //client
+	*win_height = h;  //client
+
+	X11_SCREEN_SHIFT = (wndRect.bottom - wndRect.top) - (clnRect.bottom - clnRect.top);
+	WIN_WINDOW_T_B = gfx_margins->t_b;
+
+
+	gfx_margins->maximize_flag = 0;
+#else
+
+        Display *display;
+        Window focus, toplevel_parent_of_focus, root_window;
+        XWindowAttributes attr;
+        int revert;
+        int ret;
+
+        display = XOpenDisplay(NULL);
+
+        root_window=DefaultRootWindow(display);
+
+        XRRScreenResources* sr = XRRGetScreenResources(display, root_window);
+        XRRCrtcInfo* ci = XRRGetCrtcInfo(display, sr, sr->crtcs[0]);
+        XRROutputInfo* oi = XRRGetOutputInfo(display, sr, sr->outputs[0]);
+
+        focus=_xwin.window;
+        toplevel_parent_of_focus = get_toplevel_parent(display, focus);
+        ////toplevel_parent_of_focus = get_my_window(display, root_window, Window_Name);
+        ret = XGetWindowAttributes(display,  toplevel_parent_of_focus, &attr);
+
+        wndRect.left=attr.x;
+        wndRect.top=attr.y;
+        wndRect.right=attr.x+attr.width;
+        wndRect.bottom=attr.y+attr.height;
+
+        //TEMPORARAY // TO DO
+        clnRect.left=attr.x;
+        clnRect.top=attr.y;
+        clnRect.right=attr.x+attr.width;
+        clnRect.bottom=attr.y+attr.height;
+
+        XRRFreeOutputInfo(oi);
+        XRRFreeCrtcInfo(ci);
+        XRRFreeScreenResources(sr);
+
+        XCloseDisplay(display);
+
+        w = (int)(clnRect.right - clnRect.left);
+        h = (int)(clnRect.bottom - clnRect.top);
+
+        *x_win_orig = (int)wndRect.left;
+        *y_win_orig = (int)wndRect.top;
+        *win_width = w;  //client
+        *win_height = h;  //client
+
+#endif
+        return ret_ref;
+    }
+    return 0;
+}
+
+
 void lock_mouse_switch_callback(void)
 { int k;
+    int ret;
+
+    //when window is getting focus back
+    //ret= get_window_origin_and_size(&x_win_orig_, &y_win_orig_, &win_width_, &win_height_);
+
+    is_in=TRUE;
 
   return;
 
@@ -2466,8 +2740,10 @@ int return_and_convert_bitmap(int client, char *dump_file, int *x1, int *y1, int
 }
 
 void free_mouse_switch_callback(void)
-{
-
+{  int ret;
+    //when window is loosing focus
+    //ret= get_window_origin_and_size(&x_win_orig_, &y_win_orig_, &win_width_, &win_height_);
+    is_in=FALSE;
    return;
 
   //free_mouse_switch();
@@ -2493,27 +2769,6 @@ void free_mouse_switch_callback(void)
  
 }
 
-#ifndef LINUX
-
-struct MonitorRects
-{
-	std::vector<RECT>   rcMonitors;
-
-	static BOOL CALLBACK MonitorEnum(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData)
-	{
-		MonitorRects* pThis = reinterpret_cast<MonitorRects*>(pData);
-		pThis->rcMonitors.push_back(*lprcMonitor);
-		return TRUE;
-}
-
-	MonitorRects()
-	{
-		EnumDisplayMonitors(0, 0, MonitorEnum, (LPARAM)this);
-	}
-};
-
-#endif
-
 #ifdef LINUX
 void xwin_set_hints(int dx, int dy) {
     _xwin_set_hints(dx, dy);
@@ -2530,150 +2785,411 @@ void focus_display_window(void)
 {
     XRaiseWindow(main_display,main_root_window);
 }
+Window get_allegro_window(void)
+{
+    return _xwin.window;
+}
+
+//#define GET_SHADED_STATE   //TO DO
+
+#ifdef GET_SHADED_STATE
+/* window states */
+
+typedef enum {
+    WINDOW_STATE_NONE               = 0,
+    WINDOW_STATE_MODAL              = (1 << 0),
+    WINDOW_STATE_STICKY             = (1 << 1),
+    WINDOW_STATE_MAXIMIZED_VERT     = (1 << 2),
+    WINDOW_STATE_MAXIMIZED_HORZ     = (1 << 3),
+    WINDOW_STATE_MAXIMIZED          = (WINDOW_STATE_MAXIMIZED_VERT | WINDOW_STATE_MAXIMIZED_HORZ),
+    WINDOW_STATE_SHADED             = (1 << 4),
+    WINDOW_STATE_SKIP_TASKBAR       = (1 << 5),
+    WINDOW_STATE_SKIP_PAGER         = (1 << 6),
+    WINDOW_STATE_HIDDEN             = (1 << 7),
+    WINDOW_STATE_FULLSCREEN         = (1 << 8),
+    WINDOW_STATE_ABOVE              = (1 << 9),
+    WINDOW_STATE_BELOW              = (1 << 10),
+    WINDOW_STATE_DEMANDS_ATTENTION  = (1 << 11),
+    WINDOW_STATE_FOCUSED            = (1 << 12),
+    WINDOW_STATE_SIZE               = 13,
+} window_state_t;
+
+static char* WINDOW_STATE_NAMES[] = {
+        "_NET_WM_STATE_MODAL",
+        "_NET_WM_STATE_STICKY",
+        "_NET_WM_STATE_MAXIMIZED_VERT",
+        "_NET_WM_STATE_MAXIMIZED_HORZ",
+        "_NET_WM_STATE_SHADED",
+        "_NET_WM_STATE_SKIP_TASKBAR",
+        "_NET_WM_STATE_SKIP_PAGER",
+        "_NET_WM_STATE_HIDDEN",
+        "_NET_WM_STATE_FULLSCREEN",
+        "_NET_WM_STATE_ABOVE",
+        "_NET_WM_STATE_BELOW",
+        "_NET_WM_STATE_DEMANDS_ATTENTION",
+        "_NET_WM_STATE_FOCUSED"
+};
+
+
+typedef struct {
+
+    Display *dpy;
+    Window id;
+
+    struct {
+        Atom NET_WM_STATE;
+        Atom NET_WM_STATES[WINDOW_STATE_SIZE];
+    } atoms;
+
+} window_t;
+
+int window_is_minimized(Display *display, Window window) {
+
+    Atom wmState = XInternAtom(display, "_NET_WM_STATE", True);
+
+    Atom actual_type;
+    int actual_format;
+    unsigned long i, num_items, bytes_after, num_states=0;
+    Atom* states = NULL;
+    long max_length = 1024;
+    unsigned int flags = 0;
+    unsigned char *properties = NULL;
+
+    window_t win;
+    win.dpy=display;
+    win.id=window;
+
+    int status;
+
+    do {
+        status = XGetWindowProperty(display, window, wmState, 0, max_length, False, AnyPropertyType, &actual_type, &actual_format, &num_items, &bytes_after, &properties);   //XA_ATOM
+        if (status == Success && actual_type == 4 && properties && actual_format == 32 && num_items)  //XA_ATOM
+        {
+            {
+                Atom *atoms = (Atom *) properties;
+                int maximized = 0;
+                int fullscreen = 0;
+
+#define  ALFA_WINDOW_HIDDEN  0x00000008;             //< window is not visible
+#define  ALFA_WINDOW_MINIMIZED  0x00000040;          //< window is minimized
+#define  ALFA_WINDOW_MAXIMIZED  0x00000080;          //< window is maximized
+
+                Atom _NET_WM_STATE_HIDDEN = XInternAtom(display, "_NET_WM_STATE_HIDDEN", True);
+                Atom _NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", True);
+                Atom _NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", True);
+
+                for (i = 0; i < num_items; ++i) {
+                    if (atoms[i] == _NET_WM_STATE_HIDDEN) {
+                        flags |= ALFA_WINDOW_HIDDEN;
+                    } else if (atoms[i] == _NET_WM_STATE_MAXIMIZED_VERT) {
+                        maximized |= 1;
+                    } else if (atoms[i] == _NET_WM_STATE_MAXIMIZED_HORZ) {
+                        maximized |= 2;
+                    }
+                }
+                if (maximized == 3) {
+                    flags |= ALFA_WINDOW_MAXIMIZED;
+                }
+
+            }
+        }
+       } while (bytes_after);
+
+    XFree(properties);
+    return 0;
+
+}
+#endif  //GET_SHADED_STATE
 
 #endif
 
-int get_window_origin_and_size(int *x_win_orig, int *y_win_orig, int *win_width, int *win_height)
-{   
-#ifndef LINUX
-	HWND wnd;
-	GFX_MARGINS* gfx_margins;
-	int ret;
-	int margin_v, e_h=0, e_h1=0;
-	HDC hdc;
-	LPCRECT lprcClip;
-	//MONITORENUMPROC lpfnEnum;
-	LPARAM dwData;
-	RECT actualscreen;
-	int w1, h1;
+void set_attr_x_attr_y(int x, int y)
+{
+    attr_x = x;
+    attr_y = y;
+}
+
+void Check_ConfigureNotify(void)
+{
+    int ret;
+#ifdef LINUX
+
+    ///////////////////////
+    XWindowAttributes attr;
+    Window toplevel_parent_of_focus;
+    char params[128];
+    char params1[128];
+    char params2[128];
+    int e_x, e_y;
+
+    _xwin_type *_xwin_ = &_xwin;
+
+    if (edit_text_flag==1)  //text editor is open and no skip_taskbar
+    {
+
+        sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+        char *args[] = {
+                "wmctrl",
+                (char*)"-r",
+                params1,
+                (char*)"-b",
+                (char*)"add,skip_taskbar",
+                NULL
+        };
+        ret=wmctrl(5, args);
+
+        edit_text_flag=0;
+    }
+
+    toplevel_parent_of_focus = get_toplevel_parent(_xwin.display, _xwin.window);
+    ret = XGetWindowAttributes(_xwin.display,  toplevel_parent_of_focus, &attr);
+
+    if ((attr.x!=attr_x) || (attr.y!=attr_y)) {
+        printf("origin %d %d\n",attr.x-attr_x,attr.y-attr_y);
+
+        get_editbox_origin(&e_x, &e_y);
+
+        //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -e 0,%d,%d,-1,-1", _EDIT_TEXT_, Client_number, attr.x-attr_x, attr.y-attr_y);
+        //SystemSilent("./wmctrl", params);
+
+        sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+        sprintf(params2, "0,%d,%d,-1,-1", attr.x-attr_x, attr.y-attr_y);
+        char *args[] = {
+                "wmctrl",
+                (char*)"-r",
+                params1,
+                (char*)"-e",
+                params2,
+                NULL
+        };
+        ret=wmctrl(5, args);
+        attr_x=attr.x;
+        attr_y=attr.y;
+    }
+
+
+//#ifdef GET_SHADED_STATE
+    //if (window_is_minimized(_xwin.display, toplevel_parent_of_focus))
+        if (_xwin_->state_change_flag==1)
+        { // state is set
+            if (is_hidden==FALSE)
+            {
+                //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -b add,shaded", _EDIT_TEXT_, Client_number,attr.x - attr_x, attr.y - attr_y);
+                //SystemSilent("./wmctrl", params);
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                /*
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,iconify",
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                char *args1[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,below",
+                        NULL
+                };
+                ret=wmctrl(5, args1);
+                 */
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                sprintf(params2, "0,0,%d,-1,-1", hidden_dy);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-e",
+                        params2,
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                is_hidden=TRUE;
+            }
+        }
+        else
+        {
+            if (is_hidden==TRUE)
+            {
+                //sprintf(params, "-r \"%s(%d) — KDialog4alfa\" -b add,shaded", _EDIT_TEXT_, Client_number,attr.x - attr_x, attr.y - attr_y);
+                //SystemSilent("./wmctrl", params);
+                /*
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,resize",
+                        NULL
+                };
+                ret=wmctrl(5, args);
+
+                char *args1[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-b",
+                        (char*)"add,above",
+                        NULL
+                };
+                ret=wmctrl(5, args1);
+                 */
+                sprintf(params1, "%s(%d) — KDialog4alfa", _EDIT_TEXT_, Client_number);
+                sprintf(params2, "0,0,%d,-1,-1", -hidden_dy);
+                char *args[] = {
+                        "wmctrl",
+                        (char*)"-r",
+                        params1,
+                        (char*)"-e",
+                        params2,
+                        NULL
+                };
+                ret=wmctrl(5, args);
+                is_hidden=FALSE;
+            }
+        }
+//#endif
+
+
+    ///////////////////
 #else
-	typedef struct tagRECT
-	{
-		LONG    left;
-		LONG    top;
-		LONG    right;
-		LONG    bottom;
-	} RECT;
-#endif
 
-	RECT wndRect;
-	RECT clnRect;
-    int  w,h;
+HWND wnd;
 
-	int ret_ref = 0;
-	
+if ((GFX_WIN == 1)  && (get_editor_on()))
+{
+    int curr_x0, curr_y0, curr_h, curr_v;
+    int ret_ref;
+    int ret_left_x, ret_right_x, ret_top_y, ret_bottom_y;
+    int x, y;
+    int width, height;
+    int e_x, e_y;
+    BOOL ret = FALSE;
 
-  if (GFX_WIN==1)
-  {
-#ifndef LINUX
-    wnd = win_get_window(); //WINDOWS
+    wnd = win_get_window();
+
+
+    BOOL is_iconic = IsIconic(wnd);
+    if (is_iconic)
+    {
+        if (is_hidden == FALSE)
+        {
+            if (get_editor_on())
+            {
+                SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                ret = TRUE;
+            }
+        }
+        is_hidden = TRUE;
+    }
+    else
+    {
+        if (is_hidden == TRUE)
+        {
+            if (get_editor_on())
+            {
+                //SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SW_RESTORE, 0);
+                ShowWindow(get_editor_hWnd(), TRUE);
+                ret = TRUE;
+            }
+        }
+        is_hidden = FALSE;
     
-    GetWindowRect(wnd, &wndRect);  //WINDOWS
-    GetClientRect(wnd, &clnRect);  //WINDOWS
+    }
 
-	ret = get_gfx_margins(&gfx_margins);
-	ret_ref = gfx_margins->maximize_flag;
+    if (ret == TRUE) return;
 
-	BOOL found_mon = FALSE;
-	int i;
-	MonitorRects monitors;
+    ret = FALSE;
+    is_iconic = IsIconic(get_editor_hWnd());
+    if (is_iconic)
+    {
+        if (is_hidden == FALSE)
+        {
+            if (get_editor_on())
+            {
+                SendMessage(wnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                ret = TRUE;
+            }
+        }
+        is_hidden = TRUE;
+    }
+    else
+    {
+        if (is_hidden == TRUE)
+        {
+            if (get_editor_on())
+            {
+                //SendMessage(get_editor_hWnd(), WM_SYSCOMMAND, SW_RESTORE, 0);
+                ShowWindow(wnd, TRUE);
+                ret = TRUE;
+            }
+        }
+        is_hidden = FALSE;
+    }
 
-	if (gfx_margins->maximize_flag == 2) {
+    if (ret == TRUE) return;
 
-		//check if multiple monitor
-		//int sm_monitors = GetSystemMetrics(SM_CMONITORS);
+    ret_ref = get_window_origin_and_size(&curr_x0, &curr_y0, &curr_h, &curr_v);
 
-		//MonitorRects monitors;
-		//printf("%X\n", monitors.rcMonitors.size());
-		for (i = 0; i < monitors.rcMonitors.size(); i++)
-		{
-			if (((wndRect.left + gfx_margins->l_b) >= monitors.rcMonitors[i].left) && ((wndRect.left + gfx_margins->l_b) <= monitors.rcMonitors[i].right) &&
-				((wndRect.top + gfx_margins->t_b) >= monitors.rcMonitors[i].top) && ((wndRect.top + gfx_margins->t_b) <= monitors.rcMonitors[i].bottom))
-			{
-				found_mon = TRUE;
-				if (i > 0) e_h1 = 0; // 1;  //????? check it out !!!
-				break;
-			}
-		}
-
-		margin_v = gfx_margins->t_b; e_h = 1;
-	}
-	else margin_v = 0;
-
-	w = (int)(clnRect.right - clnRect.left);
-	h = (int)(clnRect.bottom - clnRect.top) - margin_v - e_h;
-
-	if (found_mon)
-	{
-		w1 = (int)(monitors.rcMonitors[i].right - monitors.rcMonitors[i].left);
-		h1 = (int)(monitors.rcMonitors[i].bottom - monitors.rcMonitors[i].top) - gfx_margins->t_btb - e_h - e_h1;
-		if (w1 < w) 
-			w = w1;
-		if (h1 < h) 
-			h = h1;
-	}
+    if ((curr_x0 == -32000) || (curr_y0 == -32000) || (curr_h == 0) || (curr_v == 0)) return;
 
 
-	*x_win_orig = (int)wndRect.left;
-	*y_win_orig = (int)wndRect.top + margin_v;
-	*win_width = w;  //client
-	*win_height = h;  //client
+    if ((curr_x0 != attr_x) || (curr_y0 != attr_y)) {
 
-	X11_SCREEN_SHIFT = (wndRect.bottom - wndRect.top) - (clnRect.bottom - clnRect.top);
-	WIN_WINDOW_T_B = gfx_margins->t_b;
+        x = curr_x0 - attr_x;
+        y = curr_y0 - attr_y;
+
+        printf("origin %d %d\n", x, y);
+
+        //get_editbox_origin(&e_x, &e_y);
 
 
-	gfx_margins->maximize_flag = 0;
-#else
+        int opt = 0;
+        RECT lpRect = get_editbox_geometry_win(opt);
+        e_x = lpRect.left;
+        e_y = lpRect.top;
 
-      Display *display;
-      Window focus, toplevel_parent_of_focus, root_window;
-      XWindowAttributes attr;
-      int revert;
-      int ret;
+        HWND editor = get_editor_hWnd();
 
-      display = XOpenDisplay(NULL);
+        ret = get_monitor_dims(&ret_left_x, &ret_right_x, &ret_top_y, &ret_bottom_y, -1);
 
-      root_window=DefaultRootWindow(display);
+        RECT rect;
+        
+        GetWindowRect(get_editor_hWnd(), &rect);
 
-      XRRScreenResources* sr = XRRGetScreenResources(display, root_window);
-      XRRCrtcInfo* ci = XRRGetCrtcInfo(display, sr, sr->crtcs[0]);
-      XRROutputInfo* oi = XRRGetOutputInfo(display, sr, sr->outputs[0]);
+        int x_ = rect.left + x;
+        int y_ = rect.top + y;
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
 
-      focus=_xwin.window;
-      toplevel_parent_of_focus = get_toplevel_parent(display, focus);
-      ////toplevel_parent_of_focus = get_my_window(display, root_window, Window_Name);
-      ret = XGetWindowAttributes(display,  toplevel_parent_of_focus, &attr);
+        //char rap[64];
 
-      wndRect.left=attr.x;
-      wndRect.top=attr.y;
-      wndRect.right=attr.x+attr.width;
-      wndRect.bottom=attr.y+attr.height;
+        //sprintf(rap,"%d, %d\n",x_,y_);
+        //fputs(rap, stderr);
 
-      //TEMPORARAY // TO DO
-      clnRect.left=attr.x;
-      clnRect.top=attr.y;
-      clnRect.right=attr.x+attr.width;
-      clnRect.bottom=attr.y+attr.height;
+        if ((x_ + width) > ret_right_x) x_ = ret_right_x - width;
+        if (x_ < ret_left_x) x_ = ret_left_x;
+        if ((y_ + height) > ret_bottom_y) y_ = ret_bottom_y - height;
+        if (y_ < ret_top_y) y_ = ret_top_y;
 
-      XRRFreeOutputInfo(oi);
-      XRRFreeCrtcInfo(ci);
-      XRRFreeScreenResources(sr);
 
-      XCloseDisplay(display);
+        ret_ref = MoveWindow(get_editor_hWnd(), x_, y_, width, height, TRUE);
+         
 
-	  w = (int)(clnRect.right - clnRect.left);
-	  h = (int)(clnRect.bottom - clnRect.top);
+        attr_x = curr_x0;
+        attr_y = curr_y0;
 
-	  *x_win_orig = (int)wndRect.left;
-	  *y_win_orig = (int)wndRect.top;
-	  *win_width = w;  //client
-	  *win_height = h;  //client
+    }
+
+    
+}
 
 #endif
-	return ret_ref;
-  }
-  return 0;
 }
 
 
@@ -2683,6 +3199,7 @@ void Check_XNextEvent(void) {
     int ret;
 
 #ifdef LINUX
+
     if (xdnd_buf.mflag==1)  //there is something new
     {
         CURL *curl = curl_easy_init();
@@ -2757,6 +3274,8 @@ int set_window_origin(int x_win_orig, int y_win_orig)
 	RECT clnRect;
 	
     int  w,h;
+
+    set_attr_x_attr_y(x_win_orig, y_win_orig);
 
 
   if (GFX_WIN==1)
@@ -3178,6 +3697,7 @@ void set_resized_window_GFX(DRIVER_STRUCT *drv, int dx, int dy)
 */
 #endif
 
+
    h_increase=dx;
    v_increase=dy;
 
@@ -3189,9 +3709,7 @@ void set_resized_window_GFX(DRIVER_STRUCT *drv, int dx, int dy)
 
    window_was_resized=1;
 
-
    if (set_gfx_mode(GFX_GDI, gfx_width, gfx_height, 0, 0) != 0)
-
    {
     set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	graphic_error(allegro_error);
@@ -3691,7 +4209,7 @@ void change_mode_gr(DRIVER_STRUCT *drv)
     curr_h_ = dy_new;
 
 #endif
-  
+
    return;
 }
 
@@ -3970,6 +4488,82 @@ char *lang_sufix[]={"","PL","UA","ES"};
 #define DAYS_DELAY  1 //2
 #define CHECK_DELAY  7
 
+static BOOL get_cloud(T_Fstring key_name, T_Fstring ret_string)
+/*-----------------------------------------------------------*/
+{
+    int val_int;
+    long val_long;
+    float val_float;
+    char *encoded_password;
+    char *decoded_password;
+    char cloud_password_encoded[64]="";
+
+    //strupr(key_name);
+    utf8Upper(key_name);
+    //   strupr (ret_string);
+    if (ret_string == NULL) return TRUE;
+
+    if (stricmp(key_name, IC_CLOUD_CONNECT) == 0)
+    {
+        if ( sscanf ( ret_string, "%d", &val_int) == 1 )
+        {
+            cloud_connect = val_int;
+        }
+    }
+    else
+    if (stricmp(key_name, IC_CLOUD_USER) == 0)
+    {
+        strcpy(cloud_user, ret_string);
+        strcpy(cloud_user0, ret_string+1);
+        cloud_user0[strlen(cloud_user0)-1]='\0';
+    }
+    else
+    if (stricmp(key_name, IC_CLOUD_PASSWORD) == 0)
+    {
+        strcpy(cloud_password, ret_string);
+
+        strcpy(cloud_password0, ret_string+1);
+        cloud_password0[strlen(cloud_password0)-1]='\0';
+
+        /*encrypted version, if would be needed*/
+        //encoded_password=encodePassword(cloud_password0, NULL);
+        //printf("%s\n",encoded_password);
+        //decoded_password=decodePassword(encoded_password, NULL);
+        //printf("%s\n",decoded_password);
+    }
+    if (stricmp(key_name, IC_CLOUD_SHARE_URL) == 0)
+    {
+        strcpy(cloud_share_url, ret_string);
+        strcpy(cloud_share0_url, ret_string+1);
+        cloud_share0_url[strlen(cloud_share0_url)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_ADS) == 0)
+    {
+        strcpy(cloud_ads, ret_string);
+        strcpy(cloud_ads0, ret_string+1);
+        cloud_ads0[strlen(cloud_ads0)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_ADS_URL) == 0)
+    {
+        strcpy(cloud_ads_url, ret_string);
+        strcpy(cloud_ads0_url, ret_string+1);
+        cloud_ads0_url[strlen(cloud_ads0_url)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_UPGRADE) == 0)
+    {
+        strcpy(cloud_upgrade, ret_string);
+        strcpy(cloud_upgrade0, ret_string+1);
+        cloud_upgrade0[strlen(cloud_upgrade0)-1]='\0';
+    }
+    if (stricmp(key_name, IC_CLOUD_UPGRADE_URL) == 0)
+    {
+        strcpy(cloud_upgrade_url, ret_string);
+        strcpy(cloud_upgrade0_url, ret_string+1);
+        cloud_upgrade0_url[strlen(cloud_upgrade0_url)-1]='\0';
+    }
+    return TRUE;
+}
+
 int Al_Load_PNG_fade(char *png_name, char *png_name1, int w, int h, int x, int y, int d_x, int d_y, int fade_out)
 {
     BITMAP* bmp_add = NULL, *bmp, * bmp0, * bmp1, * buffer, *buffer_f = NULL;
@@ -4212,581 +4806,650 @@ int Al_Load_PNG_fade(char *png_name, char *png_name1, int w, int h, int x, int y
             char *last_upgd_date_file="last_upgd_date.dat";
             long last_upgd_date_num;
 
-            if (__file_exists(last_upgd_date_file))
+            //allocating credentials
+            cloud_connect=1;
+
+            cloud_user=(char*)malloc(32);
+            strcpy(cloud_user,"\"alfacad\"");
+            cloud_user0=(char*)malloc(32);
+            strcpy(cloud_user0,"alfacad");
+
+            cloud_password=(char*)malloc(32);
+            strcpy(cloud_password,"\"engineer4engineers\"");
+            cloud_password0=(char*)malloc(32);
+            strcpy(cloud_password0,"engineer4engineers");
+
+            cloud_share_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_share_url,"\"https://nextcloud.vurplex.com\"");
+            cloud_share0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_share0_url,"https://nextcloud.vurplex.com");
+
+            cloud_ads=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads,"\"ads\"");
+            cloud_ads0=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads0,"ads");
+
+            cloud_ads_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads_url,"\"https://nextcloud.vurplex.com/remote.php/webdav/ads\"");
+            cloud_ads0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_ads0_url,"https://nextcloud.vurplex.com/remote.php/webdav/ads");
+
+            cloud_upgrade=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade,"\"upgds\"");
+            cloud_upgrade0=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade0,"upgds");
+
+            cloud_upgrade_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade_url,"\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\"");
+            cloud_upgrade0_url=(char*)malloc(MAXPATH);
+            strcpy(cloud_upgrade0_url,"https://nextcloud.vurplex.com/remote.php/webdav/upgds");
+
+            //getting credentials
+            Get_Private_Profile_Strings_Cloud((T_Fstring)IC_CLOUD, get_cloud);
+
+            if (cloud_connect)  //user wants to connect, to get upgrades etc
             {
-                char list_row[MaxTextLen];
-                FILE *lupgdf=fopen(last_upgd_date_file, "rt");
-                if (lupgdf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lupgdf))
-                    {
-                        ret= sscanf(list_row, "%ld",&last_upgd_date_num);
-                        if ((ret==1) && (last_upgd_date_num>20240000) && (last_upgd_date_num<20300000))
-                        break;
-                        else last_upgd_date_num=0;
-                    }
-                    fclose(lupgdf);
-                }
-                else last_upgd_date_num=0;
-
-            }
-            else last_upgd_date_num=0;
-
-            char time_str[32];
-            long date_num_current, date_num;
-            int32_t ts;
-            //current time
-            timestamp_t current_time = currentTimestamp();
-            ts=sprintf_timestampAsYYYYMMDDHHMMSS ( (char*)&time_str, &date_num_current, current_time);
-            printf("%s  %ld\n",time_str, date_num_current);
-
-            if (date_num_current>last_upgd_date_num + (long)CHECK_DELAY) time_to_update=TRUE;
-
-            if ((!fade_out) && (time_to_update))  //stage 2
-             {
-#ifdef LINUX
-            //checking curl
-            pp = popen("curl -V", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        curl = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            //checking unzip
-            pp = popen("unzip -v", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "unzip") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        unzip = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            //checking sed
-            pp = popen("sed --version", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not found") == NULL))
-                    {
-                        sed = 1;
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-
-            if ((!curl) || (!unzip) || (!sed))
-            {
-                char tools_to_install[72];
-                tools_ok = FALSE;
-                sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((unzip == 0) ? "unzip" : ""), ((sed == 0) ? "sed" : ""), _TOOLS_TO_INSTALL_);
-                ret = ask_question(1, (char*)_No_, (char*)_Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
-            }
-#endif
-#ifndef LINUX
-            AllocConsole();
-            ShowWindow(GetConsoleWindow(), SW_HIDE);
-            //checking curl
-            pp = _popen("curl -V", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        curl = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            //checking tar
-            pp = _popen("tar --help", "r");
-            if (pp != NULL) 
-            {
-                while (1) 
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-
-                    if ((strstr(strlwr(line), "tar") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        tar = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            //checking sed
-            pp = _popen("sed --version", "r");
-            if (pp != NULL) 
-            {
-                while (1) 
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
-                    {
-                        sed = 1;
-                        break;
-                    }
-                    //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
-                }
-                _pclose(pp);
-            }
-
-            FreeConsole();
-           
-
-            if ((!curl) || (!tar) || (!sed))
-            {
-                BITMAP* screen_ = screen;
-                global_resized = FALSE;
-
-                char tools_to_install[72];
-                tools_ok = FALSE;
-                sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((tar == 0) ? "tar" : ""),((sed == 0) ? "sed" : ""),_TOOLS_TO_INSTALL_);
-                ret = ask_question(1, _No_, _Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
-
-                if (global_resized) {
-                    destroy_bitmap(second_screen);
-                    second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
-                    if (bmp_add != NULL)
-                        stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
-                            (int)((double)bmp_add->w * scale_x),
-                            (int)((double)bmp_add->h * scale_x));
-                    else clear_to_color(second_screen, 0x000000);
-                    flip_full_screen(second_screen);
-                }
-                else screen = screen_;
-            }
-#endif
-          }  //((!fade_out) && (time_to_update))  //stage 2
-
-          if ((!fade_out) && (tools_ok) && (time_to_update))  //stage 3
-          {
-            //this should be done when image on the screen
-#ifdef LINUX
-            ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, TRUE);
-#endif
-#ifndef LINUX
-            ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, -1);
-#endif
-            if (__file_exists("list.out"))
-                unlink("list.out");
-#ifdef LINUX
-            pp = popen("test -x adslist.sh && echo true || echo false", "r");
-            if (pp != NULL)
-            {
-                while (1)
-                {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if (strstr(strlwr(line), "false") != NULL)
-                    {
-                        sprintf(params, "+x adslist.sh");
-                        SystemSilent("chmod", params);
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            sprintf(params, "");
-            runcode = SystemSilent("./adslist.sh", params);
-#endif
-#ifndef LINUX
-            sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/ads\" --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out");
-            runcode = RunSilent("curl", params);
-            sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" list.out > b.out");
-            //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"s@.*/remote.php/webdav/ads/@@\" bb.out > list.out");
-            runcode = RunSilent("sed", params);
-#endif
-            if (__file_exists("list.out"))
-            {
-                FILE *lf;
-                char list_row[MaxTextLen];
-                int ret;
-                char row_file[MaxTextLen];
-                char row_file_name[MaxTextLen];
-                char row_weekday[6];
-                int row_day;
-                char row_month[6];
-                int row_year;
-                char row_time[12];
-                char row_zone[6];
-                int row_size;
-                char row_type[16];
-                size_t it;
-                BOOL go_download;
-                BOOL was_download = FALSE;
-
-
-                lf = fopen("list.out", "rt");
-                if (lf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lf))
-                    {
-
-                        if ((strlen(list_row) < 32) || (list_row[0] == '#') || (list_row[0] == '\t')) continue;
-#ifndef LINUX
-                        char* ptr = list_row;
-                        ptr = strchr(list_row, '\t');
-                        while (ptr != NULL)
-                        {
-                            *ptr = ' ';
-                            ptr++;
-                            ptr = strchr(ptr, '\t');
+                if (__file_exists(last_upgd_date_file)) {
+                    char list_row[MaxTextLen];
+                    FILE *lupgdf = fopen(last_upgd_date_file, "rt");
+                    if (lupgdf != NULL) {
+                        strcount1 = 0;
+                        while (fgets(list_row, MaxTextLen, lupgdf)) {
+                            ret = sscanf(list_row, "%ld", &last_upgd_date_num);
+                            if ((ret == 1) && (last_upgd_date_num > 20240000) && (last_upgd_date_num < 20300000))
+                                break;
+                            else last_upgd_date_num = 0;
                         }
+                        fclose(lupgdf);
+                    } else last_upgd_date_num = 0;
+
+                } else last_upgd_date_num = 0;
+
+                char time_str[32];
+                long date_num_current, date_num;
+                int32_t ts;
+                //current time
+                timestamp_t current_time = currentTimestamp();
+                ts = sprintf_timestampAsYYYYMMDDHHMMSS((char *) &time_str, &date_num_current, current_time);
+                printf("%s  %ld\n", time_str, date_num_current);
+
+                if (date_num_current > last_upgd_date_num + (long) CHECK_DELAY) time_to_update = TRUE;
+
+                if ((!fade_out) && (time_to_update))  //stage 2
+                {
+#ifdef LINUX
+                    //checking curl
+                    pp = popen("curl -V", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not found") == NULL)) {
+                                curl = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+                    //checking unzip
+                    pp = popen("unzip -v", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "unzip") != NULL) &&
+                                (strstr(strlwr(line), "not found") == NULL)) {
+                                unzip = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+                    //checking sed
+                    pp = popen("sed --version", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not found") == NULL)) {
+                                sed = 1;
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+
+                    if ((!curl) || (!unzip) || (!sed)) {
+                        char tools_to_install[72];
+                        tools_ok = FALSE;
+                        sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""),
+                                ((unzip == 0) ? "unzip" : ""), ((sed == 0) ? "sed" : ""), _TOOLS_TO_INSTALL_);
+                        ret = ask_question(1, (char *) _No_, (char *) _Yes_, "Upgrade", tools_to_install, 12,
+                                           (char *) _INSTALL_TOOLS_, 11, 1, 203);
+                    }
 #endif
-                            ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file, &row_weekday, &row_day,
-                                         &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
-
-                            if ((strcmp(row_file, "filelist.txt") == 0) || (ret < 9)) continue;
-                            //checking if file exists
-
-
-                            row_file_name[0] = '\0';
-                            const size_t len = strlen(row_file);
-                            it = uri_decode(row_file, len, row_file_name);
-
-                            ///////////////////////
-                            FILENAMEMAXC = sizeof(row_file_name) + 6;
-                            strarray1 = (char **)realloc(strarray1, (strcount1 + 1) * sizeof(char *));  //LINUX
-                            strarray1[strcount1] = (char *)malloc(FILENAMEMAXC * sizeof(char));
-                            strcpy(strarray1[strcount1], row_file_name);
-                            strcount1++;
-
-                            //////////////////////
-
-                            go_download = TRUE;
-                            for (int i = 0; i < n_list; i++)
+#ifndef LINUX
+                    AllocConsole();
+                    ShowWindow(GetConsoleWindow(), SW_HIDE);
+                    //checking curl
+                    pp = _popen("curl -V", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "curl") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
                             {
-                                if (strcmp(strarray[i], row_file_name) == 0) //file exists
+                                curl = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    //checking tar
+                    pp = _popen("tar --help", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+
+                            if ((strstr(strlwr(line), "tar") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
+                            {
+                                tar = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    //checking sed
+                    pp = _popen("sed --version", "r");
+                    if (pp != NULL)
+                    {
+                        while (1)
+                        {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if ((strstr(strlwr(line), "sed") != NULL) && (strstr(strlwr(line), "not recognized") == NULL))
+                            {
+                                sed = 1;
+                                break;
+                            }
+                            //if (line[0] == 'd') printf("%s\n", line); /* line includes '\n' */
+                        }
+                        _pclose(pp);
+                    }
+
+                    FreeConsole();
+
+
+                    if ((!curl) || (!tar) || (!sed))
+                    {
+                        BITMAP* screen_ = screen;
+                        global_resized = FALSE;
+
+                        char tools_to_install[72];
+                        tools_ok = FALSE;
+                        sprintf(tools_to_install, "%s %s %s %s", ((curl == 0) ? "curl" : ""), ((tar == 0) ? "tar" : ""),((sed == 0) ? "sed" : ""),_TOOLS_TO_INSTALL_);
+                        ret = ask_question(1, _No_, _Yes_, "Upgrade", tools_to_install, 12, (char *) _INSTALL_TOOLS_, 11, 1,203);
+
+                        if (global_resized) {
+                            destroy_bitmap(second_screen);
+                            second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
+                            if (bmp_add != NULL)
+                                stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
+                                    (int)((double)bmp_add->w * scale_x),
+                                    (int)((double)bmp_add->h * scale_x));
+                            else clear_to_color(second_screen, 0x000000);
+                            flip_full_screen(second_screen);
+                        }
+                        else screen = screen_;
+                    }
+#endif
+                }  //((!fade_out) && (time_to_update))  //stage 2
+
+                if ((!fade_out) && (tools_ok) && (time_to_update))  //stage 3
+                {
+                    //this should be done when image on the screen
+#ifdef LINUX
+                    ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, TRUE);
+#endif
+#ifndef LINUX
+                    ret = My_GetFiles("ads", &n_list, "\\*.png", "\\*.jpg", NULL, NULL, -1);
+#endif
+                    if (__file_exists("list.out"))
+                        unlink("list.out");
+                    flip_full_screen(second_screen);
+                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 3, "");
+#ifdef LINUX
+                    pp = popen("test -x adslist.sh && echo true || echo false", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if (strstr(strlwr(line), "false") != NULL) {
+                                sprintf(params, "+x adslist.sh");
+                                SystemSilent("chmod", params);
+                                break;
+                            }
+                        }
+                        pclose(pp);
+                    }
+
+                    sprintf(params, "%s %s %s %s", cloud_share0_url, cloud_ads0, cloud_user0, cloud_password0);
+                    runcode = SystemSilent("./adslist.sh", params);
+#endif
+#ifndef LINUX
+                    //sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/ads\" --connect-timeout 5 -m 5 --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out");
+                    sprintf(params, "%s --connect-timeout 5 -m 5 --user %s:%s --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > list.out",
+                            cloud_ads_url, cloud_user, cloud_password);
+                    //printf("%s\n", params);
+                    runcode = RunSilent("curl", params);
+                    if (__file_size("list.out") > 0)
+                    {
+                        sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" list.out > b.out");
+                        //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"s@.*/remote.php/webdav/%s/@@\" bb.out > list.out", cloud_ads0);
+                        runcode = RunSilent("sed", params);
+                    }
+#endif
+                    if (__file_exists("list.out") && (__file_size("list.out") > 0)) {
+                        FILE *lf;
+                        char list_row[MaxTextLen];
+                        int ret;
+                        char row_file[MaxTextLen];
+                        char row_file_name[MaxTextLen];
+                        char row_weekday[6];
+                        int row_day;
+                        char row_month[6];
+                        int row_year;
+                        char row_time[12];
+                        char row_zone[6];
+                        int row_size;
+                        char row_type[16];
+                        size_t it;
+                        BOOL go_download;
+                        BOOL was_download = FALSE;
+                        int n_ads = 0;
+
+
+                        lf = fopen("list.out", "rt");
+                        if (lf != NULL) {
+                            strcount1 = 0;
+                            while (fgets(list_row, MaxTextLen, lf)) {
+
+                                if ((strlen(list_row) < 32) || (list_row[0] == '#') ||
+                                    (list_row[0] == '\t'))
+                                    continue;
+#ifndef LINUX
+                                char* ptr = list_row;
+                                ptr = strchr(list_row, '\t');
+                                while (ptr != NULL)
                                 {
-                                    sprintf(ad_name, "ads/%s", strarray[i]);
-                                    stat(ad_name, &file_info);
-                                    if (file_info.st_size == row_size) {
-                                        go_download = FALSE;
-                                        break;
+                                    *ptr = ' ';
+                                    ptr++;
+                                    ptr = strchr(ptr, '\t');
+                                }
+#endif
+                                ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file, &row_weekday,
+                                             &row_day,
+                                             &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
+
+                                if ((strcmp(row_file, "filelist.txt") == 0) || (ret < 9)) continue;
+                                //checking if file exists
+
+
+                                row_file_name[0] = '\0';
+                                const size_t len = strlen(row_file);
+                                it = uri_decode(row_file, len, row_file_name);
+
+                                ///////////////////////
+                                FILENAMEMAXC = sizeof(row_file_name) + 6;
+                                strarray1 = (char **) realloc(strarray1, (strcount1 + 1) * sizeof(char *));  //LINUX
+                                strarray1[strcount1] = (char *) malloc(FILENAMEMAXC * sizeof(char));
+                                strcpy(strarray1[strcount1], row_file_name);
+                                strcount1++;
+
+                                //////////////////////
+                                n_ads++;
+
+                                go_download = TRUE;
+                                for (int i = 0; i < n_list; i++) {
+                                    if (strcmp(strarray[i], row_file_name) == 0) //file exists
+                                    {
+                                        sprintf(ad_name, "ads/%s", strarray[i]);
+                                        stat(ad_name, &file_info);
+                                        if (file_info.st_size == row_size) {
+                                            go_download = FALSE;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (go_download) {
+                                    was_download = TRUE;
+                                    flip_full_screen(second_screen);
+                                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name);
+
+                                    sprintf(params, "--connect-timeout 5 -m 20 -u %s:%s \"%s/%s\" -o \"%s/%s\"",
+                                            cloud_user, cloud_password, cloud_ads0_url, row_file, cloud_ads0,
+                                            row_file_name);
+#ifdef LINUX
+                                    runcode = SystemSilent("curl", params);
+#endif
+#ifndef LINUX
+                                    runcode = RunSilent("curl", params);
+#endif
+                                }
+
+                            }
+                            fclose(lf);
+                            //eliminating old files
+                            if (n_ads > 0) {
+                                for (i = 0; i < n_list; i++) {
+                                    if ((strcmp(strarray[i], "filelist.txt") == 0) ||
+                                        (strstr(strarray[i], ".<DIR>") != NULL))
+                                        continue;
+                                    //checking if file exists
+                                    int j;
+                                    for (j = 0; j < strcount1; j++) {
+                                        //if (strcmp(strarray[i], strarray1[j]) == 0) //file exists  //LINUX
+                                        if (strcmp(strarray[i], strarray1[j]) == 0) //file exists
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    if (j == strcount1) {
+                                        sprintf(row_file_name, "ads/%s", strarray[i]);
+                                        unlink(row_file_name);
                                     }
                                 }
                             }
-                            if (go_download)
-                            {
-                                was_download = TRUE;
-                                flip_full_screen(second_screen);
-                                extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name);
+                            for (i = 0; i < strcount1; i++)
+                                free(strarray1[i]);
+                            free(strarray1);
 
-                                sprintf(params,
-                                        "-u \"alfacad\":\"engineer4engineers\" \"https://nextcloud.vurplex.com/remote.php/webdav/ads/%s\" -o \"ads/%s\"",
-                                        row_file, row_file_name);
-#ifdef LINUX
-                                runcode = SystemSilent("curl", params);
-#endif
-#ifndef LINUX
-                                runcode = RunSilent("curl", params);
-#endif
-                            }
-                       
-                    }
-                    fclose(lf);
-                    //eliminating old files
-                        for (i=0; i<n_list; i++)
-                        {
-                            if ((strcmp(strarray[i], "filelist.txt") == 0) || (strstr(strarray[i], ".<DIR>") != NULL))  continue;
-                            //checking if file exists
-                            int j;
-                            for (j = 0; j < strcount1; j++)
-                            {
-                                //if (strcmp(strarray[i], strarray1[j]) == 0) //file exists  //LINUX
-                                if (strcmp(strarray[i], strarray1[j]) == 0) //file exists
-                                {
-                                    break;
-                                }
-                            }
-                            if (j == strcount1)
-                            {
-                                sprintf(row_file_name, "ads/%s", strarray[i]);
-                                unlink(row_file_name);
-                            }
+                            //saving time
+                            FILE *lupgdf = fopen(last_upgd_date_file, "wt");
+                            fprintf(lupgdf, "%ld\n", date_num_current);
+                            fclose(lupgdf);
+
                         }
 
-                    for (i=0; i<strcount1; i++) 
-                       free(strarray1[i]);
-                     free(strarray1);
+                        if (was_download) flip_full_screen(second_screen);
+                    } //__file_exists("list.out")
 
-                     //saving time
-                    FILE *lupgdf=fopen(last_upgd_date_file, "wt");
-                    fprintf(lupgdf, "%ld\n", date_num_current);
-                    fclose(lupgdf);
+                    //Checking upgrades
 
-                }
+                    BOOL go_download_upgds = FALSE;
+                    BOOL was_download_upgds = FALSE;
 
-                if (was_download) flip_full_screen(second_screen);
-            } //__file_exists("list.out")
+                    char row_file_upgds[MaxTextLen];
+                    char row_file_name_upgds[MaxTextLen];
 
-            //Checking upgrades
-
-            BOOL go_download_upgds=FALSE;
-            BOOL was_download_upgds = FALSE;
-
-            char row_file_upgds[MaxTextLen];
-            char row_file_name_upgds[MaxTextLen];
-
-            int language=getlanguage();
+                    int language = getlanguage();
 #ifdef LINUX
-           sprintf(ad_name, "AlfaCAD%s", lang_sufix[language]);
-           sprintf(ad_name_zip, "AlfaCAD%s.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s.zip", lang_sufix[language]);
 #endif
 #ifndef LINUX
 #ifdef BIT64
-            sprintf(ad_name, "AlfaCAD%s4Win64.exe", lang_sufix[language]);
-            sprintf(ad_name_zip, "AlfaCAD%s4Win64.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s4Win64.exe", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s4Win64.zip", lang_sufix[language]);
 #endif
 #ifndef BIT64
-            sprintf(ad_name, "AlfaCAD%s4Win.exe", lang_sufix[language]);
-            sprintf(ad_name_zip, "AlfaCAD%s4Win.zip", lang_sufix[language]);
+                    sprintf(ad_name, "AlfaCAD%s4Win.exe", lang_sufix[language]);
+                    sprintf(ad_name_zip, "AlfaCAD%s4Win.zip", lang_sufix[language]);
 #endif
 #endif
 
-            stat(ad_name, &file_info);
-            //file time
+                    stat(ad_name, &file_info);
+                    //file time
 
-            timestamp_t file_time = file_info.st_mtime;
-            ts = sprintf_timestampAsYYYYMMDDHHMMSS((char*)&time_str, &date_num, file_time);
-            printf("%s  %ld\n", time_str, date_num);
+                    timestamp_t file_time = file_info.st_mtime;
+                    ts = sprintf_timestampAsYYYYMMDDHHMMSS((char *) &time_str, &date_num, file_time);
+                    printf("%s  %ld\n", time_str, date_num);
 
-            //downloading zip list
-            ////////////////////////////////////////
-            if (__file_exists("upgdslist.out")) unlink("upgdslist.out");
+                    //downloading zip list
+                    ////////////////////////////////////////
+                    if (__file_exists("upgdslist.out"))
+                        unlink("upgdslist.out");
+                    flip_full_screen(second_screen);
+                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 3, "");
 #ifdef LINUX
-            //checking adslist.sh
-            pp = popen("test -x upgdslist.sh && echo true || echo false", "r");
-            if (pp != NULL)
-            {
-                while (1) {
-                    char *line;
-                    char buf[1000];
-                    line = fgets(buf, sizeof(buf), pp);
-                    if (line == NULL) break;
-                    if (strstr(strlwr(line), "false") != NULL) {
-                        sprintf(params, "+x upgdslist.sh");
-                        SystemSilent("chmod", params);
-                        break;
-                    }
-                }
-                pclose(pp);
-            }
-            sprintf(params, "");
-            runcode = SystemSilent("./upgdslist.sh", params);
-#endif
-#ifndef LINUX
-            sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\" --user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out");
-            runcode = RunSilent("curl", params);
-            sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" upgdslist.out > b.out");
-            //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
-            runcode = RunSilent("sed", params);
-            sprintf(params, "-e \"s@.*/remote.php/webdav/upgds/@@\" bb.out > upgdslist.out");
-            runcode = RunSilent("sed", params);
-#endif
-            if (__file_exists("upgdslist.out"))
-            {
-                FILE *lf;
-                char list_row[MaxTextLen];
-                int ret;
-                char row_weekday[6];
-                int row_day;
-                char row_month[6];
-                int row_year;
-                char row_time[12];
-                char row_zone[6];
-                int row_size;
-                char row_type[16];
-                size_t it;
-
-                lf = fopen("upgdslist.out", "rt");
-                if (lf != NULL)
-                {
-                    strcount1 = 0;
-                    while (fgets(list_row, MaxTextLen, lf)) 
-                    {
-                        if ((strlen(list_row) < 32) || (list_row[0] == '#') || (list_row[0] == '\t')) continue;
-#ifndef LINUX
-                        char* ptr = list_row;
-                        ptr = strchr(list_row, '\t');
-                        while (ptr != NULL)
-                        {
-                            *ptr = ' ';
-                            ptr++;
-                            ptr = strchr(ptr, '\t');
-                        }
-#endif
-                            ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file_upgds, &row_weekday, &row_day,
-                                         &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
-
-                            if ((strcmp(row_file_upgds, "upgdslist.txt") == 0) || (ret < 9)) continue;
-                            //checking if file exists
-
-                            row_file_name_upgds[0] = '\0';
-                            const size_t len = strlen(row_file_upgds);
-                            it = uri_decode(row_file_upgds, len, row_file_name_upgds);
-
-                            go_download_upgds = FALSE;
-                            if (strcmp(ad_name_zip, row_file_name_upgds) == 0) //new file potentially exists
-                            {
-                                //checking time
-                                long upgd_date_num=row_year*10000+int_month(row_month)*100+row_day;
-                                //sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
-                                printf("%s    %s, %02d %s %04d %s\n", time_str, row_weekday, row_day, row_month, row_year, row_time);
-                                printf("%ld   %ld\n", date_num, upgd_date_num);
-
-                                //if (date_num < (upgd_date_num + DAYS_DELAY)) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
-                                if ((upgd_date_num - date_num) > DAYS_DELAY) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
-                                   
-                                break;  //anyway
+                    //checking adslist.sh
+                    pp = popen("test -x upgdslist.sh && echo true || echo false", "r");
+                    if (pp != NULL) {
+                        while (1) {
+                            char *line;
+                            char buf[1000];
+                            line = fgets(buf, sizeof(buf), pp);
+                            if (line == NULL) break;
+                            if (strstr(strlwr(line), "false") != NULL) {
+                                sprintf(params, "+x upgdslist.sh");
+                                SystemSilent("chmod", params);
+                                break;
                             }
-                        
+                        }
+                        pclose(pp);
                     }
-                    fclose(lf);
 
-                }
-                //saving time
-                FILE *lupgdf=fopen(last_upgd_date_file, "wt");
-                fprintf(lupgdf, "%ld\n", date_num_current);
-                fclose(lupgdf);
-            }  //__file_exists("upgdslist.out")
-            ////////////////////////////////////////
-            if (go_download_upgds)
-            {
-                int key;
-                BITMAP *screen_ = screen;
-                global_resized = FALSE;
-
-                drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
-
-                ret = ask_question(2, (char*)_No_, (char*)_Yes_, "Upgrade", (char *)_UPGRADE_READY_ /*exit_str*/, 12, (char*)_UPGRADE_RESTART_, 11, 1, 202);
-
-                if (global_resized) {
-                    destroy_bitmap(second_screen);
-                    second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
-                    if (bmp_add != NULL)
-                        stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
-                                     (int) ((double) bmp_add->w * scale_x),
-                                     (int) ((double) bmp_add->h * scale_x));
-                    else clear_to_color(second_screen, 0x000000);
-                    flip_full_screen(second_screen);
-                } else screen = screen_;
-
-                if (ret == 1) key = _YES_;
-                else key = _NO_;
-
-                if (key == _YES_ || key == _yes_)
-                {
-                    //downloading
-                    was_download_upgds = TRUE;
-                    flip_full_screen(second_screen);
-                    extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name_upgds);
-                    sprintf(params,
-                            "-u \"alfacad\":\"engineer4engineers\" \"https://nextcloud.vurplex.com/remote.php/webdav/upgds/%s\" -o \"upgds/%s\"",
-                            row_file_upgds, row_file_name_upgds);
-#ifdef LINUX
-                    runcode = SystemSilent("curl", params);
+                    sprintf(params, "%s %s %s %s", cloud_share0_url, cloud_upgrade0, cloud_user0, cloud_password0);
+                    runcode = SystemSilent("./upgdslist.sh", params);
 #endif
 #ifndef LINUX
+                    //sprintf(params, "\"https://nextcloud.vurplex.com/remote.php/webdav/upgds\" --connect-timeout 5 -m 5 -user \"alfacad\":\"engineer4engineers\" --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out");
+                    sprintf(params, "%s --connect-timeout 5 -m 5 --user %s:%s --request PROPFIND --data \"<?xml version='1.0' encoding='UTF-8'?> <d:propfind xmlns:d='DAV:'> <d:prop xmlns:oc='http://owncloud.org/ns'> <d:getlastmodified/> <d:getcontentlength/> <d:getcontenttype/> </d:prop> </d:propfind>\" > upgdslist.out",
+                        cloud_upgrade_url, cloud_user, cloud_password);
                     runcode = RunSilent("curl", params);
+                    if (__file_size("upgdslist.out") > 0)
+                    {
+                        sprintf(params, "-e \"/^<?xml version='1.0'?>/d\" -e \"s@</\\?d:response>@\\n@g\" upgdslist.out > b.out");
+                        //sed - e "/^<?xml version='1.0'?>/d" - e "s@</\?d:response>@\n@g" list.out > b.out
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"/^<d:multistatus/d\" -e \"s@<d:[a-z]\\+/>@@g\" -e \"s@&quot;@@g\" -e \"s@</\\?\\(d\\|oc\\):[a-z]\\+>@\\t@g\" b.out > bb.out");
+                        runcode = RunSilent("sed", params);
+                        sprintf(params, "-e \"s@.*/remote.php/webdav/%s/@@\" bb.out > upgdslist.out", cloud_upgrade0);
+                        runcode = RunSilent("sed", params);
+                    }
 #endif
-                    //upgrading
+                    if (__file_exists("upgdslist.out") && (__file_size("upgdslist.out") > 0)) {
+                        FILE *lf;
+                        char list_row[MaxTextLen];
+                        int ret;
+                        char row_weekday[6];
+                        int row_day;
+                        char row_month[6];
+                        int row_year;
+                        char row_time[12];
+                        char row_zone[6];
+                        int row_size;
+                        char row_type[16];
+                        size_t it;
+
+                        lf = fopen("upgdslist.out", "rt");
+                        if (lf != NULL) {
+                            strcount1 = 0;
+                            while (fgets(list_row, MaxTextLen, lf)) {
+                                if ((strlen(list_row) < 32) || (list_row[0] == '#') ||
+                                    (list_row[0] == '\t'))
+                                    continue;
+#ifndef LINUX
+                                char* ptr = list_row;
+                                ptr = strchr(list_row, '\t');
+                                while (ptr != NULL)
+                                {
+                                    *ptr = ' ';
+                                    ptr++;
+                                    ptr = strchr(ptr, '\t');
+                                }
+#endif
+                                ret = sscanf(list_row, "%s %s %d %s %d %s %s %d %s ", &row_file_upgds, &row_weekday,
+                                             &row_day,
+                                             &row_month, &row_year, &row_time, &row_zone, &row_size, &row_type);
+
+                                if ((strcmp(row_file_upgds, "upgdslist.txt") == 0) || (ret < 9)) continue;
+                                //checking if file exists
+
+                                row_file_name_upgds[0] = '\0';
+                                const size_t len = strlen(row_file_upgds);
+                                it = uri_decode(row_file_upgds, len, row_file_name_upgds);
+
+                                go_download_upgds = FALSE;
+                                if (strcmp(ad_name_zip, row_file_name_upgds) == 0) //new file potentially exists
+                                {
+                                    //checking time
+                                    long upgd_date_num = row_year * 10000 + int_month(row_month) * 100 + row_day;
+                                    //sprintf(buf, "%s, %02d %s %04d %02d:%02d:%02d", eng_day[weekday], day, eng_months[month], year, hour, minute, second);
+                                    printf("%s    %s, %02d %s %04d %s\n", time_str, row_weekday, row_day, row_month,
+                                           row_year, row_time);
+                                    printf("%ld   %ld\n", date_num, upgd_date_num);
+
+                                    //if (date_num < (upgd_date_num + DAYS_DELAY)) go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
+                                    if ((upgd_date_num - date_num) > DAYS_DELAY)
+                                        go_download_upgds = TRUE;  //if zip time (upgd_date_num) is at least 1 day after date of modifying (date_num)
+
+                                    break;  //anyway
+                                }
+
+                            }
+                            fclose(lf);
+
+                        }
+                        //saving time
+                        FILE *lupgdf = fopen(last_upgd_date_file, "wt");
+                        fprintf(lupgdf, "%ld\n", date_num_current);
+                        fclose(lupgdf);
+                    }  //__file_exists("upgdslist.out")
+                    ////////////////////////////////////////
+                    if (go_download_upgds) {
+                        int key;
+                        BITMAP *screen_ = screen;
+                        global_resized = FALSE;
+
+                        drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+
+                        ret = ask_question(2, (char *) _No_, (char *) _Yes_, "Upgrade",
+                                           (char *) _UPGRADE_READY_ /*exit_str*/, 12, (char *) _UPGRADE_RESTART_,
+                                           11, 1,
+                                           202);
+
+                        if (global_resized) {
+                            destroy_bitmap(second_screen);
+                            second_screen = create_system_bitmap(getmaxx() + 1, getmaxy() + 1);
+                            if (bmp_add != NULL)
+                                stretch_blit(bmp_add, second_screen, 0, 0, bmp_add->w, bmp_add->h, 0, 0,
+                                             (int) ((double) bmp_add->w * scale_x),
+                                             (int) ((double) bmp_add->h * scale_x));
+                            else clear_to_color(second_screen, 0x000000);
+                            flip_full_screen(second_screen);
+                        } else screen = screen_;
+
+                        if (ret == 1) key = _YES_;
+                        else key = _NO_;
+
+                        if (key == _YES_ || key == _yes_) {
+                            //downloading
+                            was_download_upgds = TRUE;
+                            flip_full_screen(second_screen);
+                            extra_logo(getmaxx() / 2, getmaxy() / 2 + 6 * HEIGHT, 2, row_file_name_upgds);
+                            sprintf(params, "--connect-timeout 5 -m 120 -u %s:%s \"%s/%s\" -o \"%s/%s\"",
+                                    cloud_user, cloud_password, cloud_upgrade0_url, row_file_upgds, cloud_upgrade0,
+                                    row_file_name_upgds);
 #ifdef LINUX
-                    sprintf(params, "-o upgds/%s", row_file_name_upgds);
-                    SystemSilent("unzip", params);
+                            runcode = SystemSilent("curl", params);
 #endif
 #ifndef LINUX
-                    //sprintf(params, "-xf upgds/%s > abc.log", row_file_name_upgds);
-                    //RunSilent("tar", params);
-                    //sprintf(params, "tar -xf upgds/% s > abc.log", row_file_name_upgds);
-                    FILE* gotar;
-                    gotar=fopen("gotar.bat", "wt");
-                    fprintf(gotar, "@echo off\n");
-                    fprintf(gotar, "echo %%1\n");
-                    fprintf(gotar, "echo %%2\n");
-                    fprintf(gotar, "echo %%3\n");
-                    fprintf(gotar, "echo %%4\n");
-                    fprintf(gotar, "echo %%5\n");
-                    fprintf(gotar, "timeout /t 2 /nobreak\n");
-                    fprintf(gotar, "tar -xf upgds/%%1\n");
-                    fprintf(gotar, "start %%2 %%4 %%5\n");
-                    fclose(gotar);
+                            runcode = RunSilent("curl", params);
+#endif
+                            //upgrading
+#ifdef LINUX
+                            sprintf(params, "-o upgds/%s", row_file_name_upgds);
+                            SystemSilent("unzip", params);
+#endif
+#ifndef LINUX
+                            //sprintf(params, "-xf upgds/%s > abc.log", row_file_name_upgds);
+                            //RunSilent("tar", params);
+                            //sprintf(params, "tar -xf upgds/% s > abc.log", row_file_name_upgds);
+                            FILE* gotar;
+                            gotar=fopen("gotar.bat", "wt");
+                            fprintf(gotar, "@echo off\n");
+                            fprintf(gotar, "echo %%1\n");
+                            fprintf(gotar, "echo %%2\n");
+                            fprintf(gotar, "echo %%3\n");
+                            fprintf(gotar, "echo %%4\n");
+                            fprintf(gotar, "echo %%5\n");
+                            fprintf(gotar, "timeout /t 2 /nobreak\n");
+                            fprintf(gotar, "tar -xf upgds/%%1\n");
+                            fprintf(gotar, "start %%2 %%4 %%5\n");
+                            fclose(gotar);
 
-                    sprintf(params, "gotar.bat %s", row_file_name_upgds);
-                    _execlp("gotar.bat", "gotar.bat", row_file_name_upgds, ad_name, *(argv_), *(argv_+1), *(argv_+2), nullptr);
-                    quick_exit(0);
+                            sprintf(params, "gotar.bat %s", row_file_name_upgds);
+                            _execlp("gotar.bat", "gotar.bat", row_file_name_upgds, ad_name, *(argv_), *(argv_+1), *(argv_+2), nullptr);
+                            quick_exit(0);
 #endif
 
 #ifdef LINUX
-                    sprintf(params, "+x %s", ad_name);
-                    SystemSilent("chmod", params);
+                            sprintf(params, "+x %s", ad_name);
+                            SystemSilent("chmod", params);
 #endif
 #ifndef LINUX
-                    /////////////////////////////  TO DO ON WINDOWS
-                   ;
-                   //// RunSilent("chmod", params);
+                            /////////////////////////////  TO DO ON WINDOWS
+                           ;
+                           //// RunSilent("chmod", params);
 #endif
-                    if (bmp_add != NULL) destroy_bitmap(bmp_add);
-                    destroy_bitmap(second_screen);
-                    return 255;  //restart
-                }
-            } //(go_download_upgds)
-            //bitmap not needed anymore
-            destroy_bitmap((BITMAP*)icon_upgrademark_pmem);
-            destroy_bitmap((BITMAP*)icon_noupgrademark_pmem);
-           } //(!fade_out) && (tools_ok) ........  //stage 3
+                            if (bmp_add != NULL) destroy_bitmap(bmp_add);
+                            destroy_bitmap(second_screen);
+                            return 255;  //restart
+                        }
+                    } //(go_download_upgds)
+
+                    flip_full_screen(second_screen);
+
+                    //bitmap not needed anymore
+                    destroy_bitmap((BITMAP *) icon_upgrademark_pmem);
+                    destroy_bitmap((BITMAP *) icon_noupgrademark_pmem);
+
+                    free(cloud_user);
+                    free(cloud_user0);
+                    free(cloud_password);
+                    free(cloud_password0);
+                    free(cloud_share_url);
+                    free(cloud_share0_url);
+                    free(cloud_ads);
+                    free(cloud_ads0);
+                    free(cloud_ads_url);
+                    free(cloud_ads0_url);
+                    free(cloud_upgrade);
+                    free(cloud_upgrade0);
+                    free(cloud_upgrade_url);
+                    free(cloud_upgrade0_url);
+
+                  
+                } //(!fade_out) && (tools_ok) ........  //stage 3
+            }  //cloud connection
 
         }  //fade_out
     } //bmp
@@ -5361,7 +6024,6 @@ void expand_vertically(void)
 	dy_new = DskRect.bottom - DskRect.top - dh + dw / 2 - e_h;
 	//dy_new = dy_back;
 
-	if (WINE) dy_new -= 10;
 
 	set_resized_window(dx_new, dy_new);
 
@@ -5655,8 +6317,6 @@ void expand_diagonally(void)
 	dx_new = DskRect.right - DskRect.left;
 	dy_new = DskRect.bottom - DskRect.top - dh + dw/2 - e_h;
 
-	if (WINE) dy_new -= 10;
-
 	set_resized_window(dx_new, dy_new);
 
 	wnd = win_get_window(); //WINDOWS
@@ -5758,11 +6418,10 @@ void expand_dim(int w_x0, int w_y0, int w_width, int w_height, BOOL redraw_scree
     //checking if doesn't exceed screen baundaries
     ret = get_monitor_dims(&ret_left_x, &ret_right_x, &ret_top_y, &ret_bottom_y, -1);
 
-
+#ifdef LINUX
     dx_new = w_width;
     dy_new = w_height - X11_SCREEN_SHIFT;
 
-#ifdef LINUX
 	x0_new = max(w_x0, ret_left_x);
 	y0_new = max(w_y0, ret_top_y);
 
@@ -5772,6 +6431,9 @@ void expand_dim(int w_x0, int w_y0, int w_width, int w_height, BOOL redraw_scree
     set_origins(x0_new, y0_new);
 	set_resized_window(dx_new, dy_new);
 #else
+    dx_new = w_width;
+    dy_new = w_height; // -X11_SCREEN_SHIFT;
+
 	GFX_MARGINS* gfx_margins;
 
 	ret = get_gfx_margins(&gfx_margins);
@@ -6020,21 +6682,9 @@ int circle_and_rectangle_proc0(int untrap_mouse)
 	   a = 1;
    }
 
-   //if (untrap_mouse == 1)
-   if (WINE)
-   {
-	   Free_Mouse();
-	   //LockMouse();
 
-	   int p_mouse = my_poll_mouse();
-	   int p_keyboard = my_poll_keyboard();
-	   moveto(x0_new + (dx_new / 2), y0_new + (dy_new / 2));
-	   show_os_cursor(0);
-   }
-   else
-   {
-	   LockMouse();
-   }
+	LockMouse();
+
 
    ////simulate_keypress(14592);
 
@@ -6108,30 +6758,6 @@ int focus_on_window(void)
 	return 0;
 #endif
 }
-
-void go_ahead(void)
-{
-	int ret;
-	
-	if (WINE)
-	{
-		makro_wine();
-
-	    simulate_keypress(_MACRO_C__);
-	    ret = my_poll_keyboard();
-	    simulate_keypress(_EXECUTE_C__);
-	    ret = my_poll_keyboard();
-
-		komunikat_str((char*)_Go_AHEAD_);
-
-#ifndef LINUX
-		Sleep(10);
-#else
-        sleep(0.001);
-#endif
-	}
-}
-
 
 void DoneBackground(void)
 {

@@ -52,7 +52,7 @@ extern void activate_menu(TMENU *menu);
 extern void frame_off(TMENU * menu);
 extern void frame_on(TMENU * menu);
 
-extern void inc_menu_level(void);
+extern void inc_menu_level(TMENU * menu);
 extern void dec_menu_level(void);
 
 //parametry ramki i sektorow
@@ -1823,7 +1823,7 @@ void Magnitudes(void)
                 if (n == 0)
                 {
                     closew(&mPrecision);
-                    inc_menu_level();
+                    inc_menu_level(&mPrecision);
                     activate_menu(&mMagnitude);
                     break;
                 }
@@ -1845,7 +1845,7 @@ void Magnitudes(void)
                 if (n == 0)
                 {
                     closew(&mStaticColors);
-                    inc_menu_level();
+                    inc_menu_level(&mMagnitude);
                     activate_menu(&mMagnitude);
                     break;
                 }
@@ -1863,7 +1863,7 @@ void Magnitudes(void)
     }
 
 
-    inc_menu_level();
+    inc_menu_level(&mParametry);
     activate_menu(&mParametry);
     frame_on(&mParametry);
 }
@@ -1960,7 +1960,7 @@ void Parametry(void)
    }
   else
   {
-   if ((n==86) || (n==87) || (n == 88))
+   if ((n==86) || (n==87) || (n == 88) || (n == 9))  //9 is edit INI file
 	{
 	closew(&mParametry);
 	redcr0(0);

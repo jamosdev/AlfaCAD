@@ -58,6 +58,9 @@
 
 #include "forlinux.h"
 
+#define MIN_H 800 //1024
+#define MIN_V 540 //640
+
 #define DRV_MASTER 0
 #define DRV_SLAVE 1
 
@@ -84,7 +87,8 @@ BOOL preview_blocked = FALSE;
 #pragma pack (1)
 T_PTR_Prn_Config ptrs_config ;
 T_PTR_Prn_Ini_Date ptrs_ini_date;
-char sz_file [MAXPATH] ;
+static char sz_file [MAXPATH] ;
+char *prn_file;
 char background_name[32];
 
 double x01,y01,x02,y02,dx,dy,dx1,dy1;
@@ -188,7 +192,9 @@ extern T_Prototype  s__prot;
 
 extern int TRANSLUCENCY;
 extern BOOL BIGCURSOR;
+extern BOOL BAR_POINTER;
 extern void set_dialog_cursor(BOOL bigsmall);
+extern void set_menu_cursor(BOOL bar_pointer);
 extern void free_mem_hatch_def_param(void);
 extern void Free_winvar(void);
 extern void find_font_face(char *Font_File);
@@ -250,7 +256,6 @@ extern void Set_change_dlg(T_change_param* s__change_param_);
 
 extern void Reset_change_dlg(void);
 
-extern int Get_WINE(void);
 extern int focus_on_window(void);
 extern int set_focus_on_window(void);
 extern int my_poll_mouse(void);
@@ -355,6 +360,8 @@ extern float cups_prn_width_paper;
 extern float cups_prn_height_paper;
 
 extern int findfpostopxl(/*const unsigned*/ char *s, int max_pxl);
+
+extern void Check_ConfigureNotify(void);
 
 
 static BITMAP *second_screen_bak_=NULL;
@@ -1931,11 +1938,13 @@ char *icon_mirror_block_p;
 
  BITMAP* icon_mouse1b;
  BITMAP* icon_mouse2b;
+ BITMAP* icon_mouse1b2b;
  BITMAP* icon_mouse3b;
  BITMAP* icon_mouseRb;
 
  char* icon_mouse1b_p;
  char* icon_mouse2b_p;
+ char* icon_mouse1b2b_p;
  char* icon_mouse3b_p;
  char* icon_mouseRb_p;
 
@@ -2266,6 +2275,13 @@ char *icon_inertia_d48_p;
 BITMAP *icon_dynamics_run;
 char *icon_dynamics_run_p;
 
+BITMAP *icon_menustyle;
+char *icon_menustyle_p;
+BITMAP *icon_cursorstyle;
+char *icon_cursorstyle_p;
+BITMAP *icon_barstyle;
+char *icon_barstyle_p;
+
 
 
         BITMAP *dump_bitmap[MAX_NUMBER_OF_WINDOWS] = { NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
@@ -2335,7 +2351,7 @@ static POLE pmCzcionkaEkran[]={
 TMENU mCzcionkaEkran={36,18,18,13,20,7,0,CMNU,CMBR,CMTX,0,26,0,0,0,(POLE(*)[]) &pmCzcionkaEkran,NULL,NULL};
 
 
-TMENU mOpcje = {10, 0, 0, 42, 1, 3, ICONS | TADD, CMNU, CMBR, CMTX, 0, 0, 0, 0,0,(POLE(*)[]) &pmOpcje, NULL, NULL};
+TMENU mOpcje = {11, 0, 0, 42, 1, 3, ICONS | TADD, CMNU, CMBR, CMTX, 0, 0, 0, 0,0,(POLE(*)[]) &pmOpcje, NULL, NULL};
 
 
 BOOL get_close_button_pressed(void)
@@ -2785,10 +2801,18 @@ return_to_dialog:
    if (kk)
    {
 #ifndef LINUX
-       prn_width_paper = GetPrintPageWidth();
-       prn_height_paper = GetPrintPageHeight();
-	   ptrs_ini_date->width_paper = prn_width_paper;
-	   ptrs_ini_date->height_paper = prn_height_paper;
+	   if (ptrs_ini_date->prn_type == PRN_WINDOWS)
+	   {
+		   prn_width_paper = GetPrintPageWidth();
+		   prn_height_paper = GetPrintPageHeight();
+		   ptrs_ini_date->width_paper = prn_width_paper;
+		   ptrs_ini_date->height_paper = prn_height_paper;
+	   }
+	   else
+	   {
+		   prn_width_paper = ptrs_ini_date->width_paper;
+		   prn_height_paper = ptrs_ini_date->height_paper;
+	   }
 #else
        prn_width_paper = ptrs_ini_date->width_paper;
        prn_height_paper = ptrs_ini_date->height_paper;
@@ -3361,7 +3385,7 @@ error_print:
 void PltOut (void)
 //--------------------------
 {
-  char sz_file [MAXPATH] ;
+  char sz_file_pl [MAXPATH] ;
   char com_no [10];
   BOOL b_to_file, b_to_com ;
   int port_num ;
@@ -3387,13 +3411,13 @@ void PltOut (void)
 
   if (strlen(plt_file0)==0)
   {
-   strcpy (sz_file, zbior_danych) ;
-   File_New_Ext (sz_file, ".plt") ;
+   strcpy (sz_file_pl, zbior_danych) ;
+   File_New_Ext (sz_file_pl, ".plt") ;
   }
-  else strcpy (sz_file, plt_file0);
+  else strcpy (sz_file_pl, plt_file0);
 
 
-  if (FALSE == Plt_Draw_Param (sz_file, &ptrs_config, &ptrs_ini_date ))
+  if (FALSE == Plt_Draw_Param (sz_file_pl, &ptrs_config, &ptrs_ini_date ))
   {
 
 	normalize_text=normalize_text_back;
@@ -3403,26 +3427,26 @@ void PltOut (void)
   b_to_com = FALSE;
   port_num = 1 ;
   strcpy(plt_file0,"");
-  if (strnicmp (sz_file, "LPT", 3) == 0)
+  if (strnicmp (sz_file_pl, "LPT", 3) == 0)
   {
-    if (sscanf (&sz_file [3] , "%d", &port_num) == 1  && (port_num > 0))
+    if (sscanf (&sz_file_pl [3] , "%d", &port_num) == 1  && (port_num > 0))
     {
       b_to_file = FALSE ;
-      strcpy(plt_file0,sz_file);
+      strcpy(plt_file0,sz_file_pl);
     }
   }
   else  /*porty szeregowe*/
    {
-   if (strnicmp (sz_file, "COM", 3) == 0)
+   if (strnicmp (sz_file_pl, "COM", 3) == 0)
     {
       b_to_file = TRUE ;
       b_to_com = TRUE ;
-      strcpy(com_no,sz_file);
+      strcpy(com_no,sz_file_pl);
       strcpy(plt_file0,com_no);
-      strcpy(sz_file, "COM_PLT.TMP");
+      strcpy(sz_file_pl, "COM_PLT.TMP");
     }
    }
-  if (FALSE == Ini_Output_Device (sz_file, b_to_file, port_num, 0))
+  if (FALSE == Ini_Output_Device (sz_file_pl, b_to_file, port_num, 0))
   {
     ErrList (8) ;
 
@@ -3838,13 +3862,15 @@ void Inicjacja(void)
   char ext__[MAXEXT];
   int flags;
   int focus;
+  int ret;
 
   if (Change)
   {
-    komunikat (3);
-    key = Get_Legal_Key (_YES_NO_ESC_);
-    komunikat (0);
-    if (key == ESC) return;
+    ret=ask_question(3, "Esc",_Yes_,_No_, _DRAWING_NOT_SAVED_, 12, _SAVE_IT_, 11, 1, 61);
+    //1 ok; 0 - rezygnuj; 2 - Powrot
+    if (ret==1) key=_YES_;
+    else if (ret==2) key=_NO_;
+    else return;
     if (key == _YES_ || key == _yes_)
     {
       Uaktualnij();
@@ -3883,7 +3909,7 @@ void Inicjacja(void)
 
   strcpy(zbior_danych,sk);
   out_file_name () ;
-   Clear_View () ;
+  Clear_View () ;
 
   czytaj_rysunek(sk, TRUE);
 
@@ -3892,13 +3918,7 @@ void Inicjacja(void)
   Change = FALSE;
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  focus = focus_on_window();
-	  my_poll_mouse();
-  }
-  else focus = set_focus_on_window();
+  focus = set_focus_on_window();
 
 }
 
@@ -3943,12 +3963,7 @@ void Nowy_rysunek(void)
   Change = FALSE;
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-	  my_poll_mouse();
-  }
+
 }
 
 void Prototype(void)
@@ -4022,13 +4037,6 @@ void New_from_template(void)
 	Ini_Layers_Dlg();
 	Change = FALSE;
 	Set_Auto_Backup(FALSE);
-
-	if (Get_WINE())
-	{
-		simulate_keypress(27);
-		int focus = focus_on_window();
-		my_poll_mouse();
-	}
 
 }
 
@@ -4105,6 +4113,7 @@ int Restore_params(void)
 	Change = Drawing_Params[DRAWING_NUMBER].Change;
 	bitmap_exist = Drawing_Params[DRAWING_NUMBER].bitmap_exist;
 	bitmap_png_exist = Drawing_Params[DRAWING_NUMBER].bitmap_png_exist;
+    bitmap_vector_exist = Drawing_Params[DRAWING_NUMBER].bitmap_vector_exist;
 	bitmap_pattern_exist = Drawing_Params[DRAWING_NUMBER].bitmap_pattern_exist;
 	solid_translucent_exist = Drawing_Params[DRAWING_NUMBER].solid_translucent_exist;
 	bitmap_on_front_exist = Drawing_Params[DRAWING_NUMBER].bitmap_on_front_exist;
@@ -4250,6 +4259,7 @@ int Deposit_params(void)
 	Drawing_Params[DRAWING_NUMBER].Change = Change;
 	Drawing_Params[DRAWING_NUMBER].bitmap_exist= bitmap_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_png_exist = bitmap_png_exist;
+    Drawing_Params[DRAWING_NUMBER].bitmap_vector_exist = bitmap_vector_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_pattern_exist = bitmap_pattern_exist;
 	Drawing_Params[DRAWING_NUMBER].bitmap_on_front_exist = bitmap_on_front_exist;
 
@@ -4631,15 +4641,6 @@ void Load_P_File1234(char *previous_file)
 
   Set_Auto_Backup (FALSE);
 
-  if (Get_WINE())
-  {
-	  simulate_keypress(27);
-	  int focus = focus_on_window();
-
-	  my_poll_mouse();
-
-  }
-
 
 }
 
@@ -4778,9 +4779,7 @@ int Load_Last_Window_Settings(int *x_win_orig, int *y_win_orig, int *win_width, 
     {
 
 	  get_full_screen(x_win_orig, y_win_orig, win_width, win_height);
-#ifndef LINUX
-	  if (Get_WINE()) *win_height -= 10;
-#endif
+
 	  return 1;
     }
 	else
@@ -4795,9 +4794,7 @@ int Load_Last_Window_Settings(int *x_win_orig, int *y_win_orig, int *win_width, 
 error_set1:
 	  close (f_set_handle) ;
       get_full_screen(x_win_orig, y_win_orig, win_width, win_height);
-#ifndef LINUX
-	  if (Get_WINE()) *win_height -= 10;
-#endif
+
 	  return 1;
 	}
   return 0;
@@ -5067,6 +5064,8 @@ void Koniec(void)
 		 komunikat_str("Goodbye");
 	 }
 
+   remove_int(Check_ConfigureNotify);
+
    DoneBuffers1();
    komunikat_str("@ 2");  // !!!!!!!!!
    DoneBuffers2();
@@ -5144,7 +5143,11 @@ void Koniec(void)
 
    return;
   }
- else return;
+ else
+  {
+     lock_mouse();
+     return;
+  }
 
 }
 
@@ -5221,31 +5224,31 @@ void out_file_name (void)
 /*---------------------*/
 {
  char *str;
- char sz_file [MAXPATH] ;
+ static char sz_file_out [MAXPATH] ;
  char str_utf8[MAXPATH];
  char *adres1;
 
  if (strlen(zbior_danych)!=0)
  {
-  strcpy(sz_file,zbior_danych);
-  str = strrchr(sz_file, '/' /*'\\'*/);
+  strcpy(sz_file_out,zbior_danych);
+  str = strrchr(sz_file_out, '/' /*'\\'*/);
   if (strlen(zbior_danych_2)>0)
    {
-    strcat(sz_file," + ");
+    strcat(sz_file_out," + ");
     adres1 = strrchr(zbior_danych_2, '/' /*'\\'*/);
     if (adres1 == NULL)
      {
-      strcpy(sz_file,zbior_danych_2);
+      strcpy(sz_file_out,zbior_danych_2);
      }
       else
        {
         adres1++;
-        strcat(sz_file,adres1);
+        strcat(sz_file_out,adres1);
        }
    }
   if (str == NULL)
   {
-    str = sz_file;
+    str = sz_file_out;
   }
   else
   {
@@ -5254,14 +5257,12 @@ void out_file_name (void)
 
   strcpy(str_utf8, str);
   komunikat0_str (9, str_utf8) ;
-  w95_setapptitle(str);
   my_set_window_title(zbior_danych);
  }
  else
  {
-	 strcpy(sz_file,"");
-	 komunikat0_str (9, sz_file) ;
-     w95_setapptitle(sz_file);
+	 strcpy(sz_file_out,"");
+	 komunikat0_str (9, sz_file_out) ;
      my_set_window_title(ALF_TITLE);
  }
 }
@@ -5476,6 +5477,7 @@ int Save_Update_flex(int save_upd, int *curr_h, int *curr_v)
     int ret_menu=0;
 	int ret_ref;
 
+
     if (save_upd==0) {
         ret_ref = get_window_origin_and_size(&curr_x0, &curr_y0, curr_h, curr_v);
 
@@ -5573,6 +5575,9 @@ int Expand_flex()
             ret_menu=-999;
         }
         save_window_dim(curr_x0, curr_y0, curr_h, curr_v);
+
+		if ((curr_h1 > 0) && (curr_h1 < MIN_H)) curr_h1 = MIN_H;
+		if ((curr_v1 > 0) && (curr_v1 < MIN_V)) curr_v1 = MIN_V;
 #ifdef LINUX
         expand_dim(curr_x01, curr_y01, curr_h1, curr_v1);
 #else
@@ -5657,6 +5662,19 @@ void DialogCursorB(void)
 }
 
 
+void MenuCursorB(void)
+{
+    if (!BAR_POINTER) return;
+    set_menu_cursor(FALSE);
+}
+
+void MenuCursorP(void)
+{
+    if (BAR_POINTER) return;
+    set_menu_cursor(TRUE);
+}
+
+
 void  wysokosc_znaku_TTF(void)
 {
 	char sk[MaxTextLen] = "";
@@ -5685,7 +5703,7 @@ void  wysokosc_znaku_TTF(void)
 	dwt = ((float)WIDTH / (float)HEIGHT)*1.9;
 
 	MP_SIZE = BAR_G = HEIGHT = (int)(d+0.5);
-	ED_INF_HEIGHT = HEIGHT + 1;
+	ED_INF_HEIGHT = HEIGHT + 2; //1;
 
 	WIDTH = (int)((dwt * (float)HEIGHT / 1.9)+0.5);
 
@@ -5874,11 +5892,11 @@ static  void auto_pan_off(void)
 
 static void (*COMNDO[])(void)=
 {
-  Konfig, nooop, Wsp_Autopan, nooop, nooop, Open_Backgrounds, nooop, nooop, Save_Last_Window_Settings, nooop, Expand_hor, Expand_ver, Expand_diag, Expand_flex0, Expand_last,
+  Konfig, nooop, Wsp_Autopan, nooop, nooop, Open_Backgrounds, nooop, nooop, nooop, Save_Last_Window_Settings, nooop, Expand_hor, Expand_ver, Expand_diag, Expand_flex0, Expand_last,
   Translucency,Translucency,Translucency,Translucency,Translucency,Translucency,Translucency,Translucency, DialogCursorS, DialogCursorB,
   DemoModeOn, DemoModeOff,
   nooop, wysokosc_znaku_TTF, width_factor_TTF,
-  auto_pan_on, auto_pan_off,DesktopFontTTF,DesktopFontOTF,
+  auto_pan_on, auto_pan_off, MenuCursorB, MenuCursorP, DesktopFontTTF,DesktopFontOTF,
 } ;
 
 void uaktualnij_pola_file (void)
@@ -5963,8 +5981,12 @@ void Opcje(void)
   else strcpy(sk, smallcursor);
   menu_par_new((*mOpcje.pola)[6].txt, sk);
 
-  if (DEMO_RECORDING == TRUE) menu_par_new((*mOpcje.pola)[6].txt, _YES__);
-  else menu_par_new((*mOpcje.pola)[7].txt, _NO__);
+  if (!BAR_POINTER) strcpy(sk, barstyle);
+  else strcpy(sk, cursorstyle);
+  menu_par_new((*mOpcje.pola)[7].txt, sk);
+
+  if (DEMO_RECORDING == TRUE) menu_par_new((*mOpcje.pola)[8].txt, _YES__);
+  else menu_par_new((*mOpcje.pola)[8].txt, _NO__);
 
   sprintf(sk, "%d", HEIGHT);
   menu_par_new((*mCzcionkaEkranTTF.pola)[1].txt, sk);
@@ -6026,6 +6048,7 @@ static TDIALOG desktop_dlg =
 	1, &buttons_desktop,
 	0, NULL,
 	0,NULL,
+    0,NULL, //Sliders
 	NULL,
 	NULL,
 	0,

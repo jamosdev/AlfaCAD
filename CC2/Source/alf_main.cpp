@@ -19,7 +19,7 @@
 
 #ifndef LINUX
 #ifndef ALLEGRO_AND_MFC
-#define ALLEGRO_AND_MFC
+#define ALLEGRO_AND_MFC  //????????
 #endif
 #else
 
@@ -84,6 +84,7 @@ int Width;
 
 #ifndef LINUX
 CToolTipCtrl* m_ToolTip;
+HWND editor_hWnd = NULL;
 #endif
 
 bool next_time=0;
@@ -94,10 +95,18 @@ typedef std::string String;
 typedef std::wstring WString;
 extern String WStringToString(const WString& widestr);
 
+char* get_font_family_name(void);
+
+BOOL editor_on = FALSE;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern int Client_number;
+
+extern int Save_Update_flex(int save_upd, int *curr_h, int *curr_v);
+extern int get_window_origin_and_size(int* x_win_orig, int* y_win_orig, int* win_width, int* win_height);
 
 extern	char** argv_;
 extern 	char* argp__;
@@ -128,6 +137,10 @@ extern void(*CUR_ON)(double, double);
 extern long pikseleDX(double jednostki);
 extern long pikseleDY(double jednostki);
 
+extern long pikseleX(double jednostki);
+extern long pikseleY(double jednostki);
+
+
 extern char * tinyfd_inputBox(
         char const * aTitle , // NULL or ""
         char const * aMessage , // NULL or "" (\n and \t have no effect)
@@ -150,6 +163,7 @@ int first_window_main=0;
 #endif
 int EditText(char *mytext, int adjust, int nCmdShow, int *single, int *tab);
 int EditFile(char *mytextfilename, int adjust, int nCmdShow);
+int get_cursor_info(void);
 int set_window_icon(void);
 #ifndef LINUX
 void Set_Focus(HWND HWnd);
@@ -184,6 +198,8 @@ void report_mem_leak_cpp_(void);
 
 void set_editbox_geometry_win(int x, int y);
 void set_editbox_geometry_line_win(int x, int y);
+
+//char *get_font_family_name(void);
 
 
 #ifndef LINUX
@@ -343,6 +359,41 @@ HINSTANCE my_hInstance;
 
 static int on_header = 0;
 
+HWND get_editor_hWnd(void)
+{
+	return editor_hWnd;
+}
+
+BOOL get_editor_on(void)
+{
+	return editor_on;
+}
+
+int get_cursor_info(void)
+{
+	CURSORINFO ci;
+	ci.cbSize = sizeof(ci);
+
+	if (!GetCursorInfo(&ci)) {
+		return 0;
+	}
+
+	//BOOL ret = DestroyCursor(ci.hCursor);
+	ci.hCursor = NULL;
+	ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+		//ShowCursor(FALSE);
+
+		//SetWindowsHookEx(WH_MOUSE_LL, );
+	//remove_mouse();
+	//install_mouse();
+
+	return 1;
+}
+
 void set_editbox_geometry_win(int x, int y)
 {
 	lpRect_edit = { x, y, x+640, y+400 };
@@ -352,6 +403,11 @@ void set_editbox_geometry_win(int x, int y)
 void set_editbox_geometry_line_win(int x, int y)
 {
 	lpRect_single = { x, y, x+800, y+80 };
+}
+
+RECT get_editbox_geometry_win(int opt)
+{
+	return lpRect;
 }
 
 void get_tens_value(char* st, double tens)
@@ -1259,6 +1315,8 @@ HWND CreateTextBoxW(CStringW mytext /*char *mytext*/, int edit_params, CONST INT
 		return NULL;
 	}
 
+	editor_hWnd = hWnd;
+
 	DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_DONOTROUND;
 	DwmSetWindowAttribute(hWnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
 
@@ -1489,15 +1547,15 @@ HWND CreateTextBoxW(CStringW mytext /*char *mytext*/, int edit_params, CONST INT
 		NULL);      // Pointer not needed.
 
 
-	CreateToolTip(ID_BUTTON_BOLD, hWnd, hInstance, __BOLD__);
-	CreateToolTip(ID_BUTTON_UNDERLINED, hWnd, hInstance, __UNDERLINED__);
-	CreateToolTip(ID_BUTTON_ITALIC, hWnd, hInstance, __ITALIC__);
-	CreateToolTip(ID_BUTTON_LEFT, hWnd, hInstance, __A_TO_LEFT__);
-	CreateToolTip(ID_BUTTON_RIGHT, hWnd, hInstance, __A_TO_RIGHT__);
-	CreateToolTip(ID_BUTTON_CENTER, hWnd, hInstance, __A_TO_MIDDLE__);
-	CreateToolTip(ID_BUTTON_MIDDLE_CENTER, hWnd, hInstance, __A_TO_CENTRE__);
-	CreateToolTip(ID_BUTTON_HIDDEN, hWnd, hInstance, __HIDDEN__);
-	CreateToolTip(ID_BUTTON_COPY_TEXT, hWnd, hInstance, __COPY_TEXT__);  //PTSTR pszText
+	HWND hwnd = CreateToolTip(ID_BUTTON_BOLD, hWnd, hInstance, __BOLD__);
+	HWND hwnd1 = CreateToolTip(ID_BUTTON_UNDERLINED, hWnd, hInstance, __UNDERLINED__);
+	HWND hwnd2 = CreateToolTip(ID_BUTTON_ITALIC, hWnd, hInstance, __ITALIC__);
+	HWND hwnd3 = CreateToolTip(ID_BUTTON_LEFT, hWnd, hInstance, __A_TO_LEFT__);
+	HWND hwnd4 = CreateToolTip(ID_BUTTON_RIGHT, hWnd, hInstance, __A_TO_RIGHT__);
+	HWND hwnd5 = CreateToolTip(ID_BUTTON_CENTER, hWnd, hInstance, __A_TO_MIDDLE__);
+	HWND hwnd6 = CreateToolTip(ID_BUTTON_MIDDLE_CENTER, hWnd, hInstance, __A_TO_CENTRE__);
+	HWND hwnd7 = CreateToolTip(ID_BUTTON_HIDDEN, hWnd, hInstance, __HIDDEN__);
+	HWND hwnd8 = CreateToolTip(ID_BUTTON_COPY_TEXT, hWnd, hInstance, __COPY_TEXT__);  //PTSTR pszText
 
 	hwndButtonOK = CreateWindowW(
 		L"BUTTON",  // Predefined class; Unicode assumed 
@@ -1996,7 +2054,9 @@ int EditText(char *mytext, int edit_params, int nCmdShow, int *single, int *tab)
 	char my_mb_text[MaxMultitextLen];
 	CStringW unicode;
 	int length;
-
+	static int curr_h, curr_v;
+	int ret;
+	double PozX0, PozY0;
 
 	sw_callback_locked_proc();
 
@@ -2016,13 +2076,41 @@ int EditText(char *mytext, int edit_params, int nCmdShow, int *single, int *tab)
 	if (*single == 0) memmove(&lpRect, &lpRect_edit, sizeof(RECT));
 	else memmove(&lpRect, &lpRect_single, sizeof(RECT));
 
+
+    ret=Save_Update_flex(0, &curr_h, &curr_v);
+
+    get_posXY(&PozX0, &PozY0);
+
+    //position_mouse((int)pikseleX(PozX0), (int)pikseleY(PozY0));
+	//position_mouse((lpRect.left + lpRect.right) / 2, (lpRect.top + lpRect.bottom) / 2);
+	int x_win, y_win, h_win, v_win;
+	int ret_ref = get_window_origin_and_size(&x_win, &y_win, &h_win, &v_win);
+	position_mouse(lpRect.right+5-x_win, lpRect.bottom+5-y_win);
+
+    _free_mouse();
+    dialog_cursor(1);
+
+	editor_on = TRUE;
+
 	retHWND = CreateTextBoxW(unicode, edit_params, lpRect.left, lpRect.top, lpRect.right- lpRect.left, lpRect.bottom- lpRect.top, 0, NULL, my_hInstance, nCmdShow, windowTitle, single, tab);
+
+	editor_on = FALSE;
+
+    dialog_cursor(0);
+    lock_mouse();
+    set_posXY(PozX0, PozY0);
+    CUR_ON(PozX0,PozY0);
+    ret=Save_Update_flex(1, &curr_h, &curr_v);
+
 
 	if (*single == 0) memmove(&lpRect_edit, &lpRect, sizeof(RECT));
 	else if (*single == 1) memmove(&lpRect_single, &lpRect, sizeof(RECT));
 
 	unicode.ReleaseBuffer(length);
 	sw_callback_locked_proc();
+
+	editor_on = FALSE;
+
 	if (ret_value == 1)
 	{
 		
@@ -2082,7 +2170,14 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
 	
 	LPWSTR windowTitle = (LPWSTR)filename_ini;
 
+	memmove(&lpRect, &lpRect_file, sizeof(RECT));
+
+	editor_on = TRUE;
 	ret = CreateTextBoxW(unicode, edit_params | 0x100, lpRect_file.left, lpRect_file.top, lpRect_file.right - lpRect_file.left, lpRect_file.bottom - lpRect_file.top, 0, NULL, my_hInstance, nCmdShow, windowTitle, &single, &tab);
+	//editor_hWnd = ret;
+	// 
+	// 
+	editor_on = FALSE;
 
 	if (ret_value == 1)
 	{
@@ -2284,24 +2379,34 @@ int EditText(char *mytext, int edit_params, int nCmdShow, int *single, int *tab)
     char New_Edit_Params[16];
     double PozX0, PozY0, PozX01, PozY01;
     double DX,DY;
+    int ret;
+    static int curr_h, curr_v;
+
+    char eTitle[64];
+
+    sprintf(eTitle, "%s(%d)",_EDIT_TEXT_, Client_number);
 
     sprintf(Height,"%d", HeightI);
     sprintf(Width, "%d", WidthI);
     sprintf(New_Edit_Params,"%d",edit_params);
 
+    ret=Save_Update_flex(0, &curr_h, &curr_v);
+
     get_posXY(&PozX0, &PozY0);
 
-    position_mouse(pikseleDX(PozX0), pikseleDY(PozY0));
+    position_mouse(pikseleX(PozX0), pikseleY(PozY0));
     _free_mouse();
     dialog_cursor(1);
 
-    my_text = tinyfd_editBox("Edit text", mytext, 0, (char *) &font_family_name, (char *) &font_file, (char*)&Height, (char *)&Width, "TEXT", (char*)&New_Edit_Params, single);
+    my_text = tinyfd_editBox(eTitle/*"Edit text"*/, mytext, 0, (char *) &font_family_name, (char *) &font_file, (char*)&Height, (char *)&Width, "TEXT", (char*)&New_Edit_Params, single);
 
     dialog_cursor(0);
     lock_mouse();
 
     set_posXY(PozX0, PozY0);
     CUR_ON(PozX0,PozY0);
+
+    ret=Save_Update_flex(1, &curr_h, &curr_v);
 
     if (*single==-1) return -1;
 
@@ -2349,6 +2454,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
     BOOL reload_ini;
     int single = 0;
     long sz;
+    int ret1;
+    static int curr_h, curr_v;
 
     //reading file
     f = fopen(filename, "rt");
@@ -2374,6 +2481,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
     sprintf(Width, "%d", WidthI);
     sprintf(New_Edit_Params,"%d",edit_params);
 
+    ret1=Save_Update_flex(0, &curr_h, &curr_v);
+
     get_posXY(&PozX0, &PozY0);
     _free_mouse();
     dialog_cursor(1);
@@ -2385,6 +2494,8 @@ int EditFile(char *filename, int edit_params, int nCmdShow)
 
     set_posXY(PozX0, PozY0);
     CUR_ON(PozX0,PozY0);
+
+    ret=Save_Update_flex(1, &curr_h, &curr_v);
 
     if (my_text != NULL)
     {

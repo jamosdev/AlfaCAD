@@ -30,22 +30,15 @@ set(CMAKE_BUILD_RPATH "./")
 # Global configuration types
 ################################################################################
 set(CMAKE_CONFIGURATION_TYPES
-    "AlfRelease"
-    "AsterRelease"
     "Debug"
     "Debug_PL"
     "Debug_UA"
     "Debug_ES"
-    "Demo"
-    "DLLDebug"
-    "DLLRelease"
     "Release"
     "Release_PL"
     "Release_UA"
     "Release_ES"
     "RelWithDebInfo"
-    "ViewerDebug"
-    "ViewerRelease"
     CACHE STRING "" FORCE
 )
 
@@ -470,10 +463,14 @@ set(Source_Files
     "../../../CC2/Source/woods_US.c"
     "../../../CC2/Source/o_combinations.c"
     "../../../CC2/Source/uri_encode.c"
-        o_text2PDF.c
-        utf8.c
-        o_animate_dynamics.c
-        o_animate_dynamics.h
+    "../../../CC2/Source/o_text2PDF.c"
+    "../../../CC2/Source/utf8.c"
+    "../../../CC2/Source/o_animate_dynamics.c"
+    "../../../CC2/Source/o_animate_dynamics.h"
+    "../../../CC2/Source/o_slider.c"
+    "../../../CC2/Source/o_wmctrl.c"
+    #"../../../CC2/Source/present_window.cpp"
+    #"../../../CC2/Source/present_window.h"
 )
 source_group("Source Files" FILES ${Source_Files})
 
@@ -542,59 +539,38 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        TARGET_NAME_ALFRELEASE     "Alf4win"
-        TARGET_NAME_ASTERRELEASE   "Aster4win44"
         TARGET_NAME_DEBUG_PL       "AlfaCADPL4Win"
         TARGET_NAME_DEBUG_UA       "AlfaCADES4Win"
         TARGET_NAME_DEBUG_ES       "AlfaCADUA4Win"
         TARGET_NAME_DEBUG          "AlfaCAD4Win"
-        TARGET_NAME_DEMO           "AlfPro4winDem"
-        TARGET_NAME_DLLDEBUG       "AlfaCAD4Win"
-        TARGET_NAME_DLLRELEASE     "AlfaCAD4Win"
         TARGET_NAME_RELEASE_PL     "AlfaCADPL4Win"
         TARGET_NAME_RELEASE_UA     "AlfaCADUA4Win"
         TARGET_NAME_RELEASE_ES     "AlfaCADES4Win"
         TARGET_NAME_RELEASE        "AlfaCAD4Win"
         TARGET_NAME_RELWITHDEBINFO "AlfaCAD4Win"
-        TARGET_NAME_VIEWERDEBUG    "AlfView4win"
-        TARGET_NAME_VIEWERRELEASE  "AlfView4win"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        TARGET_NAME_ALFRELEASE     "Alf4win"
-        TARGET_NAME_ASTERRELEASE   "Aster4win44"
         TARGET_NAME_DEBUG_PL       "AlfaCADPL4Win64"
         TARGET_NAME_DEBUG_UA       "AlfaCADUA4Win64"
         TARGET_NAME_DEBUG_ES       "AlfaCADES4Win64"
         TARGET_NAME_DEBUG          "AlfaCAD4Win64"
-        TARGET_NAME_DEMO           "AlfPro4winDem"
-        TARGET_NAME_DLLDEBUG       "AlfaCAD4Win64"
-        TARGET_NAME_DLLRELEASE     "AlfaCAD4Win64"
         TARGET_NAME_RELEASE_PL     "AlfaCADPL4Win64"
         TARGET_NAME_RELEASE_UA     "AlfaCADUA4Win64"
         TARGET_NAME_RELEASE_ES     "AlfaCADES4Win64"
         TARGET_NAME_RELEASE        "AlfaCAD4Win64"
         TARGET_NAME_RELWITHDEBINFO "AlfaCAD4Win64"
-        TARGET_NAME_VIEWERDEBUG    "AlfView4win"
-        TARGET_NAME_VIEWERRELEASE  "AlfView4win"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        TARGET_NAME_ALFRELEASE     "Alf4win"
-        TARGET_NAME_ASTERRELEASE   "Aster4win44"
         TARGET_NAME_DEBUG_PL       "AlfaCADPL4Win"
         TARGET_NAME_DEBUG_UA       "AlfaCAD4Win"
         TARGET_NAME_DEBUG          "AlfaCAD4Win"
-        TARGET_NAME_DEMO           "AlfPro4winDem"
-        TARGET_NAME_DLLDEBUG       "AlfaCAD4Win"
-        TARGET_NAME_DLLRELEASE     "AlfaCAD4Win"
         TARGET_NAME_RELEASE_PL     "AlfaCADPL4Win"
         TARGET_NAME_RELEASE_UA     "AlfaCADUA4Win"
         TARGET_NAME_RELEASE_UA     "AlfaCADES4Win"
         TARGET_NAME_RELEASE        "AlfaCAD4Win"
         TARGET_NAME_RELWITHDEBINFO "AlfaCAD4Win"
-        TARGET_NAME_VIEWERDEBUG    "AlfView4win"
-        TARGET_NAME_VIEWERRELEASE  "AlfView4win"
     )
 endif()
 ################################################################################
@@ -602,118 +578,76 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/Alf-Release"
-        OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/Aster-Release"
         OUTPUT_DIRECTORY_DEBUG_PL       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG_UA       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG_ES       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/Demo"
-        OUTPUT_DIRECTORY_DLLDEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/Release"
-        OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/Alf-Release"
-        OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/Aster-Release"
         OUTPUT_DIRECTORY_DEBUG_PL       "${CMAKE_CURRENT_SOURCE_DIR}/x64/Debug_PL"
         OUTPUT_DIRECTORY_DEBUG_UA       "${CMAKE_CURRENT_SOURCE_DIR}/x64/Debug_UA"
         OUTPUT_DIRECTORY_DEBUG_ES       "${CMAKE_CURRENT_SOURCE_DIR}/x64/Debug_ES"
         OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/x64/Debug"
-        OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/Demo"
-        OUTPUT_DIRECTORY_DLLDEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/x64/Debug"
-        OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release"
         OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release_PL"
         OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release_UA"
         OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release_ES"
         OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release"
         OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/x64/Release"
-        OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/Alf-Release"
-        OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/Aster-Release"
         OUTPUT_DIRECTORY_DEBUG_PL       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG_UA       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG_ES       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
         OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/Demo"
-        OUTPUT_DIRECTORY_DLLDEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/Release"
         OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/Release"
-        OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug"
-        OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release"
     )
 endif()
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        PDB_OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Alf-Release"
-        PDB_OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/./Aster-Release"
         PDB_OUTPUT_DIRECTORY_DEBUG_PL       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG_UA       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG_ES       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/./Demo"
-        PDB_OUTPUT_DIRECTORY_DLLDEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
-        PDB_OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        PDB_OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Alf-Release"
-        PDB_OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/./Aster-Release"
         PDB_OUTPUT_DIRECTORY_DEBUG_PL       "c:/Users/Marek/Allegro_win/Alfax/Alfprof/x64/Debug_PL"
         PDB_OUTPUT_DIRECTORY_DEBUG_UA       "c:/Users/Marek/Allegro_win/Alfax/Alfprof/x64/Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG_ES       "c:/Users/Marek/Allegro_win/Alfax/Alfprof/x64/Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG          "c:/Users/Marek/Allegro_win/Alfax/Alfprof/x64/Debug"
-        PDB_OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/./Demo"
-        PDB_OUTPUT_DIRECTORY_DLLDEBUG       "c:/Users/Marek/Allegro_win/Alfax/Alfprof/x64/Debug"
-        PDB_OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
-        PDB_OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        PDB_OUTPUT_DIRECTORY_ALFRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Alf-Release"
-        PDB_OUTPUT_DIRECTORY_ASTERRELEASE   "${CMAKE_CURRENT_SOURCE_DIR}/./Aster-Release"
         PDB_OUTPUT_DIRECTORY_DEBUG_PL       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG_UA       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG_ES       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
         PDB_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_DEMO           "${CMAKE_CURRENT_SOURCE_DIR}/./Demo"
-        PDB_OUTPUT_DIRECTORY_DLLDEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_DLLRELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_PL     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_UA     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE_ES     "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
         PDB_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
-        PDB_OUTPUT_DIRECTORY_VIEWERDEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/./Debug"
-        PDB_OUTPUT_DIRECTORY_VIEWERRELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/./Release"
     )
 endif()
 ################################################################################
@@ -722,12 +656,6 @@ endif()
 get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
-        $<$<CONFIG:AlfRelease>:
-            MultiThreadedDLL
-        >
-        $<$<CONFIG:AsterRelease>:
-            MultiThreadedDLL
-        >
         $<$<CONFIG:Debug_PL>:
             MultiThreadedDebugDLL
         >
@@ -739,15 +667,6 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         >
         $<$<CONFIG:Debug>:
             MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:Demo>:
-            MultiThreaded
-        >
-        $<$<CONFIG:DLLDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:DLLRelease>:
-            MultiThreadedDLL
         >
         $<$<CONFIG:Release_PL>:
             MultiThreadedDLL
@@ -764,22 +683,10 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         $<$<CONFIG:RelWithDebInfo>:
             MultiThreadedDLL
         >
-        $<$<CONFIG:ViewerDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:ViewerRelease>:
-            MultiThreadedDLL
-        >
-        $<$<NOT:$<OR:$<CONFIG:AlfRelease>,$<CONFIG:AsterRelease>,$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Demo>,$<CONFIG:DLLDebug>,$<CONFIG:DLLRelease>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:ViewerDebug>,$<CONFIG:ViewerRelease>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+        $<$<NOT:$<OR:$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
-        $<$<CONFIG:AlfRelease>:
-            MultiThreadedDLL
-        >
-        $<$<CONFIG:AsterRelease>:
-            MultiThreadedDLL
-        >
         $<$<CONFIG:Debug_PL>:
             MultiThreadedDebugDLL
         >
@@ -791,15 +698,6 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         >
         $<$<CONFIG:Debug>:
             MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:Demo>:
-            MultiThreaded
-        >
-        $<$<CONFIG:DLLDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:DLLRelease>:
-            MultiThreadedDLL
         >
         $<$<CONFIG:Release_PL>:
             MultiThreadedDLL
@@ -816,22 +714,10 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         $<$<CONFIG:RelWithDebInfo>:
             MultiThreadedDLL
         >
-        $<$<CONFIG:ViewerDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:ViewerRelease>:
-            MultiThreadedDLL
-        >
-        $<$<NOT:$<OR:$<CONFIG:AlfRelease>,$<CONFIG:AsterRelease>,$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Demo>,$<CONFIG:DLLDebug>,$<CONFIG:DLLRelease>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:ViewerDebug>,$<CONFIG:ViewerRelease>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+        $<$<NOT:$<OR:$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
-        $<$<CONFIG:AlfRelease>:
-            MultiThreadedDLL
-        >
-        $<$<CONFIG:AsterRelease>:
-            MultiThreadedDLL
-        >
         $<$<CONFIG:Debug_PL>:
             MultiThreadedDebugDLL
         >
@@ -843,15 +729,6 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         >
         $<$<CONFIG:Debug>:
             MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:Demo>:
-            MultiThreaded
-        >
-        $<$<CONFIG:DLLDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:DLLRelease>:
-            MultiThreadedDLL
         >
         $<$<CONFIG:Release_PL>:
             MultiThreadedDLL
@@ -868,13 +745,7 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         $<$<CONFIG:RelWithDebInfo>:
             MultiThreadedDLL
         >
-        $<$<CONFIG:ViewerDebug>:
-            MultiThreadedDebugDLL
-        >
-        $<$<CONFIG:ViewerRelease>:
-            MultiThreadedDLL
-        >
-        $<$<NOT:$<OR:$<CONFIG:AlfRelease>,$<CONFIG:AsterRelease>,$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Demo>,$<CONFIG:DLLDebug>,$<CONFIG:DLLRelease>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:ViewerDebug>,$<CONFIG:ViewerRelease>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+        $<$<NOT:$<OR:$<CONFIG:Debug_PL>,$<CONFIG:Debug_UA>,$<CONFIG:Debug_ES>,$<CONFIG:Debug>,$<CONFIG:Release_PL>,$<CONFIG:Release_UA>,$<CONFIG:Release_ES>,$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
     )
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
@@ -884,69 +755,57 @@ set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUN
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_include_directories(${PROJECT_NAME} PUBLIC
-        "$<$<CONFIG:AlfRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
-        "$<$<CONFIG:AsterRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug_ES>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:DLLDebug>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:DLLRelease>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_ES>:"
         "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+        #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:RelWithDebInfo>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_include_directories(${PROJECT_NAME} PUBLIC
-        "$<$<CONFIG:AlfRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
-        "$<$<CONFIG:AsterRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -981,12 +840,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
         ">"
         "$<$<CONFIG:Debug_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1021,12 +882,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
         ">"
         "$<$<CONFIG:Debug_ES>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1061,12 +924,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
         ">"
         "$<$<CONFIG:Debug>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1103,11 +968,13 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/qt/QtDBus"
             "/usr/include/ruby-3.0.0"
             "/usr/include/ruby-3.0.0/x86_64-linux"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
         ">"
         "$<$<CONFIG:DLLDebug>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../lpng1637;"
@@ -1125,7 +992,7 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         ">"
         "$<$<CONFIG:DLLRelease>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../allegro-4.4.3.1/allegro;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../../zlib/build;"
@@ -1143,7 +1010,7 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         "$<$<CONFIG:Release_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1177,12 +1044,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
             ">"
         "$<$<CONFIG:Release_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1216,12 +1085,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
             ">"
         "$<$<CONFIG:Release_ES>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1255,12 +1126,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
             ">"
         "$<$<CONFIG:Release>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1294,12 +1167,14 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
             ">"
         "$<$<CONFIG:RelWithDebInfo>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
+           #"${CMAKE_CURRENT_SOURCE_DIR}/../../CC2/Source/include;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/build;"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../libpng1637;"
@@ -1333,60 +1208,48 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "/usr/include/KF5/KGuiAddons"
             "/usr/include/KF5/KWindowSystem"
             "/usr/include/qt/QtDBus"
+            "/usr/include/glib-2.0"
+            "/usr/lib/glib-2.0/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../clip;"
             ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_include_directories(${PROJECT_NAME} PUBLIC
-        "$<$<CONFIG:AlfRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
-        "$<$<CONFIG:AsterRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../include;"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug_ES>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Debug>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
-        ">"
-        "$<$<CONFIG:DLLDebug>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
-        ">"
-        "$<$<CONFIG:DLLRelease>:"
-            "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_PL>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_UA>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release_ES>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:Release>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
         "$<$<CONFIG:RelWithDebInfo>:"
             "${CMAKE_CURRENT_SOURCE_DIR}/.;"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
+            #"${CMAKE_CURRENT_SOURCE_DIR}/../../../CC2/Source/include;"
         ">"
     )
 endif()
@@ -1396,16 +1259,6 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:AlfRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro"
-        ">"
-        "$<$<CONFIG:AsterRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "aster"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "ALF_MAIN;"
             "alfpro;"
@@ -1433,22 +1286,6 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
             "alfpro;"
             "ENGLISH;"
             "LINUX;"
-            ""
-        ">"
-        "$<$<CONFIG:Demo>:"
-            "NDEBUG"
-        ">"
-        "$<$<CONFIG:DLLDebug>:"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
-            ""
-        ">"
-        "$<$<CONFIG:DLLRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
             ""
         ">"
         "$<$<CONFIG:Release_PL>:"
@@ -1492,36 +1329,12 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
             "LINUX;"
             ""
         ">"
-        "$<$<CONFIG:ViewerDebug>:"
-            "_DEBUG;"
-            "ALF_MAIN;"
-            "VIEWER"
-        ">"
-        "$<$<CONFIG:ViewerRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "VIEWER"
-        ">"
         "WIN32;"  ###
         #"_WINDOWS;"
         "_MBCS"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:AlfRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
-         "$<$<CONFIG:AsterRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "aster;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "ALF_MAIN;"
             "alfpro;"
@@ -1560,26 +1373,6 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "QT_WIDGETS_LIB"
             #"ALLEGRO_STATICLINK"
         ">"
-        "$<$<CONFIG:Demo>:"
-            "NDEBUG;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
-        "$<$<CONFIG:DLLDebug>:"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
-            "BIT64;"
-            "_MBCS"
-        ">"
-        "$<$<CONFIG:DLLRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
-            "BIT64;"
-            "_MBCS"
-        ">"
         "$<$<CONFIG:Release_PL>:"
             "NDEBUG;"
             "ALF_MAIN;"
@@ -1631,35 +1424,11 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
             "_MBCS"
             "QT_WIDGETS_LIB"
         ">"
-        "$<$<CONFIG:ViewerDebug>:"
-            "_DEBUG;"
-            "ALF_MAIN;"
-            "VIEWER;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
-        "$<$<CONFIG:ViewerRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "VIEWER;"
-            "UNICODE;"
-            "_UNICODE"
-        ">"
         #"WIN32;" ###
         #"_WINDOWS"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:AlfRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro"
-        ">"
-        "$<$<CONFIG:AsterRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "aster"
-        ">"
         "$<$<CONFIG:Debug_PL>:"
             "ALF_MAIN;"
             "alfpro;"
@@ -1685,22 +1454,6 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
             "ENGLISH;"
             ""
         ">"
-        "$<$<CONFIG:Demo>:"
-            "NDEBUG"
-        ">"
-        "$<$<CONFIG:DLLDebug>:"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
-            ""
-        ">"
-        "$<$<CONFIG:DLLRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "alfpro;"
-            "ENGLISH;"
-            ""
-        ">"
         "$<$<CONFIG:Release_PL>:"
             "NDEBUG;"
             "ALF_MAIN;"
@@ -1737,16 +1490,6 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
             "ENGLISH;"
             ""
         ">"
-        "$<$<CONFIG:ViewerDebug>:"
-            "_DEBUG;"
-            "ALF_MAIN;"
-            "VIEWER"
-        ">"
-        "$<$<CONFIG:ViewerRelease>:"
-            "NDEBUG;"
-            "ALF_MAIN;"
-            "VIEWER"
-        ">"
         "WIN32;" ###
         #"_WINDOWS;"
         "_MBCS"
@@ -1759,20 +1502,6 @@ endif()
 if(MSVC)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_compile_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:AlfRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:AsterRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
             $<$<CONFIG:Debug_PL>:
                 /Od;
                 /RTC1;
@@ -1792,25 +1521,6 @@ if(MSVC)
                 /Od;
                 /RTC1;
                 /ZI
-            >
-            $<$<CONFIG:Demo>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:DLLDebug>:
-                /Od;
-                /RTC1;
-                /ZI
-            >
-            $<$<CONFIG:DLLRelease>:
-                /Od;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
             >
             $<$<CONFIG:Release_PL>:
                 /Od;
@@ -1842,18 +1552,6 @@ if(MSVC)
             >
             $<$<CONFIG:RelWithDebInfo>:
                 /Od;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:ViewerDebug>:
-                /Od;
-                /RTC1;
-                /ZI
-            >
-            $<$<CONFIG:ViewerRelease>:
-                /O2;
                 /Ob1;
                 /GF;
                 /Gy;
@@ -1865,20 +1563,6 @@ if(MSVC)
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         target_compile_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:AlfRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:AsterRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
             $<$<CONFIG:Debug_PL>:
                 /Od;
                 /RTC1;
@@ -1899,22 +1583,6 @@ if(MSVC)
                 /RTC1;
                 /Zi
             >
-            $<$<CONFIG:Demo>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:DLLDebug>:
-                /Od;
-                /RTC1;
-                /Zi
-            >
-            $<$<CONFIG:DLLRelease>:
-                /Od;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
             $<$<CONFIG:Release_PL>:
                 /Od;
                 ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
@@ -1933,18 +1601,6 @@ if(MSVC)
             >
             $<$<CONFIG:RelWithDebInfo>:
                 /Od;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:ViewerDebug>:
-                /Od;
-                /RTC1;
-                /Zi
-            >
-            $<$<CONFIG:ViewerRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
                 ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
             >
             /W3;
@@ -1953,20 +1609,6 @@ if(MSVC)
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         target_compile_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:AlfRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:AsterRelease>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
             $<$<CONFIG:Debug_PL>:
                 /Od;
                 /RTC1;
@@ -1986,25 +1628,6 @@ if(MSVC)
                 /Od;
                 /RTC1;
                 /ZI
-            >
-            $<$<CONFIG:Demo>:
-                /O2;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:DLLDebug>:
-                /Od;
-                /RTC1;
-                /ZI
-            >
-            $<$<CONFIG:DLLRelease>:
-                /Od;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
             >
             $<$<CONFIG:Release_PL>:
                 /Od;
@@ -2036,18 +1659,6 @@ if(MSVC)
             >
             $<$<CONFIG:RelWithDebInfo>:
                 /Od;
-                /Ob1;
-                /GF;
-                /Gy;
-                ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
-            >
-            $<$<CONFIG:ViewerDebug>:
-                /Od;
-                /RTC1;
-                /ZI
-            >
-            $<$<CONFIG:ViewerRelease>:
-                /O2;
                 /Ob1;
                 /GF;
                 /Gy;
@@ -2060,12 +1671,6 @@ if(MSVC)
     endif()
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2078,15 +1683,6 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2096,27 +1692,10 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2129,15 +1708,6 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2147,27 +1717,10 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2180,15 +1733,6 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2198,29 +1742,13 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_buf.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2233,15 +1761,7 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2251,27 +1771,11 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2284,15 +1788,6 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2302,27 +1797,11 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2335,15 +1814,6 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2353,29 +1823,13 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_clip.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2388,15 +1842,7 @@ if(MSVC)
             "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
             ">"
-            "$<$<CONFIG:Demo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Release_PL>:"
                 "/O2"
             ">"
@@ -2406,27 +1852,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2" 
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2457,27 +1888,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2508,29 +1924,14 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_dxf_o.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2564,27 +1965,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2615,27 +2001,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2666,29 +2037,14 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/B_libfun.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2719,27 +2075,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2770,27 +2111,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2821,29 +2147,14 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_menu.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2874,27 +2185,12 @@ if(MSVC)
             "$<$<CONFIG:Release_ES>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2925,27 +2221,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -2976,29 +2257,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_messag.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3029,27 +2295,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3080,27 +2331,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3131,29 +2367,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_mouse.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3184,27 +2405,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3235,27 +2441,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3286,29 +2477,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/B_osnap.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3339,27 +2515,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3390,27 +2551,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3441,29 +2587,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_sel.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3494,27 +2625,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3545,27 +2661,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3596,29 +2697,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_texr_b.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3649,27 +2735,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3700,27 +2771,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3751,29 +2807,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/b_textw.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3804,27 +2845,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3855,27 +2881,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3906,29 +2917,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/bgiext01.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -3959,27 +2955,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4010,27 +2991,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4061,29 +3027,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/Bib_arc.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4114,27 +3065,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4165,27 +3101,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4216,29 +3137,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/bib_blok.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4269,27 +3175,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4320,27 +3211,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4371,29 +3247,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/bib_e.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4424,27 +3285,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4475,27 +3321,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4526,29 +3357,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/Bib_e1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4579,27 +3395,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4630,27 +3431,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4681,29 +3467,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/bib_edit.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4734,27 +3505,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4785,27 +3541,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4836,29 +3577,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/colors.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4889,27 +3615,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4940,27 +3651,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -4991,29 +3687,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/fnmerge.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5044,27 +3725,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5095,27 +3761,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5146,29 +3797,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/fnsplit.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5199,27 +3835,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5250,27 +3871,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5301,29 +3907,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/int16_33.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5354,27 +3945,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5405,27 +3981,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5456,29 +4017,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_addmnu.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5509,27 +4055,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5560,27 +4091,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5611,29 +4127,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_array.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5664,27 +4165,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5715,27 +4201,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5766,29 +4237,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_asking.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5819,27 +4275,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5870,27 +4311,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -5921,29 +4347,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_instruct.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -5953,15 +4364,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -5977,21 +4380,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -6001,15 +4394,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -6025,21 +4410,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -6049,15 +4424,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -6073,23 +4440,13 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     endif()
     source_file_compile_options(../../../CC2/Source/o_block1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6120,27 +4477,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6171,27 +4513,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6222,29 +4549,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_blok.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6275,27 +4587,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6326,27 +4623,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6377,29 +4659,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_bloklb.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6430,27 +4697,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6481,27 +4733,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6532,29 +4769,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_break.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6585,27 +4807,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6636,27 +4843,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6687,29 +4879,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_calcul.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6740,27 +4917,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6791,27 +4953,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6842,29 +4989,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_chprop.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6895,27 +5027,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6946,27 +5063,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -6997,29 +5099,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_cluk0.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7029,15 +5116,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7053,21 +5132,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7077,15 +5146,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7101,21 +5162,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7125,15 +5176,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7149,23 +5192,13 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     endif()
     source_file_compile_options(../../../CC2/Source/o_cluk.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7175,15 +5208,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7199,21 +5224,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7223,15 +5238,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7247,21 +5254,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -7271,15 +5268,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -7295,23 +5284,13 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     endif()
     source_file_compile_options(../../../CC2/Source/o_config.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7342,27 +5321,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7393,27 +5357,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7444,29 +5393,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_debug.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7497,27 +5431,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7548,27 +5467,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7599,29 +5503,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_dialog.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7652,27 +5541,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7703,27 +5577,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7754,29 +5613,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_divide.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7807,27 +5651,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7858,27 +5687,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7909,29 +5723,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_dxf_in.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -7962,27 +5761,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8013,27 +5797,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8064,29 +5833,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_editst.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8117,27 +5871,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8168,27 +5907,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8219,29 +5943,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_ellip1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8272,27 +5981,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8323,27 +6017,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8374,29 +6053,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_ellips.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8427,27 +6091,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8478,27 +6127,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8529,29 +6163,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_etext.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8582,27 +6201,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8633,27 +6237,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8684,29 +6273,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_extend.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8737,27 +6311,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8788,27 +6347,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8839,29 +6383,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_findob.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8892,27 +6421,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8943,27 +6457,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -8994,29 +6493,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_graphf.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9047,27 +6531,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9098,27 +6567,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9149,29 +6603,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_hatch.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9202,27 +6641,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9253,27 +6677,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9304,29 +6713,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_hatch1.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9357,27 +6751,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9408,27 +6787,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9459,29 +6823,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_hatch2.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9512,27 +6861,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9563,27 +6897,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9614,29 +6933,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_hatch3.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9667,27 +6971,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9718,27 +7007,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9769,29 +7043,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_image.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9822,27 +7081,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9873,27 +7117,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9924,29 +7153,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_import.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -9977,27 +7191,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10028,27 +7227,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10079,29 +7263,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_info.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10132,27 +7301,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10183,27 +7337,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10234,29 +7373,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_inicnf.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10287,27 +7411,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10338,27 +7447,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10389,29 +7483,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_inigfx.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10442,27 +7521,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10493,27 +7557,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10544,29 +7593,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_layers.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10597,27 +7631,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10648,27 +7667,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10699,29 +7703,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_lfile.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10752,27 +7741,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10803,27 +7777,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10854,29 +7813,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_libfun.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10907,27 +7851,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -10958,27 +7887,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11009,29 +7923,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_line.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11062,27 +7961,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11113,27 +7997,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11164,29 +8033,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_vector.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -11196,15 +8050,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -11220,21 +8066,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -11244,15 +8080,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -11268,21 +8096,11 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-                "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
                 ">"
@@ -11292,15 +8110,7 @@ if(MSVC)
                 "$<$<CONFIG:Debug>:"
                 "/Od;/RTC1"
                 ">"
-                "$<$<CONFIG:Demo>:"
-                "/O2"
-                ">"
-                "$<$<CONFIG:DLLDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:DLLRelease>:"
-                "/O2"
-                ">"
+
                 "$<$<CONFIG:Release_PL>:"
                 "/O2"
                 ">"
@@ -11316,23 +8126,13 @@ if(MSVC)
                 "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
                 ">"
-                "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-                ">"
-                "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-                ">"
+
                 )
     endif()
     source_file_compile_options(../../../CC2/Source/o_listbl.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11363,27 +8163,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11414,27 +8199,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11465,29 +8235,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_listst.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11518,27 +8273,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11569,27 +8309,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11620,29 +8345,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_loadf.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11673,27 +8383,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11724,27 +8419,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11775,29 +8455,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_lttype.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11828,27 +8493,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11879,27 +8529,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11930,29 +8565,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_luk.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -11983,27 +8603,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12034,27 +8639,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12085,29 +8675,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_mak.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12138,27 +8713,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12189,27 +8749,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12240,29 +8785,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_measur.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12293,27 +8823,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12344,27 +8859,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12395,29 +8895,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_memory_win.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12448,27 +8933,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12499,27 +8969,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12550,29 +9005,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_mirror.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12603,27 +9043,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12654,27 +9079,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12705,29 +9115,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_noumb.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12758,27 +9153,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12809,27 +9189,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12860,29 +9225,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_objec1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12913,27 +9263,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -12964,27 +9299,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13015,29 +9335,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_objec2.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13068,27 +9373,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13119,27 +9409,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13170,29 +9445,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_object.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13223,27 +9483,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13274,27 +9519,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13325,29 +9555,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_offset.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13378,27 +9593,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13429,27 +9629,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13480,29 +9665,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_okrag.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13533,27 +9703,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13584,27 +9739,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13635,29 +9775,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_osnap.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13688,27 +9813,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13739,27 +9849,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13790,29 +9885,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_osnap1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13843,27 +9923,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13894,27 +9959,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13945,29 +9995,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_osnap2.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -13998,27 +10033,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14049,27 +10069,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14100,29 +10105,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_par_b.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14153,27 +10143,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14204,27 +10179,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14255,29 +10215,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_pconfig.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14308,27 +10253,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14359,27 +10289,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14410,29 +10325,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_pline.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14463,27 +10363,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14514,27 +10399,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14565,29 +10435,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_pline1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14618,27 +10473,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14669,27 +10509,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14720,29 +10545,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_pltfun.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14773,27 +10583,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14824,27 +10619,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14881,23 +10661,13 @@ if(MSVC)
             "$<$<CONFIG:RelWithDebInfo>:"
                 "/O2"
             ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_pltprn.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14928,27 +10698,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -14979,27 +10734,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15030,29 +10770,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_point.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15083,27 +10808,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15134,27 +10844,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15185,29 +10880,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_polygn.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15238,27 +10918,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15289,27 +10954,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15340,29 +10990,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_prndlg.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15393,27 +11028,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15444,27 +11064,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15495,29 +11100,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_prnfun.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15548,27 +11138,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15599,27 +11174,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15650,29 +11210,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_prof.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15703,27 +11248,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15754,27 +11284,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15805,29 +11320,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_protec.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15858,27 +11358,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15909,27 +11394,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -15960,29 +11430,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_recta.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16013,27 +11468,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16064,27 +11504,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16115,29 +11540,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_savegfx.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16168,27 +11578,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16219,27 +11614,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16270,29 +11650,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_sel.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16323,27 +11688,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16374,27 +11724,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16425,29 +11760,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_sketch.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16478,27 +11798,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16529,27 +11834,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16580,29 +11870,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_solid.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16633,27 +11908,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16684,27 +11944,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16735,29 +11980,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_spec.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16788,27 +12018,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16839,27 +12054,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16890,29 +12090,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_testdrive.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16943,27 +12128,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -16994,27 +12164,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17045,29 +12200,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_text_b.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17098,27 +12238,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17149,27 +12274,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17200,29 +12310,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_tools.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17253,27 +12348,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17304,27 +12384,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17355,29 +12420,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_trace.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17408,27 +12458,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17459,27 +12494,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17510,29 +12530,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_trim.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17563,27 +12568,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17614,27 +12604,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17665,29 +12640,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_undo.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17718,27 +12678,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17769,27 +12714,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17820,29 +12750,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_ver.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17873,27 +12788,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17924,27 +12824,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -17975,29 +12860,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_wyj.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18028,27 +12898,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18079,27 +12934,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18130,29 +12970,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/O_wym.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18183,27 +13008,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18234,27 +13044,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18285,29 +13080,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/o_zb.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18338,27 +13118,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18389,27 +13154,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18440,29 +13190,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/pcx.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18493,27 +13228,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18544,27 +13264,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18595,29 +13300,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/Strlwr1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18648,27 +13338,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18699,27 +13374,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18750,29 +13410,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/Strupr1.c ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18803,27 +13448,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18854,27 +13484,12 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         string(CONCAT FILE_CL_OPTIONS
-            "$<$<CONFIG:AlfRelease>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:AsterRelease>:"
-                "/O2"
-            ">"
+
             "$<$<CONFIG:Debug_PL>:"
                 "/Od;/RTC1"
             ">"
@@ -18905,29 +13520,14 @@ if(MSVC)
                 "$<$<CONFIG:Release_ES>:"
                 "/O2"
                 ">"
-            "$<$<CONFIG:Release>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:RelWithDebInfo>:"
-                "/O2"
-            ">"
-            "$<$<CONFIG:ViewerDebug>:"
-                "/Od;/RTC1"
-            ">"
-            "$<$<CONFIG:ViewerRelease>:"
-                "/O2"
-            ">"
+
+
         )
     endif()
     source_file_compile_options(../../../CC2/Source/winprint.cpp ${FILE_CL_OPTIONS})
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_link_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:AlfRelease>:
-                /DEBUG:FULL
-            >
-            $<$<CONFIG:AsterRelease>:
-                /DEBUG:FULL
-            >
+
             $<$<CONFIG:Debug_PL>:
                 /DEBUG
             >
@@ -18940,15 +13540,7 @@ if(MSVC)
             $<$<CONFIG:Debug>:
                 /DEBUG
             >
-            $<$<CONFIG:Demo>:
-                /DEBUG:FULL
-            >
-            $<$<CONFIG:DLLDebug>:
-                /DEBUG
-            >
-            $<$<CONFIG:DLLRelease>:
-                /DEBUG:FULL
-            >
+
             $<$<CONFIG:Release_PL>:
                 /DEBUG:FULL
             >
@@ -18965,11 +13557,7 @@ if(MSVC)
                 /DEBUG:FULL
             >
             $<$<CONFIG:ViewerDebug>:
-                /DEBUG
-            >
-            $<$<CONFIG:ViewerRelease>:
-                /DEBUG:FULL
-            >
+
             /NOLOGO;
             /MACHINE:X86;
             /SUBSYSTEM:WINDOWS;
@@ -18990,12 +13578,7 @@ if(MSVC)
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         target_link_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:AlfRelease>:
-                /DEBUG:FULL
-            >
-            $<$<CONFIG:AsterRelease>:
-                /DEBUG:FULL
-            >
+
             $<$<CONFIG:Debug_PL>:
                 /DEBUG
             >
@@ -19008,15 +13591,7 @@ if(MSVC)
             $<$<CONFIG:Debug>:
                 /DEBUG
             >
-            $<$<CONFIG:Demo>:
-                /DEBUG:FULL
-            >
-            $<$<CONFIG:DLLDebug>:
-                /DEBUG
-            >
-            $<$<CONFIG:DLLRelease>:
-                /DEBUG:FULL
-            >
+
             $<$<CONFIG:Release_PL>:
                 /DEBUG:FULL
             >
@@ -19033,11 +13608,7 @@ if(MSVC)
                 /DEBUG:FULL
             >
             $<$<CONFIG:ViewerDebug>:
-                /DEBUG
-            >
-            $<$<CONFIG:ViewerRelease>:
-                /DEBUG:FULL
-            >
+
             /NOLOGO;
             /MACHINE:X86;
             /SUBSYSTEM:WINDOWS;
@@ -19055,6 +13626,14 @@ endif()
 #find_package should find everything fine so long as the ENV Variable is set or, for linux systems,
 #it is in the default install path.
 
+#OPTIONAL GTK4
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(GTK REQUIRED gtk4)
+###pkg_check_modules(GTK REQUIRED gtk+-3.0)
+
+#include_directories(${GTK_INCLUDE_DIRS})
+#link_directories(${GTK_LIBRARY_DIRS})
+
 target_link_libraries(${PROJECT_NAME}
         X11
         Xrandr
@@ -19068,6 +13647,8 @@ target_link_libraries(${PROJECT_NAME}
         xcb
         ruby
         curl
+        Xmu
+        glib-2.0
         "${CMAKE_CURRENT_SOURCE_DIR}/../../clip/cmake-build-release/libclip.a"
         "/usr/lib/libQt5Core.so"
         "/usr/lib/libQt5Widgets.so"
@@ -19085,5 +13666,7 @@ target_link_libraries(${PROJECT_NAME}
         #"${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/liballeg.a"
         "${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/libjpgalleg.so"
         #"${CMAKE_CURRENT_SOURCE_DIR}/../../allegro5-4.4.3/lib/libjpgalleg.a"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/libz.a")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../zlib/libz.a"
+        #"${GTK_LIBRARIES}"
+        )
 

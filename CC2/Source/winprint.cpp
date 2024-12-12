@@ -32,8 +32,10 @@
 #endif
 
 #include <time.h>
+#ifndef LINUX
+#include <Windows.h>
+#endif
 #include "bgiext.h"
-
 #include "menu.h"
 #include "tinyfiledialogs.h"
 
@@ -42,11 +44,7 @@
 #include "o_prn_cups.h"
 
 #ifndef LINUX
-#ifdef BIT64
-#include "C:\Users\marek\Allegro_win\Alfax\AlfObjects\GlobalDllObjects.h"
-#else
-#include "C:\Users\marek\Allegro_win\Alfax\AlfObjects32\GlobalDllObjects.h"
-#endif
+#include "AlfaObjects\GlobalDllObjects.h"
 #else
 #include <stdio.h>
 #include <cups/cups.h>
@@ -112,8 +110,6 @@ int GetPrintVertres(void);
 int GetPrintHorizDensity(void);
 int GetPrintVertDensity(void);
 
-extern void Set_WINE(int w_);
-
 extern int Number_of_clients;
 extern int Client_number;
 extern BOOL just_file;
@@ -154,8 +150,6 @@ void Done_CUPS_Printers(void);
 BOOL SetDefaultPrinter_(char* printer_name);
 }
 
-extern int VeryMy_GetOpenFolder(char* f_name, char* sz__current_path_file, char* sz__default_path_file, char* sz__current_mask, char* dlg_name); 
-
 extern int win2unicodefactory(char* wintext, char* unicodetext, int codepage);
 extern void unicode2utf8(char* unicodetext, unsigned char* utf8text);
 
@@ -164,9 +158,12 @@ extern int GET_ALL_PRINTERS(void);
 extern int GET_DEF_PRINTER(char *szPName, int *iBufferSize);
 extern int win2unicode(char *wintext, char *unicodetext);
 
+
 #ifndef LINUX
-static HDC hDC;
+extern int VeryMy_GetOpenFolder(HWND hwnd, char* f_name, char* sz__current_path_file, char* sz__default_path_file, char* sz__current_mask, char* dlg_name);
+static HDC hDC=NULL;
 static LPDEVMODE devmode;
+extern HWND win_get_window_(void);
 #endif
 static BOOL hdc_deleted=TRUE;
 
@@ -293,7 +290,6 @@ void Initial_Message(char file_name[255])
  {
 	 sprintf(NT_version, "\nRunning on Wine %s", pwine_get_version());
 	 strcat(logoandquote, NT_version);
-	 Set_WINE(1);
  }
  else
  {
@@ -605,8 +601,10 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
     ret=Save_Update_flex(0, &curr_h, &curr_v);
 
     get_posXY(&PozX0, &PozY0);
+#ifdef LINUX
     _free_mouse();
     dialog_cursor(1);
+#endif
 
     if (!in_out)
 #ifdef LINUX
@@ -625,6 +623,8 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
         numoffilters = 1;
         lFilterPatterns[0] = sz__current_mask;
         lFilterPatterns[1] = "";
+
+        printf("tinyfd_FileNameDialog\n");
 
         lTheOpenFileName = tinyfd_FileNameDialog(       //tinyfd_FileNameDialog
             dlg_name,
@@ -659,9 +659,10 @@ int My_GetOpenFileName(char* f_name, char* sz__current_path_file, char* sz__curr
             NULL);
     }
 #endif
-
+#ifdef LINUX
     dialog_cursor(0);
     lock_mouse();
+#endif
     if (cur) CUR_ON(PozX0,PozY0);
 
 	if (!lTheOpenFileName)
@@ -682,35 +683,34 @@ int My_GetOpenFolder(char *f_name, char *sz__current_path_file, char *sz__defaul
     char const* folder_name;
     int ret;
     static int curr_h, curr_v;
+    double PozX0, PozY0;
 
     ret=Save_Update_flex(0, &curr_h, &curr_v);
-#ifndef LINUX
-    ret = VeryMy_GetOpenFolder(f_name, sz__current_path_file, sz__default_path_file, sz__current_mask, dlg_name); // , int font_height, int font_width, char *font_name)
-#else
-    double PozX0, PozY0;
 
     get_posXY(&PozX0, &PozY0);
     _free_mouse();
     dialog_cursor(1);
 
+#ifndef LINUX
+    HWND hwnd = win_get_window_();
+    ret = VeryMy_GetOpenFolder(hwnd, f_name, sz__current_path_file, sz__default_path_file, sz__current_mask, dlg_name); // , int font_height, int font_width, char *font_name)
+#else
+
     folder_name = tinyfd_selectFolderDialog(
             dlg_name , /* "" */
             sz__current_path_file ) ; /* "" */
+    if (folder_name!=NULL)
+        strcpy(f_name, folder_name);
+#endif
 
     dialog_cursor(0);
     lock_mouse();
     CUR_ON(PozX0,PozY0);
 
-    if (!folder_name)
-    {
-        ret=Save_Update_flex(1, &curr_h, &curr_v);
-        return 0;
-    }
+    ret = Save_Update_flex(1, &curr_h, &curr_v);
 
-    strcpy(f_name, folder_name);
-#endif
-
-    ret=Save_Update_flex(1, &curr_h, &curr_v);
+    //if (!folder_name) return 0;
+    if (strlen(f_name)==0) return 0;
     return 1;
 }
 
@@ -843,7 +843,7 @@ int Print2Page(int WINPRINT_DEF)
     cups_printer_no = 0;
 
 #ifndef LINUX
-  static char temp1[32+1];
+  static char temp1[64+1];
   CUPS_PRINTERS cups_printer;
   LPCSTR temp2;
   int Error1;
@@ -864,7 +864,37 @@ int Print2Page(int WINPRINT_DEF)
 	strncpy(temp1, szPName, 32)	;
 	temp2=(LPCTSTR)temp1;
 	winspooltext="WINSPOOL";
+
+
 	hDC = CreateDC(winspooltext, temp2, NULL, NULL);
+    ASSERT(hDC);
+    //DWORD err=GetLastError();
+
+    /*
+    CString printerName = szPName;
+    DWORD infoSize, numBytes;
+    HANDLE hPrinter;
+    bool ok = OpenPrinter(printerName.GetBuffer(), (LPHANDLE)&hPrinter, 0);
+    if (!ok)
+    {
+        printf("QWin32PrintEngine::initialize: OpenPrinter failed\n");
+    }
+    GetPrinter(hPrinter, 2, NULL, 0, &infoSize);
+    HGLOBAL hMem;
+    hMem = GlobalAlloc(GHND, infoSize);
+    PRINTER_INFO_2* pInfo;
+    pInfo = (PRINTER_INFO_2*)GlobalLock(hMem);
+    ok = GetPrinter(hPrinter, 2, (LPBYTE)pInfo, infoSize, &numBytes);
+    if (!ok)
+    {
+        printf("QWin32PrintEngine::initialize: GetPrinter failed\n");
+    }
+    DEVMODE* devMode;
+    devMode = pInfo->pDevMode;
+    HDC hdc = NULL;
+    hdc = CreateDC(NULL, printerName.GetString(), 0, devMode);
+    hDC = hdc;
+    */
 
     cups_printer.printer_name = temp1;
 
@@ -895,6 +925,7 @@ int Print2Page(int WINPRINT_DEF)
 
 	hDC = CreateDC(winspooltext, temp2, NULL, NULL); //devmode1); //NULL);
 	ASSERT(hDC);
+   //DWORD err = GetLastError();
 
  }
 

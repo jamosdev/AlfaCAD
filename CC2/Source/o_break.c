@@ -1538,7 +1538,7 @@ void deduct_objects(void *b_src, void *b_dest)
                         l2=(LUK*)ptrd_beg;
                         if ((l1->x==l2->x) && (l1->y==l2->y) && (l1->r==l2->r) && (l1->kat1==l2->kat1) && (l1->kat2==l2->kat2))
                         {
-                            L2->atrybut=Abad;
+                            l2->atrybut=Abad;
                             found=TRUE;
                         }
                         break;
